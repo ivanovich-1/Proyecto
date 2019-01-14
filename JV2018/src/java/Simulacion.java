@@ -154,7 +154,7 @@ public class Simulacion {
 	 * Despliega en la consola el estado almacenado, corresponde
 	 * a una generación del Juego de la vida.
 	 */
-	public void mostrarMundo() {
+	private void mostrarMundo() {
 
 		for (int i = 0; i < TAMAÑO_MUNDO; i++) {
 			for (int j = 0; j < TAMAÑO_MUNDO; j++) {		
