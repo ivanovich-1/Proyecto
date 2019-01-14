@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Calendar;
@@ -113,6 +114,7 @@ public class SimulacionTest {
 			fail("No debe llegar aquí...");
 		} 
 		catch (AssertionError e) { 
+			assertTrue(simulacion2.getUsr() != null);
 		}
 	}
 	
@@ -123,6 +125,7 @@ public class SimulacionTest {
 			fail("No debe llegar aquí...");
 		} 
 		catch (AssertionError e) { 
+			assertTrue(simulacion2.getMundo() != null);
 		}
 	}
 	
@@ -133,6 +136,7 @@ public class SimulacionTest {
 			fail("No debe llegar aquí...");
 		} 
 		catch (AssertionError e) { 
+			assertTrue(simulacion2.getFecha() != null);
 		}
 	}
 	

@@ -10,6 +10,7 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Calendar;
@@ -117,6 +118,7 @@ class SesionUsuarioTest {
 			fail("No debe llegar aquí...");
 		} 
 		catch (AssertionError e) { 
+			assertTrue(sesion2.getUsr() != null);
 		}
 	}
 	
@@ -127,6 +129,7 @@ class SesionUsuarioTest {
 			fail("No debe llegar aquí...");
 		} 
 		catch (AssertionError e) { 
+			assertTrue(sesion2.getFecha() != null);
 		}
 	}
 	
