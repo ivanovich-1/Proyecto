@@ -104,6 +104,18 @@ public class Usuario {
 				+ this.nif.getTexto().substring(7);
 	}
 	
+	/**
+	 * Genera una variante cambiando la última letra del idUsr 
+	 * por la siguiente en el alfabeto previsto para el nif.
+	 * @param idUsr
+	 * @return nuevo idUsr
+	 */
+	public String generarVarianteIdUsr(String idUsr) {
+		String alfabetoNif = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+		String alfabetoNifDesplazado = "BCDEFGHJKLMNPQRSTUVWXYZA";
+		return getIdUsr().substring(0, 4) + alfabetoNifDesplazado.charAt(alfabetoNif.indexOf(idUsr.charAt(4)));
+	}
+	
 	public Nif getNif() {
 		return nif;
 	}
