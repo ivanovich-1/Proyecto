@@ -14,14 +14,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ 
-	ClaveAccesoTest.class,
-	CorreoTest.class,
-	DireccionPostalTest.class,
-	NifTest.class,
 	UsuarioTest.class,
 	SesionUsuarioTest.class,
 	SimulacionTest.class
-
 })
 
 public class AllTests {
