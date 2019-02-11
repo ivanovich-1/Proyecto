@@ -104,6 +104,10 @@ public class Simulacion {
 		this.fecha = fecha;
 	}
 
+	public String getIdSimulacion() {	
+		return this.usr.getIdUsr() + "-" + fecha.toStringMarcaTiempo();
+	}
+	
 	@Override
 	public String toString() {
 		return String.format(

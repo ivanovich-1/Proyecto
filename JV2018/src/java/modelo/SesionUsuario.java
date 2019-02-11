@@ -61,8 +61,8 @@ public class SesionUsuario {
 		this.fecha = fecha;
 	}
 
-	public String getIdSimulacion() {	
-		return this.usr.getIdUsr() + fecha.toStringMarcaTiempo();
+	public String getIdSesion() {	
+		return this.usr.getIdUsr() + ":" + fecha.toStringMarcaTiempo();
 	}
 	
 	/**

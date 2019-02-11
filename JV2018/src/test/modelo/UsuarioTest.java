@@ -119,6 +119,12 @@ public class UsuarioTest {
 	}
 	
 	@Test
+	public void testSetNif() {
+		usuario2.setNif(new Nif("00000001R"));
+		assertEquals(usuario2.getNif().getTexto(), "00000001R");
+	}
+	
+	@Test
 	public void testSetNombre() {
 		usuario2.setNombre("Luis");
 		assertEquals(usuario2.getNombre(), "Luis");

@@ -113,7 +113,8 @@ public class Usuario {
 	public String generarVarianteIdUsr(String idUsr) {
 		String alfabetoNif = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 		String alfabetoNifDesplazado = "BCDEFGHJKLMNPQRSTUVWXYZA";
-		return getIdUsr().substring(0, 4) + alfabetoNifDesplazado.charAt(alfabetoNif.indexOf(idUsr.charAt(4)));
+		return getIdUsr().substring(0, 4) 
+				+ alfabetoNifDesplazado.charAt(alfabetoNif.indexOf(idUsr.charAt(4)));
 	}
 	
 	public Nif getNif() {

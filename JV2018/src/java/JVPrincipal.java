@@ -23,6 +23,7 @@ public class JVPrincipal {
 	 * Secuencia principal del programa.
 	 */
 	public static void main(String[] args) {		
+				
 		datos.cargarUsuariosPrueba();		
 		datos.mostrarTodosUsuarios();
 
