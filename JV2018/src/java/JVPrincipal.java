@@ -35,7 +35,7 @@ public class JVPrincipal {
 		if (interfazUsr.inicioSesionCorrecto()) {
 			SesionUsuario sesion = new SesionUsuario();
 			sesion.setUsr(interfazUsr.getUsrEnSesion());
-			sesion.setFecha(new Fecha());  // Hoy
+			sesion.setFecha(new Fecha());  		// Hoy
 			
 			datos.altaSesion(sesion);	
 			
@@ -50,5 +50,6 @@ public class JVPrincipal {
 		}		
 		System.out.println("Fin del programa.");
 	}
+
 
 } //class

@@ -16,11 +16,11 @@ import modelo.Usuario.RolUsuario;
 import util.Fecha;
 
 public class Datos {
-	
+
 	private static ArrayList<Usuario> datosUsuarios = new ArrayList<Usuario>();
-	private static ArrayList<SesionUsuario> datosSesiones = new ArrayList<SesionUsuario>();
+	private static ArrayList<SesionUsuario> datosSesiones = new ArrayList<SesionUsuario>();	
 	private static ArrayList<Simulacion> datosSimulaciones = new ArrayList<Simulacion>();
-	
+
 
 	public int getUsuariosRegistradas() {
 		return datosUsuarios.size();
@@ -29,55 +29,58 @@ public class Datos {
 	public int getSesionesRegistradas() {
 		return datosSesiones.size();
 	}
-	
+
 	public int getSimulacionesRegistradas() {
 		return datosSimulaciones.size();
 	}
-	
+
 	/**
-	 * Busca usuario dado su nif.
-	 * @param idUsr - el nif del Usuario a buscar.
+	 * Busca usuario dado su id.
+	 * @param id - el id del Usuario a buscar.
 	 * @return - el Usuario encontrado o null si no existe.
 	 */
-	public Usuario buscarUsuario2(String idUsr) {
+	public Usuario buscarUsuarioB(String id) {
 		// Busca usuario coincidente con la credencial.
-		
 		for (Usuario usr : datosUsuarios) {
-			System.out.println(usr.getIdUsr());
-			if (usr.getIdUsr().equals(idUsr)) {
+			if (usr != null
+					&& usr.getIdUsr().equalsIgnoreCase(id)) {
 				return usr;	// Devuelve el usuario encontrado.
 			}
 		}
 		return null;						// No encuentra.
 	}
 
-	
+
 	/**
-	 * Busca usuario dado su nif.
-	 * @param idUsr - el nif del Usuario a buscar.
+	 * Busca usuario dado su id usando el método de búsqueda binaria. 
+	 * @param id - el id del Usuario a buscar.
 	 * @return - el Usuario encontrado o null si no existe.
 	 */
-	public Usuario buscarUsuario(String idUsr) {
-		 int n = datosUsuarios.size();
-		  int centro;
-		  int inf = 0;
-		  int sup = n-1;
-		   while(inf <= sup){
-		     centro = (sup + inf) / 2;
-		     if(datosUsuarios.get(centro).getIdUsr().equals(idUsr)) {
-		    	 return datosUsuarios.get(centro);
-		     }
-		     else if(idUsr.compareTo(datosUsuarios.get(centro).getIdUsr()) < 0){
-		        sup = centro-1;
-		     }
-		     else {
-		       inf = centro+1;
-		     }
-		   }
-		   return null;
+	public Usuario buscarUsuario(String id){
+		
+		int centro;
+		int inf = 0;
+		int sup = datosUsuarios.size()-1;
+		
+		while (inf <= sup) {
+			centro = (sup + inf) / 2;
+
+			if (datosUsuarios.get(centro).getIdUsr().equals(id)) {
+				return datosUsuarios.get(centro);
+			}
+			else {
+				if (datosUsuarios.get(centro).getIdUsr().compareTo(id) > 0){
+					sup = centro-1;
+				}
+				else {
+					inf = centro+1;
+				}
+			}
+		}
+		return null; 				// No encuentra.
 	}
-	
-	
+
+
 	/**
 	 * Registro de la sesión de usuario.
 	 * @param sesionUsuario 
@@ -98,7 +101,7 @@ public class Datos {
 				break;
 			}
 			System.out.println("\n" + usr);
-			
+
 		}
 	}
 
@@ -123,7 +126,7 @@ public class Datos {
 	 * @param sesionUsuario 
 	 */
 	public void altaSesion(SesionUsuario sesion) {
-		datosSesiones.add(sesion);   							
+		datosSesiones.add(sesion);  
 	}
 
 	/**
@@ -141,13 +144,13 @@ public class Datos {
 		}
 		return null;			// No encuentra.
 	}
-	
+
 	/**
 	 * Registro de la simulación.
 	 * @param simulacion 
 	 */
 	public void altaSimulacion(Simulacion simulacion) {
-		datosSimulaciones.add(simulacion);  							
+		datosSimulaciones.add(simulacion);
 	}
 
 	/**
