@@ -1,66 +1,90 @@
 /** 
-Proyecto: Juego de la vida.
+ * Proyecto: Juego de la vida.
  * Implementa el almacén de datos del programa. 
  * @since: prototipo1.1
  * @source: Datos.java 
- * @version: 1.1 - 2019/02/06
+ * @version: 1.2 - 2019/02/13
  * @author: ajp
  */
 
 package accesoDatos;
 
-import modelo.ClaveAcceso;
-import modelo.Correo;
-import modelo.DireccionPostal;
-import modelo.Nif;
-import modelo.SesionUsuario;
-import modelo.Simulacion;
-import modelo.Usuario;
+import java.util.ArrayList;
+
+import modelo.*;
 import modelo.Usuario.RolUsuario;
 import util.Fecha;
 
 public class Datos {
+	
+	private static ArrayList<Usuario> datosUsuarios = new ArrayList<Usuario>();
+	private static ArrayList<SesionUsuario> datosSesiones = new ArrayList<SesionUsuario>();
+	private static ArrayList<Simulacion> datosSimulaciones = new ArrayList<Simulacion>();
+	
 
-	public static final int MAX_USUARIOS = 15;
-	public static final int MAX_SESIONES = 15;
-	public static final int MAX_SIMULACIONES = 15;
-	private static Usuario[] datosUsuarios = new Usuario[MAX_USUARIOS];
-	private static SesionUsuario[] datosSesiones = new SesionUsuario[MAX_SESIONES];
-	private static Simulacion[] datosSimulaciones = new Simulacion[MAX_SIMULACIONES];
-	private static int sesionesRegistradas = 0;				// Control de sesiones registradas.
-	private static int usuariosRegistrados = 0;
-	private static int simulacionesRegistradas = 0;
-
-	public int getSesionesRegistradas() {
-		return sesionesRegistradas;
+	public int getUsuariosRegistradas() {
+		return datosUsuarios.size();
 	}
 
-
+	public int getSesionesRegistradas() {
+		return datosSesiones.size();
+	}
+	
+	public int getSimulacionesRegistradas() {
+		return datosSimulaciones.size();
+	}
+	
 	/**
 	 * Busca usuario dado su nif.
 	 * @param idUsr - el nif del Usuario a buscar.
 	 * @return - el Usuario encontrado o null si no existe.
 	 */
-	public Usuario buscarUsuario(String nif) {
+	public Usuario buscarUsuario2(String idUsr) {
 		// Busca usuario coincidente con la credencial.
+		
 		for (Usuario usr : datosUsuarios) {
-			if (usr != null
-					&& usr.getNif().getTexto().equalsIgnoreCase(nif)) {
+			System.out.println(usr.getIdUsr());
+			if (usr.getIdUsr().equals(idUsr)) {
 				return usr;	// Devuelve el usuario encontrado.
 			}
 		}
 		return null;						// No encuentra.
 	}
 
+	
+	/**
+	 * Busca usuario dado su nif.
+	 * @param idUsr - el nif del Usuario a buscar.
+	 * @return - el Usuario encontrado o null si no existe.
+	 */
+	public Usuario buscarUsuario(String idUsr) {
+		 int n = datosUsuarios.size();
+		  int centro;
+		  int inf = 0;
+		  int sup = n-1;
+		   while(inf <= sup){
+		     centro = (sup + inf) / 2;
+		     if(datosUsuarios.get(centro).getIdUsr().equals(idUsr)) {
+		    	 return datosUsuarios.get(centro);
+		     }
+		     else if(idUsr.compareTo(datosUsuarios.get(centro).getIdUsr()) < 0){
+		        sup = centro-1;
+		     }
+		     else {
+		       inf = centro+1;
+		     }
+		   }
+		   return null;
+	}
+	
+	
 	/**
 	 * Registro de la sesión de usuario.
 	 * @param sesionUsuario 
 	 */
 	public void altaUsuario(Usuario usr) {
-		// Registra usuario a partir de la última posición ocupada.
 		if (buscarUsuario(usr.getIdUsr()) == null) {
-			datosUsuarios[usuariosRegistrados] = usr;  
-			usuariosRegistrados++; 
+			datosUsuarios.add(usr);   
 		}
 	}
 
@@ -99,9 +123,7 @@ public class Datos {
 	 * @param sesionUsuario 
 	 */
 	public void altaSesion(SesionUsuario sesion) {
-		// Registra sesion de usuario a partir de la última posición ocupada.
-		datosSesiones[sesionesRegistradas] = sesion;  
-		sesionesRegistradas++; 							
+		datosSesiones.add(sesion);   							
 	}
 
 	/**
@@ -125,9 +147,7 @@ public class Datos {
 	 * @param simulacion 
 	 */
 	public void altaSimulacion(Simulacion simulacion) {
-		// Registra sesion de usuario a partir de la última posición ocupada.
-		datosSimulaciones[simulacionesRegistradas] = simulacion;  
-		simulacionesRegistradas++; 							
+		datosSimulaciones.add(simulacion);  							
 	}
 
 	/**

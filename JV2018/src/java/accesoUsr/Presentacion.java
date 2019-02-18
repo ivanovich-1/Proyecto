@@ -1,9 +1,9 @@
 /** 
-Proyecto: Juego de la vida.
+ * Proyecto: Juego de la vida.
  * Implementa los mecanismos de interaccion con el usuario. 
  * @since: prototipo1.1
  * @source: Presentacion.java 
- * @version: 1.1 - 2019/02/06
+ * @version: 1.2 - 2019/02/13
  * @author: ajp
  */
 
@@ -13,6 +13,7 @@ import java.util.Scanner;
 
 import accesoDatos.Datos;
 import modelo.ClaveAcceso;
+import modelo.Nif;
 import modelo.Simulacion;
 import modelo.Usuario;
 
@@ -50,13 +51,13 @@ public class Presentacion {
 
 		do {
 			// Pide usuario y contraseña.
-			System.out.print("Introduce el nif de usuario: ");
-			String nif = teclado.nextLine();
+			System.out.print("Introduce el id de usuario: ");
+			String id = teclado.nextLine();
 			System.out.print("Introduce clave acceso: ");
 			ClaveAcceso clave = new ClaveAcceso(teclado.nextLine());
 
 			// Busca usuario coincidente con las credenciales.
-			usrEnSesion = datos.buscarUsuario(nif);
+			usrEnSesion = datos.buscarUsuario(id);
 
 			// Encripta clave tecleada utilizando un objeto temporal
 			// que ejecutará automáticamente el método privado.

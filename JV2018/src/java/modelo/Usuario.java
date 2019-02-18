@@ -99,7 +99,7 @@ public class Usuario {
 		assert this.nombre != null;
 		assert this.apellidos != null;
 		String[] apellidos = this.apellidos.split(" ");
-		return this.nombre.charAt(0) 
+		return ""+ this.nombre.charAt(0) 
 				+ apellidos[0].charAt(0) + apellidos[1].charAt(0)
 				+ this.nif.getTexto().substring(7);
 	}

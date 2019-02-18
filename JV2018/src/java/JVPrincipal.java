@@ -7,6 +7,11 @@ Proyecto: Juego de la vida.
  * @author: ajp
  */
 
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import accesoDatos.Datos;
 import accesoUsr.Presentacion;
 import modelo.SesionUsuario;
@@ -23,7 +28,7 @@ public class JVPrincipal {
 	 * Secuencia principal del programa.
 	 */
 	public static void main(String[] args) {		
-				
+		
 		datos.cargarUsuariosPrueba();		
 		datos.mostrarTodosUsuarios();
 
