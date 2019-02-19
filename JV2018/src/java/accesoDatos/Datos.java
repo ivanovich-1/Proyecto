@@ -39,45 +39,38 @@ public class Datos {
 	 * @param id - el id del Usuario a buscar.
 	 * @return - el Usuario encontrado o null si no existe.
 	 */
-	public Usuario buscarUsuarioB(String id) {
-		// Busca usuario coincidente con la credencial.
-		for (Usuario usr : datosUsuarios) {
-			if (usr != null
-					&& usr.getIdUsr().equalsIgnoreCase(id)) {
-				return usr;	// Devuelve el usuario encontrado.
-			}
-		}
-		return null;						// No encuentra.
+	public Usuario buscarUsuario(String id) {		
+		return datosUsuarios.get(indexSort(id));	
 	}
 
 
 	/**
-	 * Busca usuario dado su id usando el método de búsqueda binaria. 
-	 * @param id - el id del Usuario a buscar.
-	 * @return - el Usuario encontrado o null si no existe.
+	 * Busca objeto dado su id usando búsqueda binaria. 
+	 * @param id - el id del objeto a buscar.
+	 * @return - el índice de objeto encontrado.
+	 * @return - el índice con valor negativo del sitio que ocuparía.
 	 */
-	public Usuario buscarUsuario(String id){
-		
-		int centro;
+	private int indexSort(String id){
+
 		int inf = 0;
 		int sup = datosUsuarios.size()-1;
-		
-		while (inf <= sup) {
-			centro = (sup + inf) / 2;
 
-			if (datosUsuarios.get(centro).getIdUsr().equals(id)) {
-				return datosUsuarios.get(centro);
+		while (inf <= sup) {
+			
+			int centro = (sup + inf) / 2;
+			int comparacion = datosUsuarios.get(centro).getIdUsr().compareTo(id);
+			
+			if (comparacion == 0) {
+				return centro;
+			}
+			if (comparacion > 0){
+				sup = centro-1;
 			}
 			else {
-				if (datosUsuarios.get(centro).getIdUsr().compareTo(id) > 0){
-					sup = centro-1;
-				}
-				else {
-					inf = centro+1;
-				}
+				inf = centro+1;
 			}
 		}
-		return null; 				// No encuentra.
+		return -1; 
 	}
 
 
@@ -86,8 +79,11 @@ public class Datos {
 	 * @param sesionUsuario 
 	 */
 	public void altaUsuario(Usuario usr) {
-		if (buscarUsuario(usr.getIdUsr()) == null) {
+		if (indexSort(usr.getIdUsr()) < 0) {
 			datosUsuarios.add(usr);   
+		}
+		else {
+			// Error
 		}
 	}
 
