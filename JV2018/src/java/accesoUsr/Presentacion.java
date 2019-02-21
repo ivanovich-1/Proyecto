@@ -52,7 +52,7 @@ public class Presentacion {
 		do {
 			// Pide usuario y contraseña.
 			System.out.print("Introduce el id de usuario: ");
-			String id = teclado.nextLine();
+			String id = teclado.nextLine().toUpperCase();
 			System.out.print("Introduce clave acceso: ");
 			ClaveAcceso clave = new ClaveAcceso(teclado.nextLine());
 

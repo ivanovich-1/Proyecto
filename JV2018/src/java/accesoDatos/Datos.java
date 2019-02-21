@@ -10,6 +10,7 @@
 package accesoDatos;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import modelo.*;
 import modelo.Usuario.RolUsuario;
@@ -20,7 +21,8 @@ public class Datos {
 	private static ArrayList<Usuario> datosUsuarios = new ArrayList<Usuario>();
 	private static ArrayList<SesionUsuario> datosSesiones = new ArrayList<SesionUsuario>();	
 	private static ArrayList<Simulacion> datosSimulaciones = new ArrayList<Simulacion>();
-
+	
+	private static HashMap<String,String> equivalenciasId = new HashMap<String, String>();
 
 	public int getUsuariosRegistradas() {
 		return datosUsuarios.size();
@@ -40,37 +42,36 @@ public class Datos {
 	 * @return - el Usuario encontrado o null si no existe.
 	 */
 	public Usuario buscarUsuario(String id) {		
-		return datosUsuarios.get(indexSort(id));	
+		return datosUsuarios.get(indexSort(id)-1);	
 	}
 
 
 	/**
-	 * Busca objeto dado su id usando búsqueda binaria. 
+	 * Obtiene posición ordenada de un objeto dado su id utilizado
+	 * como criterio de ordenación. Utiliza búsqueda binaria. 
 	 * @param id - el id del objeto a buscar.
-	 * @return - el índice de objeto encontrado.
-	 * @return - el índice con valor negativo del sitio que ocuparía.
+	 * @return - el indice, base 1, que ocupa un objeto, o ocuparía (negativo).
 	 */
 	private int indexSort(String id){
 
 		int inf = 0;
 		int sup = datosUsuarios.size()-1;
 
-		while (inf <= sup) {
-			
-			int centro = (sup + inf) / 2;
-			int comparacion = datosUsuarios.get(centro).getIdUsr().compareTo(id);
-			
+		while (inf <= sup) {		
+			int medio = (sup + inf) / 2;
+			int comparacion =  id.compareTo(datosUsuarios.get(medio).getIdUsr());
+
 			if (comparacion == 0) {
-				return centro;
+				return medio + 1;  	// Posición ocupada, base 1
 			}
 			if (comparacion > 0){
-				sup = centro-1;
+				inf = medio + 1;
 			}
 			else {
-				inf = centro+1;
+				sup = medio - 1;
 			}
 		}
-		return -1; 
+		return -(inf + 1);			// Posición que ocuparía, negativo, base 1  	
 	}
 
 
@@ -79,8 +80,12 @@ public class Datos {
 	 * @param sesionUsuario 
 	 */
 	public void altaUsuario(Usuario usr) {
-		if (indexSort(usr.getIdUsr()) < 0) {
-			datosUsuarios.add(usr);   
+		assert usr != null;
+		int posInsercion = indexSort(usr.getIdUsr());
+
+		if (posInsercion < 0) {
+			datosUsuarios.add(-posInsercion-1 ,usr);  // Inserta en orden.
+			equivalenciasId.put(usr.getNif().getTexto(), usr.getIdUsr());
 		}
 		else {
 			// Error
@@ -106,7 +111,16 @@ public class Datos {
 	 * del almacén de datos.
 	 */
 	public void cargarUsuariosPrueba() {	
-		for (int i = 0; i < 10; i++) {
+		for (int i = 5; i < 10; i++) {
+			altaUsuario(new Usuario(new Nif("0000000" + i + "TRWAGMYFPDXBNJZSQVHLCKE".charAt(i)), 
+					"Pepe", "López Pérez", 
+					new DireccionPostal("Luna", "27", "30132", "Murcia"),
+					new Correo("pepe" + i + "@gmail.com"), 
+					new Fecha(1999, 11, 12), 
+					new Fecha(2018, 01, 03), 
+					new ClaveAcceso("Miau#" + i), RolUsuario.NORMAL));
+		}
+		for (int i = 0; i < 5; i++) {
 			altaUsuario(new Usuario(new Nif("0000000" + i + "TRWAGMYFPDXBNJZSQVHLCKE".charAt(i)), 
 					"Pepe", "López Pérez", 
 					new DireccionPostal("Luna", "27", "30132", "Murcia"),

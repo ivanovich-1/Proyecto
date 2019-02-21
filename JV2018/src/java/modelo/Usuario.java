@@ -258,6 +258,77 @@ public class Usuario {
 		this.rol = rol;
 	}
 
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((apellidos == null) ? 0 : apellidos.hashCode());
+		result = prime * result + ((claveAcceso == null) ? 0 : claveAcceso.hashCode());
+		result = prime * result + ((correo == null) ? 0 : correo.hashCode());
+		result = prime * result + ((domicilio == null) ? 0 : domicilio.hashCode());
+		result = prime * result + ((fechaAlta == null) ? 0 : fechaAlta.hashCode());
+		result = prime * result + ((fechaNacimiento == null) ? 0 : fechaNacimiento.hashCode());
+		result = prime * result + ((nif == null) ? 0 : nif.hashCode());
+		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
+		result = prime * result + ((rol == null) ? 0 : rol.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Usuario other = (Usuario) obj;
+		if (apellidos == null) {
+			if (other.apellidos != null)
+				return false;
+		} else if (!apellidos.equals(other.apellidos))
+			return false;
+		if (claveAcceso == null) {
+			if (other.claveAcceso != null)
+				return false;
+		} else if (!claveAcceso.equals(other.claveAcceso))
+			return false;
+		if (correo == null) {
+			if (other.correo != null)
+				return false;
+		} else if (!correo.equals(other.correo))
+			return false;
+		if (domicilio == null) {
+			if (other.domicilio != null)
+				return false;
+		} else if (!domicilio.equals(other.domicilio))
+			return false;
+		if (fechaAlta == null) {
+			if (other.fechaAlta != null)
+				return false;
+		} else if (!fechaAlta.equals(other.fechaAlta))
+			return false;
+		if (fechaNacimiento == null) {
+			if (other.fechaNacimiento != null)
+				return false;
+		} else if (!fechaNacimiento.equals(other.fechaNacimiento))
+			return false;
+		if (nif == null) {
+			if (other.nif != null)
+				return false;
+		} else if (!nif.equals(other.nif))
+			return false;
+		if (nombre == null) {
+			if (other.nombre != null)
+				return false;
+		} else if (!nombre.equals(other.nombre))
+			return false;
+		if (rol != other.rol)
+			return false;
+		return true;
+	}
+
 	/**
 	 * Redefine el método heredado de la clase Objecto.
 	 * @return el texto formateado del estado -valores de atributos- de objeto de la clase Usuario.  
