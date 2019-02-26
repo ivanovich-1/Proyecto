@@ -17,6 +17,7 @@ public class Usuario {
 	public enum RolUsuario {INVITADO, NORMAL, ADMINSTRADOR};
 	
 	static final int EDAD_MINIMA = 16;
+	private String id;
 	private Nif nif;
 	private String nombre;
 	private String apellidos;
@@ -52,6 +53,8 @@ public class Usuario {
 		setFechaAlta(fechaAlta);
 		setClaveAcceso(claveAcceso);
 		setRol(rol);
+		generarIdUsr();
+		
 	}
 
 	/**
@@ -85,21 +88,41 @@ public class Usuario {
 				usr.fechaAlta.getMes(), usr.fechaAlta.getDia());
 		this.claveAcceso = new ClaveAcceso(usr.claveAcceso);
 		this.rol = usr.rol;
+		this.id = new String(usr.id);
 	}
 
+	/**
+	 * Constructor para variar id.
+	 * @param usr
+	 */
+	public Usuario(Usuario usr, String id) {
+		this.nif = new Nif(usr.nif);
+		this.nombre = new String(usr.nombre);
+		this.apellidos = new String(usr.apellidos);
+		this.domicilio = new DireccionPostal(usr.domicilio);
+		this.correo = new Correo(usr.correo);
+		this.fechaNacimiento = new Fecha(usr.fechaNacimiento.getAño(), 
+				usr.fechaNacimiento.getMes(), usr.fechaNacimiento.getDia());
+		this.fechaAlta = new Fecha(usr.fechaAlta.getAño(), 
+				usr.fechaAlta.getMes(), usr.fechaAlta.getDia());
+		this.claveAcceso = new ClaveAcceso(usr.claveAcceso);
+		this.rol = usr.rol;
+		this.id = id;
+		generarVarianteIdUsr();
+	}
+	
 	/**
 	 * Genera un identificador sintético a partir de:
 	 * La letra inicial del nombre, 
 	 * Las dos iniciales del primer y segundo apellido,
-	 * Los dos último caracteres del nif.
-	 * @return idUsr
+	 * Los dos último caracteres del nif
 	 */
-	public String getIdUsr() {
+	private void generarIdUsr() {
 		assert this.nif != null;
 		assert this.nombre != null;
 		assert this.apellidos != null;
 		String[] apellidos = this.apellidos.split(" ");
-		return ""+ this.nombre.charAt(0) 
+		this.id = ""+ this.nombre.charAt(0) 
 				+ apellidos[0].charAt(0) + apellidos[1].charAt(0)
 				+ this.nif.getTexto().substring(7);
 	}
@@ -107,18 +130,20 @@ public class Usuario {
 	/**
 	 * Genera una variante cambiando la última letra del idUsr 
 	 * por la siguiente en el alfabeto previsto para el nif.
-	 * @param idUsr
-	 * @return nuevo idUsr
 	 */
-	public String generarVarianteIdUsr(String idUsr) {
+	private void generarVarianteIdUsr() {
 		String alfabetoNif = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 		String alfabetoNifDesplazado = "BCDEFGHJKLMNPQRSTUVWXYZA";
-		return getIdUsr().substring(0, 4) 
-				+ alfabetoNifDesplazado.charAt(alfabetoNif.indexOf(idUsr.charAt(4)));
+		this.id = this.id.substring(0, 4) 
+				+ alfabetoNifDesplazado.charAt(alfabetoNif.indexOf(id.charAt(4)));
+	}
+	
+	public String getId() {
+		return this.id;
 	}
 	
 	public Nif getNif() {
-		return nif;
+		return this.nif;
 	}
 
 	public void setNif(Nif nif) {
@@ -259,6 +284,7 @@ public class Usuario {
 	}
 
 	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -269,6 +295,7 @@ public class Usuario {
 		result = prime * result + ((domicilio == null) ? 0 : domicilio.hashCode());
 		result = prime * result + ((fechaAlta == null) ? 0 : fechaAlta.hashCode());
 		result = prime * result + ((fechaNacimiento == null) ? 0 : fechaNacimiento.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((nif == null) ? 0 : nif.hashCode());
 		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
 		result = prime * result + ((rol == null) ? 0 : rol.hashCode());
@@ -314,6 +341,11 @@ public class Usuario {
 				return false;
 		} else if (!fechaNacimiento.equals(other.fechaNacimiento))
 			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
 		if (nif == null) {
 			if (other.nif != null)
 				return false;
@@ -336,7 +368,7 @@ public class Usuario {
 	@Override
 	public String toString() {
 		return String.format(
-				"%-16s %s\n"
+		"%-16s %s\n"
 		+ "%-16s %s\n"
 		+ "%-16s %s\n"
 		+ "%-16s %s\n"
@@ -344,7 +376,9 @@ public class Usuario {
 		+ "%-16s %s\n"
 		+ "%-16s %s\n"
 		+ "%-16s %s\n"
-		+ "%-16s %s\n", 
+		+ "%-16s %s\n"
+		+ "%-16s %s\n",
+		"id: ", id,
 		"nif:", nif, 
 		"nombre:", this.nombre, 
 		"apellidos:", this.apellidos,  

@@ -21,8 +21,7 @@ public class Datos {
 	private static ArrayList<Usuario> datosUsuarios = new ArrayList<Usuario>();
 	private static ArrayList<SesionUsuario> datosSesiones = new ArrayList<SesionUsuario>();	
 	private static ArrayList<Simulacion> datosSimulaciones = new ArrayList<Simulacion>();
-	
-	private static HashMap<String,String> equivalenciasId = new HashMap<String, String>();
+	private static HashMap<String, String> equivalenciasId = new HashMap<String, String>();
 
 	public int getUsuariosRegistradas() {
 		return datosUsuarios.size();
@@ -42,7 +41,15 @@ public class Datos {
 	 * @return - el Usuario encontrado o null si no existe.
 	 */
 	public Usuario buscarUsuario(String id) {		
-		return datosUsuarios.get(indexSort(id)-1);	
+		
+		id = equivalenciasId.get(id);	
+		int posicion = indexSort(id)-1;    // Base 1 de índices.
+		
+		if (posicion < 0) {
+			// error
+			return null;
+		}
+		return datosUsuarios.get(posicion);	
 	}
 
 
@@ -59,7 +66,8 @@ public class Datos {
 
 		while (inf <= sup) {		
 			int medio = (sup + inf) / 2;
-			int comparacion =  id.compareTo(datosUsuarios.get(medio).getIdUsr());
+			
+			int comparacion =  id.compareTo(datosUsuarios.get(medio).getId());
 
 			if (comparacion == 0) {
 				return medio + 1;  	// Posición ocupada, base 1
@@ -81,15 +89,28 @@ public class Datos {
 	 */
 	public void altaUsuario(Usuario usr) {
 		assert usr != null;
-		int posInsercion = indexSort(usr.getIdUsr());
+		int posInsercion = indexSort(usr.getId());
 
 		if (posInsercion < 0) {
 			datosUsuarios.add(-posInsercion-1 ,usr);  // Inserta en orden.
-			equivalenciasId.put(usr.getNif().getTexto(), usr.getIdUsr());
+			registrarEquivalencias(usr);
 		}
 		else {
-			// Error
+			
+			// Error usuario ya existe.
+			
+			// Coincidencia de id. Hay que generar variante
+			
+				// Generar variante y comprueba de nuevo.
+			usr = new Usuario(usr, usr.getId());	
+			posInsercion = indexSort(usr.getId());
 		}
+	}
+
+	private void registrarEquivalencias(Usuario usr) {
+		equivalenciasId.put(usr.getNif().getTexto().toUpperCase(), usr.getId());
+		equivalenciasId.put(usr.getCorreo().getTexto().toUpperCase(), usr.getId());
+		equivalenciasId.put(usr.getId().toUpperCase(), usr.getId());
 	}
 
 
@@ -111,16 +132,7 @@ public class Datos {
 	 * del almacén de datos.
 	 */
 	public void cargarUsuariosPrueba() {	
-		for (int i = 5; i < 10; i++) {
-			altaUsuario(new Usuario(new Nif("0000000" + i + "TRWAGMYFPDXBNJZSQVHLCKE".charAt(i)), 
-					"Pepe", "López Pérez", 
-					new DireccionPostal("Luna", "27", "30132", "Murcia"),
-					new Correo("pepe" + i + "@gmail.com"), 
-					new Fecha(1999, 11, 12), 
-					new Fecha(2018, 01, 03), 
-					new ClaveAcceso("Miau#" + i), RolUsuario.NORMAL));
-		}
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 10; i++) {
 			altaUsuario(new Usuario(new Nif("0000000" + i + "TRWAGMYFPDXBNJZSQVHLCKE".charAt(i)), 
 					"Pepe", "López Pérez", 
 					new DireccionPostal("Luna", "27", "30132", "Murcia"),

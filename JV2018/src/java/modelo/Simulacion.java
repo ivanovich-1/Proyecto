@@ -1,14 +1,9 @@
 /** 
  * Proyecto: Juego de la vida.
- * Organiza aspectos de gestión de la simulación según el modelo1.
- * En esta versión sólo se ha aplicado un diseño OO básico.
- * Se pueden detectar varios defectos y antipatrones de diseño:
- *  	- Obsesión por los tipos primitivos.
- *  	- Clase demasiado grande.
- *  	- Clase acaparadora, que delega poca responsabilidad.  
+ * Organiza aspectos de gestión de la simulación según el modelo1.1.
  * @since: prototipo1.0
  * @source: Simulacion.java 
- * @version: 1.1 - 2019.01.25
+ * @version: 1.2 - 2019.02.25
  * @author: ajp
  */
 
@@ -21,7 +16,11 @@ public class Simulacion {
 
 	public static final int TAMAÑO_MUNDO = 18;
 	private static final int CICLOS_SIMULACION = 20;
-	private byte[][] mundo = new byte[TAMAÑO_MUNDO][TAMAÑO_MUNDO];
+	
+	//private byte[][] mundo = new byte[TAMAÑO_MUNDO][TAMAÑO_MUNDO];
+	
+	private Mundo mundo = new Mundo();
+	
 	
 	private Usuario usr;
 	private Fecha fecha;
@@ -105,7 +104,7 @@ public class Simulacion {
 	}
 
 	public String getIdSimulacion() {	
-		return this.usr.getIdUsr() + "-" + fecha.toStringMarcaTiempo();
+		return this.usr.getId() + "-" + fecha.toStringMarcaTiempo();
 	}
 	
 	@Override
@@ -127,33 +126,6 @@ public class Simulacion {
 			generacion++;
 		}
 		while (generacion < CICLOS_SIMULACION);
-	}
-
-	/**
-	 * Carga datos demo en la matriz que representa el mundo. 
-	 */
-	private void cargarMundoDemo() {
-		// En este array los 0 indican celdas con células muertas y los 1 vivas.
-		mundo = new byte[][] { 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // 
-			{ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Planeador
-			{ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Flip-Flop
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Still Life
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  //
-		};
 	}
 
 	/**

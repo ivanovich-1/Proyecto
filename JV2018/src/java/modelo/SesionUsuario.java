@@ -62,7 +62,7 @@ public class SesionUsuario {
 	}
 
 	public String getIdSesion() {	
-		return this.usr.getIdUsr() + ":" + fecha.toStringMarcaTiempo();
+		return this.usr.getId() + ":" + fecha.toStringMarcaTiempo();
 	}
 	
 	/**

@@ -57,6 +57,7 @@ public class Presentacion {
 			ClaveAcceso clave = new ClaveAcceso(teclado.nextLine());
 
 			// Busca usuario coincidente con las credenciales.
+			
 			usrEnSesion = datos.buscarUsuario(id);
 
 			// Encripta clave tecleada utilizando un objeto temporal
