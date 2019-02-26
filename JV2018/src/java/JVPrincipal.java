@@ -8,21 +8,15 @@ Proyecto: Juego de la vida.
  */
 
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import accesoDatos.Datos;
 import accesoUsr.Presentacion;
 import modelo.SesionUsuario;
-import modelo.Simulacion;
 import util.Fecha;
 
 public class JVPrincipal {
 
 	private static Datos datos = new Datos();
 	private static Presentacion interfazUsr = new Presentacion();
-	
 	
 	/**
 	 * Secuencia principal del programa.
@@ -43,7 +37,7 @@ public class JVPrincipal {
 					+ 	interfazUsr.getUsrEnSesion().getNombre() + " " 
 					+ interfazUsr.getUsrEnSesion().getApellidos());	
 			
-			new Simulacion().lanzarDemo();
+			interfazUsr.mostrarSimulacion();
 		}
 		else {
 			System.out.println("\nDemasiados intentos fallidos...");

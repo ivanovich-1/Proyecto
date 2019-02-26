@@ -22,6 +22,7 @@ public class Presentacion {
 	public static final int MAX_INTENTOS_FALLIDOS = 3;
 	private Usuario usrEnSesion;
 	private static Datos datos = new Datos();
+	private Simulacion simulacion = new Simulacion();
 	
 	public Usuario getUsrEnSesion() {
 		return this.usrEnSesion;
@@ -31,14 +32,16 @@ public class Presentacion {
 	 * Despliega en la consola el estado almacenado, corresponde
 	 * a una generación del Juego de la vida.
 	 */
-	public void mostrarMundo(Simulacion simulacion) {
-		
-		for (int i = 0; i < simulacion.getMundo().length; i++) {
-			for (int j = 0; j < simulacion.getMundo().length; j++) {		
-				System.out.print((simulacion.getMundo()[i][j] == 1) ? "|o" : "| ");
-			}
-			System.out.println("|");
+	public void mostrarSimulacion() {
+		int generacion = 0; 
+		do {
+			System.out.println("\nGeneración: " + generacion);
+			simulacion.getMundo().actualizarMundo();
+			generacion++;
+			System.out.println(simulacion.getMundo().toStringEstadoMundo());
 		}
+		while (generacion < simulacion.CICLOS_SIMULACION);
+		
 	}
 
 	/**
