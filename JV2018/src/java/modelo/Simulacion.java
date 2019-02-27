@@ -47,13 +47,12 @@ public class Simulacion {
 	 * Establece el valor inicial de cada uno de los atributos a partir de
 	 * los valores obtenidos de un objeto de su misma clase.
 	 * El objeto Usuario es compartido (agregación).
-	 * Llama al constructor convencional.
-	 * @param s - la Simulacion a clonar
+	 * @param simul - la Simulacion a clonar
 	 */
-	public Simulacion(Simulacion s) {
-		setUsr(new Usuario(s.usr));
-		setFecha((Fecha)s.fecha.clone());
-		setMundo(new Mundo(s.mundo));
+	public Simulacion(Simulacion simul) {
+		setUsr(simul.usr);
+		setFecha((Fecha) simul.fecha.clone());
+		setMundo(new Mundo(simul.mundo));
 	}
 
 	public Usuario getUsr() {
@@ -64,7 +63,6 @@ public class Simulacion {
 		assert usr != null;
 		this.usr = usr;
 	}
-
 
 	public Mundo getMundo() {
 		return mundo;
@@ -84,7 +82,7 @@ public class Simulacion {
 		this.fecha = fecha;
 	}
 
-	public String getIdSimulacion() {	
+	public String getId() {	
 		return this.usr.getId() + "-" + fecha.toStringMarcaTiempo();
 	}
 	
@@ -93,20 +91,5 @@ public class Simulacion {
 		return String.format(
 				"Simulacion [usr=%s, fecha=%s, mundo=%s]", usr, fecha, mundo);
 	}
-
-//	/**
-//	 * Ejecuta una simulación del juego de la vida en la consola.
-//	 */
-//	public void lanzarDemo() {
-//		int generacion = 0; 
-//		do {
-//			System.out.println("\nGeneración: " + generacion);
-//			mundo.actualizarMundo();
-//			generacion++;
-//			simulacion.getMundo().toStringEstadoMundo();
-//		}
-//		while (generacion < CICLOS_SIMULACION);
-//	}
-
 
 } //class

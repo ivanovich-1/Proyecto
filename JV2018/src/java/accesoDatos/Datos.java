@@ -1,9 +1,9 @@
 /** 
  * Proyecto: Juego de la vida.
- * Implementa el almacén de datos del programa. 
+ * Implementa el almacén de datos del programa en la API Collection. 
  * @since: prototipo1.1
  * @source: Datos.java 
- * @version: 1.2 - 2019/02/13
+ * @version: 1.2 - 2019/02/26
  * @author: ajp
  */
 
@@ -19,47 +19,22 @@ import util.Fecha;
 public class Datos {
 
 	private static ArrayList<Usuario> datosUsuarios = new ArrayList<Usuario>();
+	private static HashMap<String, String> equivalenciasId = new HashMap<String, String>();
 	private static ArrayList<SesionUsuario> datosSesiones = new ArrayList<SesionUsuario>();	
 	private static ArrayList<Simulacion> datosSimulaciones = new ArrayList<Simulacion>();
-	private static HashMap<String, String> equivalenciasId = new HashMap<String, String>();
+	private static ArrayList<Mundo> datosMundos = new ArrayList<Mundo>();
+	
 
-	public int getUsuariosRegistradas() {
-		return datosUsuarios.size();
-	}
-
-	public int getSesionesRegistradas() {
-		return datosSesiones.size();
-	}
-
-	public int getSimulacionesRegistradas() {
-		return datosSimulaciones.size();
-	}
-
-	/**
-	 * Busca usuario dado su id.
-	 * @param id - el id del Usuario a buscar.
-	 * @return - el Usuario encontrado o null si no existe.
-	 */
-	public Usuario buscarUsuario(String id) {		
-		
-		id = equivalenciasId.get(id);	
-		int posicion = indexSort(id)-1;    // Base 1 de índices.
-		
-		if (posicion < 0) {
-			// error
-			return null;
-		}
-		return datosUsuarios.get(posicion);	
-	}
-
-
+	
+	// USUARIOS
+	
 	/**
 	 * Obtiene posición ordenada de un objeto dado su id utilizado
 	 * como criterio de ordenación. Utiliza búsqueda binaria. 
 	 * @param id - el id del objeto a buscar.
 	 * @return - el indice, base 1, que ocupa un objeto, o ocuparía (negativo).
 	 */
-	private int indexSort(String id){
+	private int indexSortUsuario(String id){
 
 		int inf = 0;
 		int sup = datosUsuarios.size()-1;
@@ -81,7 +56,27 @@ public class Datos {
 		}
 		return -(inf + 1);			// Posición que ocuparía, negativo, base 1  	
 	}
+	
+	public int getUsuariosRegistradas() {
+		return datosUsuarios.size();
+	}
 
+	/**
+	 * Busca usuario dado su id.
+	 * @param id - el id del Usuario a buscar.
+	 * @return - el Usuario encontrado o null si no existe.
+	 */
+	public Usuario buscarUsuario(String id) {		
+		
+		id = equivalenciasId.get(id);	
+		int posicion = indexSortUsuario(id)-1;    // Base 1 de índices.
+		
+		if (posicion < 0) {
+			// error
+			return null;
+		}
+		return datosUsuarios.get(posicion);	
+	}
 
 	/**
 	 * Registro de la sesión de usuario.
@@ -89,7 +84,7 @@ public class Datos {
 	 */
 	public void altaUsuario(Usuario usr) {
 		assert usr != null;
-		int posInsercion = indexSort(usr.getId());
+		int posInsercion = indexSortUsuario(usr.getId());
 
 		if (posInsercion < 0) {
 			datosUsuarios.add(-posInsercion-1 ,usr);  // Inserta en orden.
@@ -103,7 +98,7 @@ public class Datos {
 			
 				// Generar variante y comprueba de nuevo.
 			usr = new Usuario(usr, usr.getId());	
-			posInsercion = indexSort(usr.getId());
+			posInsercion = indexSortUsuario(usr.getId());
 		}
 	}
 
@@ -123,7 +118,6 @@ public class Datos {
 				break;
 			}
 			System.out.println("\n" + usr);
-
 		}
 	}
 
@@ -142,29 +136,108 @@ public class Datos {
 					new ClaveAcceso("Miau#" + i), RolUsuario.NORMAL));
 		}
 	}
+	
+	// SESIONES
+	
+	/**
+	 * Obtiene posición ordenada de un objeto dado su id utilizado
+	 * como criterio de ordenación. Utiliza búsqueda binaria. 
+	 * @param id - el id del objeto a buscar.
+	 * @return - el indice, base 1, que ocupa un objeto, o ocuparía (negativo).
+	 */
+	private int indexSortSesiones(String id){
+
+		int inf = 0;
+		int sup = datosSesiones.size()-1;
+
+		while (inf <= sup) {		
+			int medio = (sup + inf) / 2;
+			
+			int comparacion =  id.compareTo(datosSesiones.get(medio).getId());
+
+			if (comparacion == 0) {
+				return medio + 1;  	// Posición ocupada, base 1
+			}
+			if (comparacion > 0){
+				inf = medio + 1;
+			}
+			else {
+				sup = medio - 1;
+			}
+		}
+		return -(inf + 1);			// Posición que ocuparía, negativo, base 1  	
+	}
+	
+	public int getSesionesRegistradas() {
+		return datosSesiones.size();
+	}
 
 	/**
 	 * Registro de la sesión de usuario.
 	 * @param sesionUsuario 
 	 */
 	public void altaSesion(SesionUsuario sesion) {
-		datosSesiones.add(sesion);  
+		assert sesion != null;
+		int posInsercion = indexSortSesiones(sesion.getId());
+
+		if (posInsercion < 0) {
+			datosSesiones.add(sesion);
+		}
+		else {	
+			// Error sesion ya existe.		
+		}	  
 	}
 
 	/**
 	 * Busca sesionUsaurio dado su id.
-	 * @param idSesion 
+	 * @param id 
 	 * @return - la SesionUsuario encontrada o null si no existe.
 	 */
-	public SesionUsuario buscarSesion(String idSesion) {
+	public SesionUsuario buscarSesion(String id) {
 		// Busca sesionUsuario coincidente con la credencial.
 		for (SesionUsuario sesion : datosSesiones) {
 			if (sesion != null
-					&& sesion.getIdSesion().equalsIgnoreCase(idSesion)) {
+					&& sesion.getId().equalsIgnoreCase(id)) {
 				return sesion;	// Devuelve la sesionUsuario encontrada.
 			}
 		}
 		return null;			// No encuentra.
+	}
+
+	
+	// SIMULACIONES
+	
+	/**
+	 * Obtiene posición ordenada de un objeto dado su id utilizado
+	 * como criterio de ordenación. Utiliza búsqueda binaria. 
+	 * @param id - el id del objeto a buscar.
+	 * @return - el indice, base 1, que ocupa un objeto, o ocuparía (negativo).
+	 */
+	private int indexSortSimulaciones(String id){
+
+		int inf = 0;
+		int sup = datosSimulaciones.size()-1;
+
+		while (inf <= sup) {		
+			int medio = (sup + inf) / 2;
+			
+			int comparacion =  id.compareTo(datosSimulaciones.get(medio).getId());
+
+			if (comparacion == 0) {
+				return medio + 1;  	// Posición ocupada, base 1
+			}
+			if (comparacion > 0){
+				inf = medio + 1;
+			}
+			else {
+				sup = medio - 1;
+			}
+		}
+		return -(inf + 1);			// Posición que ocuparía, negativo, base 1  	
+	}
+	
+	public int getSimulacionesRegistradas() {
+		return datosSimulaciones.size();
 	}
 
 	/**
@@ -172,23 +245,97 @@ public class Datos {
 	 * @param simulacion 
 	 */
 	public void altaSimulacion(Simulacion simulacion) {
-		datosSimulaciones.add(simulacion);
+		assert simulacion != null;
+		int posInsercion = indexSortSimulaciones(simulacion.getId());
+		if (posInsercion < 0) {
+			datosSimulaciones.add(simulacion);
+		}
+		else {	
+			// Error simulacion ya existe.		
+		}	  
 	}
 
 	/**
 	 * Busca simulación dado su id.
-	 * @param idSesion 
+	 * @param id 
 	 * @return - la simulacion encontrada o null si no existe.
 	 */
-	public Simulacion buscarSimulacion(String idSimulacion) {
+	public Simulacion buscarSimulacion(String id) {
 		// Busca simulacion coincidente con la credencial.
 		for (Simulacion simulacion : datosSimulaciones) {
 			if (simulacion != null
-					&& simulacion.getIdSimulacion().equalsIgnoreCase(idSimulacion)) {
+					&& simulacion.getId().equalsIgnoreCase(id)) {
 				return simulacion;	// Devuelve la simulación encontrada.
 			}
 		}
 		return null;				// No encuentra.
+	}
+
+	// MUNDOS
+	
+	/**
+	 * Obtiene posición ordenada de un objeto dado su id utilizado
+	 * como criterio de ordenación. Utiliza búsqueda binaria. 
+	 * @param id - el id del objeto a buscar.
+	 * @return - el indice, base 1, que ocupa un objeto, o ocuparía (negativo).
+	 */
+	private int indexSortMundos(String id){
+
+		int inf = 0;
+		int sup = datosSimulaciones.size()-1;
+
+		while (inf <= sup) {		
+			int medio = (sup + inf) / 2;
+			
+			int comparacion =  id.compareTo(datosMundos.get(medio).getId());
+
+			if (comparacion == 0) {
+				return medio + 1;  	// Posición ocupada, base 1
+			}
+			if (comparacion > 0){
+				inf = medio + 1;
+			}
+			else {
+				sup = medio - 1;
+			}
+		}
+		return -(inf + 1);			// Posición que ocuparía, negativo, base 1  	
+	}
+	
+	public int getMundosRegistradas() {
+		return datosMundos.size();
+	}
+
+	/**
+	 * Registro de la simulación.
+	 * @param simulacion 
+	 */
+	public void altaMundo(Mundo mundo) {
+		assert mundo != null;
+		int posInsercion = indexSortUsuario(mundo.getId());
+
+		if (posInsercion < 0) {
+			datosMundos.add(-posInsercion-1 ,mundo);  // Inserta en orden.
+		}
+		else {
+			// Error mundo ya existe.
+		}
+	}
+
+	/**
+	 * Busca simulación dado su id.
+	 * @param id 
+	 * @return - el mundo encontrado o null si no existe.
+	 */
+	public Mundo buscarMundo(String id) {
+		// Busca mundo coincidente con el id.
+		for (Mundo mundo : datosMundos) {
+			if (mundo != null
+					&& mundo.getId().equalsIgnoreCase(id)) {
+				return mundo;	// Devuelve el mundo encontrado.
+			}
+		}
+		return null;			// No encuentra.
 	}
 
 } // class

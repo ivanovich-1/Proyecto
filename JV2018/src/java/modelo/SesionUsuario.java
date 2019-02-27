@@ -61,7 +61,7 @@ public class SesionUsuario {
 		this.fecha = fecha;
 	}
 
-	public String getIdSesion() {	
+	public String getId() {	
 		return this.usr.getId() + ":" + fecha.toStringMarcaTiempo();
 	}
 	

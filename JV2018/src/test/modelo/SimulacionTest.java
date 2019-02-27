@@ -31,7 +31,7 @@ import util.Fecha;
 public class SimulacionTest {
 	private static Usuario usr;
 	private static Fecha fecha;
-	private static byte[][] espacioMundo;
+	private static Mundo mundo;
 	private static Simulacion simulacion1;
 	private Simulacion simulacion2;
 
@@ -51,8 +51,8 @@ public class SimulacionTest {
 				new ClaveAcceso("Miau#12"), 
 				Usuario.RolUsuario.NORMAL);
 		fecha = new Fecha(2018, 10, 20, 10, 35, 2);
-		espacioMundo = new byte[10][10];
-		simulacion1 = new Simulacion(usr, fecha, espacioMundo);
+		mundo = new Mundo();
+		simulacion1 = new Simulacion(usr, fecha, mundo);
 	}
 
 	@AfterAll
@@ -71,7 +71,7 @@ public class SimulacionTest {
 	public void testSimulacionConvencional() {	
 		assertSame(simulacion1.getUsr(), usr);
 		assertSame(simulacion1.getFecha(), fecha);
-		assertSame(simulacion1.getMundo(), espacioMundo);
+		assertSame(simulacion1.getMundo(), mundo);
 	}
 
 	@Test
@@ -96,8 +96,8 @@ public class SimulacionTest {
 
 	@Test
 	public void testSetMundo() {
-		simulacion2.setMundo(espacioMundo);
-		assertSame(simulacion2.getMundo(), espacioMundo);
+		simulacion2.setMundo(mundo);
+		assertSame(simulacion2.getMundo(), mundo);
 	}
 
 	@Test

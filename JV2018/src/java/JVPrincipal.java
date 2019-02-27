@@ -3,10 +3,9 @@ Proyecto: Juego de la vida.
  * Implementa el control de inicio de sesión y ejecución de la simulación por defecto. 
  * @since: prototipo1.0
  * @source: JVPrincipal.java 
- * @version: 1.1 - 2019/02/06
+ * @version: 1.2 - 2019/02/25
  * @author: ajp
  */
-
 
 import accesoDatos.Datos;
 import accesoUsr.Presentacion;

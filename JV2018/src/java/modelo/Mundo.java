@@ -44,6 +44,10 @@ public class Mundo {
 		constantes = new HashMap<String, int[]>(mundo.constantes);
 	}
 	
+	public String getId() {
+		return nombre;
+	}
+	
 	public int getTamañoMundo() {
 		return tamañoMundo;
 	}
