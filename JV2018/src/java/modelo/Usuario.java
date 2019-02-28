@@ -11,7 +11,6 @@ package modelo;
 
 import util.Fecha;
 
-
 public class Usuario {
 	
 	public enum RolUsuario {INVITADO, NORMAL, ADMINSTRADOR};

@@ -39,7 +39,7 @@ public class Simulacion {
 	 * Llama al constructor convencional de la propia clase.
 	 */
 	public Simulacion() {
-		this(new Usuario(), new Fecha(), new Mundo());	
+		this(new Usuario(), new Fecha(), new Mundo());
 	}
 
 	/**

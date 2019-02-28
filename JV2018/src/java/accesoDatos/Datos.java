@@ -1,6 +1,7 @@
 /** 
  * Proyecto: Juego de la vida.
- * Implementa el almacén de datos del programa en la API Collection. 
+ * Implementa el almacén de datos del programa en la API Collection.
+ * Tiene defectos de metodos repetidos.
  * @since: prototipo1.1
  * @source: Datos.java 
  * @version: 1.2 - 2019/02/26
@@ -23,8 +24,6 @@ public class Datos {
 	private static ArrayList<SesionUsuario> datosSesiones = new ArrayList<SesionUsuario>();	
 	private static ArrayList<Simulacion> datosSimulaciones = new ArrayList<Simulacion>();
 	private static ArrayList<Mundo> datosMundos = new ArrayList<Mundo>();
-	
-
 	
 	// USUARIOS
 	
@@ -282,7 +281,7 @@ public class Datos {
 	private int indexSortMundos(String id){
 
 		int inf = 0;
-		int sup = datosSimulaciones.size()-1;
+		int sup = datosMundos.size()-1;
 
 		while (inf <= sup) {		
 			int medio = (sup + inf) / 2;
@@ -338,4 +337,35 @@ public class Datos {
 		return null;			// No encuentra.
 	}
 
+
+	/**
+	 * Carga datos demo en la matriz que representa el mundo. 
+	 */
+	public void cargarMundoDemo() {
+		
+		Mundo mundoDemo = new Mundo();
+		mundoDemo.setEspacio(new byte[][] { 
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+			{ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+			{ 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+			{ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0 }, //
+			{ 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // 
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0 }, //
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // 
+			{ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Planeador
+			{ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Flip-Flop
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Still Life
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  //
+		});
+		
+		altaMundo(mundoDemo);
+	}
+	
 } // class

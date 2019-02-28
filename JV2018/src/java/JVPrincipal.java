@@ -14,23 +14,30 @@ import util.Fecha;
 
 public class JVPrincipal {
 
-	private static Datos datos = new Datos();
-	private static Presentacion interfazUsr = new Presentacion();
+	private static Datos datos;
+	private static Presentacion interfazUsr;
 	
 	/**
 	 * Secuencia principal del programa.
 	 */
 	public static void main(String[] args) {		
-		
+		datos = new Datos();
 		datos.cargarUsuariosPrueba();		
 		datos.mostrarTodosUsuarios();
-
+		datos.cargarMundoDemo();
+		
+		interfazUsr = new Presentacion();
 		if (interfazUsr.inicioSesionCorrecto()) {
+			
 			SesionUsuario sesion = new SesionUsuario();
 			sesion.setUsr(interfazUsr.getUsrEnSesion());
 			sesion.setFecha(new Fecha());  		// Hoy
+			datos.altaSesion(sesion);
 			
-			datos.altaSesion(sesion);	
+			interfazUsr.getSimulacion().setUsr(interfazUsr.getUsrEnSesion());
+			interfazUsr.getSimulacion().setFecha(new Fecha());
+			interfazUsr.getSimulacion().setMundo(datos.buscarMundo("Demo1"));
+			datos.altaSimulacion(interfazUsr.getSimulacion());
 			
 			System.out.println("Sesión: " + datos.getSesionesRegistradas() + '\n' + "Iniciada por: " 
 					+ 	interfazUsr.getUsrEnSesion().getNombre() + " " 

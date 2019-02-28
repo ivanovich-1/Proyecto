@@ -19,13 +19,22 @@ import modelo.Usuario;
 
 public class Presentacion {
 
+	private static Datos datos = new Datos();
 	public static final int MAX_INTENTOS_FALLIDOS = 3;
 	private Usuario usrEnSesion;
-	private static Datos datos = new Datos();
-	private Simulacion simulacion = new Simulacion();
+	private Simulacion simulacion;
+	
+	public Presentacion() {
+		simulacion = new Simulacion();
+	}
 	
 	public Usuario getUsrEnSesion() {
 		return this.usrEnSesion;
+	}
+	
+	public Simulacion getSimulacion() {
+		return this.simulacion;
+		
 	}
 	
 	/**

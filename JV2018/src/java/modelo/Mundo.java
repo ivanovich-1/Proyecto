@@ -26,22 +26,32 @@ public class Mundo {
 	enum FormaEspacio { PLANO, ESFERICO }
 	private static final FormaEspacio TIPO_MUNDO = FormaEspacio.PLANO;
 
-	public Mundo() {	
-		nombre = "Demo1";
-		//espacio = new byte[TAMAÑO_MUNDO][TAMAÑO_MUNDO];
-		cargarMundoDemo();
-		tamañoMundo = espacio.length;
-		distribucion = new LinkedList<Posicion>();
+	public Mundo(String nombre, byte[][] espacio, 
+			List distribucion, Map constantes) {
+		this.nombre = nombre;
+		this.espacio = espacio;
+		this.constantes = constantes;
+		this.distribucion = new LinkedList<Posicion>();
 		//cargarDistribucion();
-		constantes = new HashMap<String, int[]>();
+		this.tamañoMundo = espacio.length;	
 		establecerLeyes();
+	}
+	
+	public Mundo() {	
+		this("Demo1", new byte[TAMAÑO_MUNDO][TAMAÑO_MUNDO], 
+				new LinkedList<Posicion>(), 
+				new HashMap<String, int[]>());
 	}
 
 	public Mundo(Mundo mundo) {
-		nombre = new String(mundo.nombre);
-		espacio = mundo.espacio.clone();
-		distribucion = new LinkedList<Posicion>(mundo.distribucion);
-		constantes = new HashMap<String, int[]>(mundo.constantes);
+		this.nombre = new String(mundo.nombre);
+		this.espacio = mundo.espacio.clone();
+		this.distribucion = new LinkedList<Posicion>(mundo.distribucion);
+		this.constantes = new HashMap<String, int[]>(mundo.constantes);
+		this.tamañoMundo = espacio.length;
+		
+		//cargarDistribucion();
+		establecerLeyes();
 	}
 	
 	public String getId() {
@@ -50,6 +60,12 @@ public class Mundo {
 	
 	public int getTamañoMundo() {
 		return tamañoMundo;
+	}
+	
+	public void setEspacio(byte[][] espacio) {
+		assert espacio != null;
+		this.espacio = espacio;
+		
 	}
 	
 	private void establecerLeyes() {
@@ -76,13 +92,11 @@ public class Mundo {
 	}
 	
 	/**
-	 * Despliega en un texto el estado almacenado, corresponde
+	 * Despliega en texto el estado almacenado, corresponde
 	 * a una generación del Juego de la vida.
 	 */
-	public String toStringEstadoMundo() {
-		
-		StringBuilder salida = new StringBuilder();
-		
+	public String toStringEstadoMundo() {	
+		StringBuilder salida = new StringBuilder();	
 		for (int i = 0; i < espacio.length; i++) {
 			for (int j = 0; j < espacio.length; j++) {		
 				salida.append(espacio[i][j] == 1 ? "|o" : "| ");
@@ -91,34 +105,6 @@ public class Mundo {
 		}
 		return salida.toString();
 	}
-	
-	/**
-	 * Carga datos demo en la matriz que representa el mundo. 
-	 */
-	private void cargarMundoDemo() {
-		// En este array los 0 indican celdas con células muertas y los 1 vivas.
-		espacio = new byte[][] { 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // 
-			{ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Planeador
-			{ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Flip-Flop
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Still Life
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  //
-		};
-	}
-
 
 	/**
 	 * Actualiza el estado del Juego de la Vida.
@@ -176,14 +162,12 @@ public class Mundo {
 	 * @param vecinas
 	 */
 	private void actualizarCelda(byte[][] nuevoEstado, int fila, int col, int vecinas) {	
-
 		for (int valor : constantes.get("ValoresRenacer")) {
 			if (vecinas == valor) {									// Pasa a estar viva.
 				nuevoEstado[fila][col] = 1;
 				return;
 			}
-		}
-		
+		}	
 		for (int valor : constantes.get("ValoresSobrevivir")) {
 			if (vecinas == valor && espacio[fila][col] == 1) {		// Permanece viva, si lo estaba.
 				nuevoEstado[fila][col] = 1;
@@ -295,5 +279,6 @@ public class Mundo {
 		}
 		return 0;
 	}
+
 
 } // class
