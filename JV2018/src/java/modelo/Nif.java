@@ -34,8 +34,8 @@ public class Nif {
 			this.texto = texto;
 		}
 		// Todavía no se gestionan errores de usuario.
-		if (this.texto == null) {						// Tiempo de construcción.
-				this.texto = new Nif().texto; 		    // Defecto.
+		if (this.texto == null) {					// Tiempo de construcción.	
+			this.texto = new Nif().texto; 		    // Defecto.
 		}
 	}
 

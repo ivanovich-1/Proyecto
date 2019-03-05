@@ -13,7 +13,6 @@ import java.util.Scanner;
 
 import accesoDatos.Datos;
 import modelo.ClaveAcceso;
-import modelo.Nif;
 import modelo.Simulacion;
 import modelo.Usuario;
 

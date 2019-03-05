@@ -31,16 +31,30 @@ public class Posicion {
 		return x;
 	}
 	
-	public void setX(int x) {
-		this.x = x;
+	public void setX(int x) throws ModeloException {
+		if (coordenadaValida(x)) {
+			this.x = x;
+		}
+		else {
+			throw new ModeloException("Posicion: coordenada negativa");
+		}
 	}
 	
+	private boolean coordenadaValida(int c) {
+		return c >= 0;
+	}
+
 	public int getY() {
 		return y;
 	}
 	
-	public void setY(int y) {
-		this.y = y;
+	public void setY(int y) throws ModeloException {
+		if (coordenadaValida(y)) {
+			this.y = y;
+		}
+		else {
+			throw new ModeloException("Posicion: coordenada negativa");
+		}
 	}
 
 	@Override

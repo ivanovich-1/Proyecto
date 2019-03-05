@@ -15,10 +15,14 @@ public class ClaveAcceso {
 	private String texto;
 
 	public ClaveAcceso() {
-		setTexto("Miau#0");
+		try {
+			setTexto("Miau#0");
+		} 
+		catch (ModeloException e) {
+		}
 	}
 
-	public ClaveAcceso(String texto) {
+	public ClaveAcceso(String texto) throws ModeloException {
 		setTexto(texto);
 	}
 
@@ -30,12 +34,14 @@ public class ClaveAcceso {
 		return this.texto;
 	}
 
-	public void setTexto(String texto) {
+	public void setTexto(String texto) throws ModeloException {
 		assert texto != null;
 		if (ClaveAccesoValido(texto)) {
 			this.texto = encriptarCesar(texto);
 		}
-		// Todavía no se gestionan errores de usuario.
+		else {
+			throw new ModeloException("ClaveAcceso: texto no válido");
+		}
 		if (this.texto == null) {						// Tiempo de construcción.
 				this.texto = new ClaveAcceso().texto; 	// Defecto.
 		}

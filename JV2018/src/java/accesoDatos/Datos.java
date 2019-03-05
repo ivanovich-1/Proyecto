@@ -25,6 +25,7 @@ public class Datos {
 	private static ArrayList<Simulacion> datosSimulaciones = new ArrayList<Simulacion>();
 	private static ArrayList<Mundo> datosMundos = new ArrayList<Mundo>();
 	
+	
 	// USUARIOS
 	
 	/**
@@ -136,6 +137,7 @@ public class Datos {
 		}
 	}
 	
+	
 	// SESIONES
 	
 	/**
@@ -180,7 +182,7 @@ public class Datos {
 		int posInsercion = indexSortSesiones(sesion.getId());
 
 		if (posInsercion < 0) {
-			datosSesiones.add(sesion);
+			datosSesiones.add(-posInsercion-1, sesion);
 		}
 		else {	
 			// Error sesion ya existe.		
@@ -246,8 +248,9 @@ public class Datos {
 	public void altaSimulacion(Simulacion simulacion) {
 		assert simulacion != null;
 		int posInsercion = indexSortSimulaciones(simulacion.getId());
+		
 		if (posInsercion < 0) {
-			datosSimulaciones.add(simulacion);
+			datosSimulaciones.add(-posInsercion-1, simulacion);
 		}
 		else {	
 			// Error simulacion ya existe.		
@@ -270,6 +273,7 @@ public class Datos {
 		return null;				// No encuentra.
 	}
 
+	
 	// MUNDOS
 	
 	/**
@@ -306,12 +310,12 @@ public class Datos {
 	}
 
 	/**
-	 * Registro de la simulación.
+	 * Registro del mundo.
 	 * @param simulacion 
 	 */
 	public void altaMundo(Mundo mundo) {
 		assert mundo != null;
-		int posInsercion = indexSortUsuario(mundo.getId());
+		int posInsercion = indexSortMundos(mundo.getId());
 
 		if (posInsercion < 0) {
 			datosMundos.add(-posInsercion-1 ,mundo);  // Inserta en orden.
@@ -364,7 +368,6 @@ public class Datos {
 			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
 			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  //
 		});
-		
 		altaMundo(mundoDemo);
 	}
 	

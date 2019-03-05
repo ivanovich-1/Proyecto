@@ -65,7 +65,6 @@ public class Mundo {
 	public void setEspacio(byte[][] espacio) {
 		assert espacio != null;
 		this.espacio = espacio;
-		
 	}
 	
 	private void establecerLeyes() {
