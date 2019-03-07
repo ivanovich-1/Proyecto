@@ -37,8 +37,9 @@ public class Simulacion {
 	 * Constructor por defecto.
 	 * Establece el valor inicial, por defecto, de cada uno de los atributos.
 	 * Llama al constructor convencional de la propia clase.
+	 * @throws ModeloException 
 	 */
-	public Simulacion() {
+	public Simulacion() throws ModeloException {
 		this(new Usuario(), new Fecha(), new Mundo());
 	}
 

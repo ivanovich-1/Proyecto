@@ -14,11 +14,11 @@ public class Correo {
 
 	private String texto;
 
-	public Correo() {
-		setTexto("correo@correo.es");
+	public Correo() throws ModeloException {
+		this("correo@correo.es");
 	}
 
-	public Correo(String texto) {
+	public Correo(String texto) throws ModeloException {
 		setTexto(texto);
 	}
 
@@ -30,14 +30,13 @@ public class Correo {
 		return this.texto;
 	}
 
-	public void setTexto(String texto) {
+	public void setTexto(String texto) throws ModeloException {
 		assert texto != null;
 		if (correoValido(texto)) {
 			this.texto = texto;
 		}
-		// Todavía no se gestionan errores de usuario.
-		if (this.texto == null) {						// Tiempo de construcción.
-				this.texto = new Correo().texto; 		// Defecto.
+		else {
+			throw new ModeloException("Correo: formato no válido.");
 		}
 	}
 

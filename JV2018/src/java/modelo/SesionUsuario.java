@@ -28,8 +28,9 @@ public class SesionUsuario {
 
 	/**
 	 * Constructor por defecto. Utiliza constructor convencional.
+	 * @throws ModeloException 
 	 */
-	public SesionUsuario() {
+	public SesionUsuario() throws ModeloException {
 		this(new Usuario(), new Fecha());
 	}
 

@@ -16,39 +16,44 @@ public class JVPrincipal {
 
 	private static Datos datos;
 	private static Presentacion interfazUsr;
-	
+
 	/**
 	 * Secuencia principal del programa.
 	 */
 	public static void main(String[] args) {		
-		datos = new Datos();
-		datos.cargarUsuariosPrueba();		
-		datos.mostrarTodosUsuarios();
-		datos.cargarMundoDemo();
-		
-		interfazUsr = new Presentacion();
-		if (interfazUsr.inicioSesionCorrecto()) {
-			
-			SesionUsuario sesion = new SesionUsuario();
-			sesion.setUsr(interfazUsr.getUsrEnSesion());
-			sesion.setFecha(new Fecha());  		// Hoy
-			datos.altaSesion(sesion);
-			
-			interfazUsr.getSimulacion().setUsr(interfazUsr.getUsrEnSesion());
-			interfazUsr.getSimulacion().setFecha(new Fecha());
-			interfazUsr.getSimulacion().setMundo(datos.buscarMundo("Demo1"));
-			datos.altaSimulacion(interfazUsr.getSimulacion());
-			
-			System.out.println("Sesión: " + datos.getSesionesRegistradas() + '\n' + "Iniciada por: " 
-					+ 	interfazUsr.getUsrEnSesion().getNombre() + " " 
-					+ interfazUsr.getUsrEnSesion().getApellidos());	
-			
-			interfazUsr.mostrarSimulacion();
+		try {
+			datos = new Datos();
+			datos.cargarUsuariosPrueba();		
+			datos.mostrarTodosUsuarios();
+			datos.cargarMundoDemo();
+
+			interfazUsr = new Presentacion();
+			if (interfazUsr.inicioSesionCorrecto()) {
+
+				SesionUsuario sesion = new SesionUsuario();
+				sesion.setUsr(interfazUsr.getUsrEnSesion());
+				sesion.setFecha(new Fecha()); 
+				datos.altaSesion(sesion);
+
+				interfazUsr.getSimulacion().setUsr(interfazUsr.getUsrEnSesion());
+				interfazUsr.getSimulacion().setFecha(new Fecha());
+				interfazUsr.getSimulacion().setMundo(datos.buscarMundo("Demo1"));
+				datos.altaSimulacion(interfazUsr.getSimulacion());
+
+				System.out.println("Sesión: " + datos.getSesionesRegistradas() + '\n' + "Iniciada por: " 
+						+ 	interfazUsr.getUsrEnSesion().getNombre() + " " 
+						+ interfazUsr.getUsrEnSesion().getApellidos());	
+
+				interfazUsr.mostrarSimulacion();
+			}
+			else {
+				System.out.println("\nDemasiados intentos fallidos...");
+			}		
+			System.out.println("Fin del programa.");
+		} 
+		catch (Exception e) {
+			//e.printStackTrace();
 		}
-		else {
-			System.out.println("\nDemasiados intentos fallidos...");
-		}		
-		System.out.println("Fin del programa.");
 	}
 
 

@@ -12,11 +12,11 @@ public class Nif {
 
 	private String texto;
 
-	public Nif() {
-		setTexto("00000000T");
+	public Nif() throws ModeloException {
+		this("00000000T");
 	}
 
-	public Nif(String texto) {
+	public Nif(String texto) throws ModeloException {
 		setTexto(texto);
 	}
 
@@ -28,14 +28,13 @@ public class Nif {
 		return this.texto;
 	}
 
-	public void setTexto(String texto) {
+	public void setTexto(String texto) throws ModeloException {
 		assert texto != null;
 		if (nifValido(texto)) {
 			this.texto = texto;
 		}
-		// Todavía no se gestionan errores de usuario.
-		if (this.texto == null) {					// Tiempo de construcción.	
-			this.texto = new Nif().texto; 		    // Defecto.
+		else {
+			throw new ModeloException("Nif: formato no válido.");
 		}
 	}
 

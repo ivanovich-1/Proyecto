@@ -14,15 +14,11 @@ public class ClaveAcceso {
 
 	private String texto;
 
-	public ClaveAcceso() {
-		try {
-			setTexto("Miau#0");
-		} 
-		catch (ModeloException e) {
-		}
+	public ClaveAcceso() throws ModeloException {
+		this("Miau#0");
 	}
 
-	public ClaveAcceso(String texto) throws ModeloException {
+	public ClaveAcceso(String texto) throws ModeloException   {
 		setTexto(texto);
 	}
 
@@ -40,10 +36,7 @@ public class ClaveAcceso {
 			this.texto = encriptarCesar(texto);
 		}
 		else {
-			throw new ModeloException("ClaveAcceso: texto no válido");
-		}
-		if (this.texto == null) {						// Tiempo de construcción.
-				this.texto = new ClaveAcceso().texto; 	// Defecto.
+			throw new ModeloException("ClaveAcceso: formato no válido.");
 		}
 	}
 

@@ -37,19 +37,23 @@ public class SimulacionTest {
 
 	/**
 	 * Método que se ejecuta una sola vez al principio del conjunto pruebas.
-	 * @throws DatosException 
+	 * @throws AccesoUsrException 
 	 */
 	@BeforeAll
 	public static void iniciarlizarDatosFijos() {
 		// Objetos no modicados en las pruebas.
-		usr = new Usuario(new Nif("00000001T"), 
-				"Luis", "Roca Mora",
-				new DireccionPostal("Roncal", "10", "30130", "Murcia"), 
-				new Correo("luis@gmail.com"), 
-				new Fecha(2000, 03, 21),
-				new Fecha(2018,10,17), 
-				new ClaveAcceso("Miau#12"), 
-				Usuario.RolUsuario.NORMAL);
+		try {
+			usr = new Usuario(new Nif("00000001T"), 
+					"Luis", "Roca Mora",
+					new DireccionPostal("Roncal", "10", "30130", "Murcia"), 
+					new Correo("luis@gmail.com"), 
+					new Fecha(2000, 03, 21),
+					new Fecha(2018,10,17), 
+					new ClaveAcceso("Miau#12"), 
+					Usuario.RolUsuario.NORMAL);
+		} 
+		catch (ModeloException e) {
+		}
 		fecha = new Fecha(2018, 10, 20, 10, 35, 2);
 		mundo = new Mundo();
 		simulacion1 = new Simulacion(usr, fecha, mundo);
@@ -62,7 +66,11 @@ public class SimulacionTest {
 
 	@BeforeEach
 	public void iniciarlizarDatosVariables() {	
-		simulacion2 = new Simulacion();
+		try {
+			simulacion2 = new Simulacion();
+		} 
+		catch (ModeloException e) {
+		}
 	}
 
 
@@ -76,7 +84,11 @@ public class SimulacionTest {
 
 	@Test
 	public void testSimulacionDefecto() {
-		assertEquals(simulacion2.getUsr().getNif(), new Usuario().getNif());
+		try {
+			assertEquals(simulacion2.getUsr().getNif(), new Usuario().getNif());
+		} 
+		catch (ModeloException e) {
+		}
 		assertEquals(simulacion2.getFecha().getAño(), new Fecha().getAño());
 		assertEquals(simulacion2.getFecha().getMes(), new Fecha().getMes());
 		assertEquals(simulacion2.getFecha().getDia(), new Fecha().getDia());

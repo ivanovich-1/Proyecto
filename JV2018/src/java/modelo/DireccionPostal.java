@@ -17,14 +17,15 @@ public class DireccionPostal {
 	private String cp;
 	private String poblacion;
 
-	public DireccionPostal(String calle, String numero, String cp, String poblacion) {
+	public DireccionPostal(String calle, String numero, 
+			String cp, String poblacion) throws ModeloException {
 		setCalle(calle);
 		setNumero(numero);
 		setCp(cp);
 		setPoblacion(poblacion);
 	}
 
-	public DireccionPostal() {
+	public DireccionPostal() throws ModeloException {
 		this("Calle", "00", "01000", "Población");
 	}
 
@@ -35,14 +36,13 @@ public class DireccionPostal {
 		poblacion = new String(dp.poblacion);
 	}
 
-	public void setCalle(String calle) {
+	public void setCalle(String calle) throws ModeloException {
 		assert calle != null;
 		if  (calleValida(calle)) {
 			this.calle = calle;
 		}
-		// Todavía no se gestionan errores de usuario.
-		if (this.calle == null) {						// Tiempo de construcción.
-			this.calle = new DireccionPostal().calle; 	// Defecto.
+		else {
+			throw new ModeloException("DireccionPostal: formato no válido.");
 		}
 	}
 
@@ -55,14 +55,13 @@ public class DireccionPostal {
 		return	calle.matches("[A-ZÑÁÉÍÓÚa-zñáéíóú/\\d ]+");
 	}
 
-	public void setNumero(String numero) {
+	public void setNumero(String numero) throws ModeloException {
 		assert numero != null;
 		if (numeroValido(numero)) {
 			this.numero = numero;
 		}
-		// Todavía no se gestionan errores de usuario.
-		if (this.numero == null) {						// Tiempo de construcción.
-			this.numero = new DireccionPostal().numero; // Defecto.
+		else {
+			throw new ModeloException("DireccionPostal: formato no válido.");
 		}
 	}
 
@@ -75,14 +74,13 @@ public class DireccionPostal {
 		return	numero.matches("[\\d]+[A-Z]?");
 	}
 
-	public void setCp(String cp) {
+	public void setCp(String cp) throws ModeloException {
 		assert cp != null;
 		if (cpValido(cp)) {
 			this.cp = cp;
 		}
-		// Todavía no se gestionan errores de usuario.
-		if (this.cp == null) {							// Tiempo de construcción.
-			this.cp = new DireccionPostal().cp; 		// Defecto.
+		else {
+			throw new ModeloException("DireccionPostal: formato no válido.");
 		}
 	}
 
@@ -96,14 +94,13 @@ public class DireccionPostal {
 		return cp.matches("^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$");
 	}
 
-	public void setPoblacion(String poblacion) {
+	public void setPoblacion(String poblacion) throws ModeloException {
 		assert poblacion != null;
 		if (poblacionValida(poblacion)) {
 			this.poblacion = poblacion;
 		}
-		// Todavía no se gestionan errores de usuario.
-		if (this.poblacion == null) {							// Tiempo de construcción.
-			this.poblacion = new DireccionPostal().poblacion; 	// Defecto.
+		else {
+			throw new ModeloException("DireccionPostal: formato no válido.");
 		}
 	}
 

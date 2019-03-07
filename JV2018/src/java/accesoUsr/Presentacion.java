@@ -13,6 +13,7 @@ import java.util.Scanner;
 
 import accesoDatos.Datos;
 import modelo.ClaveAcceso;
+import modelo.ModeloException;
 import modelo.Simulacion;
 import modelo.Usuario;
 
@@ -22,20 +23,20 @@ public class Presentacion {
 	public static final int MAX_INTENTOS_FALLIDOS = 3;
 	private Usuario usrEnSesion;
 	private Simulacion simulacion;
-	
-	public Presentacion() {
+
+	public Presentacion() throws ModeloException  {
 		simulacion = new Simulacion();
 	}
-	
+
 	public Usuario getUsrEnSesion() {
 		return this.usrEnSesion;
 	}
-	
+
 	public Simulacion getSimulacion() {
 		return this.simulacion;
-		
+
 	}
-	
+
 	/**
 	 * Despliega en la consola el estado almacenado, corresponde
 	 * a una generación del Juego de la vida.
@@ -49,7 +50,7 @@ public class Presentacion {
 			System.out.println(simulacion.getMundo().toStringEstadoMundo());
 		}
 		while (generacion < simulacion.CICLOS_SIMULACION);
-		
+
 	}
 
 	/**
@@ -65,16 +66,25 @@ public class Presentacion {
 			System.out.print("Introduce el id de usuario: ");
 			String id = teclado.nextLine().toUpperCase();
 			System.out.print("Introduce clave acceso: ");
-			ClaveAcceso clave = new ClaveAcceso(teclado.nextLine());
+			ClaveAcceso clave = null;
+			Usuario aux = null;
+			try {
+				clave = new ClaveAcceso("Miau#0");
+				clave.setTexto(teclado.nextLine());
 
-			// Busca usuario coincidente con las credenciales.
-			
-			usrEnSesion = datos.buscarUsuario(id);
+				// Busca usuario coincidente con las credenciales.
+				usrEnSesion = datos.buscarUsuario(id);
 
-			// Encripta clave tecleada utilizando un objeto temporal
-			// que ejecutará automáticamente el método privado.
-			Usuario aux = new Usuario();
-			aux.setClaveAcceso(new ClaveAcceso(clave));
+				// Encripta clave tecleada utilizando un objeto temporal
+				// que ejecutará automáticamente el método privado.
+				aux = new Usuario();
+			} 
+			catch (ModeloException e) {
+				System.out.println(e.getMessage());
+				//e.printStackTrace();
+			}
+
+			aux.setClaveAcceso(clave);
 			clave = aux.getClaveAcceso();
 			if (usrEnSesion != null && usrEnSesion.getClaveAcceso().equals(clave)) {
 				return true;

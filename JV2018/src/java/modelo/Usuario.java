@@ -39,10 +39,11 @@ public class Usuario {
 	 * @param fechaAlta
 	 * @param claveAcceso
 	 * @param rol
+	 * @throws ModeloException 
 	 */
-	public Usuario(Nif nif, String nombre, String apellidos,
-			DireccionPostal domicilio, Correo correo, Fecha fechaNacimiento,
-			Fecha fechaAlta, ClaveAcceso claveAcceso, RolUsuario rol) {
+	public Usuario(Nif nif, String nombre, String apellidos,DireccionPostal domicilio, 
+			Correo correo, Fecha fechaNacimiento, Fecha fechaAlta, 
+			ClaveAcceso claveAcceso, RolUsuario rol) throws ModeloException {
 		setNif(nif);
 		setNombre(nombre);
 		setApellidos(apellidos);
@@ -58,8 +59,9 @@ public class Usuario {
 
 	/**
 	 * Constructor por defecto. Reenvía al constructor convencional.
+	 * @throws ModeloException 
 	 */
-	public Usuario() {
+	public Usuario() throws ModeloException {
 		this(new Nif(), 
 				"Nombre", 
 				"Apellido Apellido", 
@@ -154,14 +156,13 @@ public class Usuario {
 		return nombre;
 	}
 
-	public void setNombre(String nombre) {	
+	public void setNombre(String nombre) throws ModeloException {	
 		assert nombre != null;
 		if (nombreValido(nombre)) {
 			this.nombre = nombre;
 		}
-		// Todavía no se gestionan errores de usuario.
-		if (this.nombre == null) {						// Tiempo de construcción.
-			this.nombre = new Usuario().nombre; 		// Defecto.
+		else {
+			throw new ModeloException("Usuario: formato nombre no válido.");
 		}
 	}
 
@@ -178,14 +179,13 @@ public class Usuario {
 		return apellidos;
 	}
 
-	public void setApellidos(String apellidos) {
+	public void setApellidos(String apellidos) throws ModeloException {
 		assert apellidos != null;
 		if (apellidosValidos(apellidos)) {
 			this.apellidos = apellidos;
 		}
-		// Todavía no se gestionan errores de usuario.
-		if (this.apellidos == null) {				  	// Tiempo de construcción.
-			this.apellidos = new Usuario().apellidos; 	// Defecto.
+		else {
+			throw new ModeloException("Usuario: formato apellidos no válido.");
 		}
 	}
 
@@ -220,14 +220,13 @@ public class Usuario {
 		return fechaNacimiento;
 	}
 
-	public void setFechaNacimiento(Fecha fechaNacimiento) {
+	public void setFechaNacimiento(Fecha fechaNacimiento) throws ModeloException {
 		assert fechaNacimiento != null;
 		if (fechaNacimientoValida(fechaNacimiento)) {
 			this.fechaNacimiento = fechaNacimiento;
 		}
-		// Todavía no se gestionan errores de usuario.
-		if (this.fechaNacimiento == null) {							// Tiempo de construcción.
-			this.fechaNacimiento = new Usuario().fechaNacimiento;	// Defecto.
+		else {
+			throw new ModeloException("Usuario: fecha nacimiento no válida.");
 		}
 	}
 
@@ -244,14 +243,13 @@ public class Usuario {
 		return fechaAlta;
 	}
 
-	public void setFechaAlta(Fecha fechaAlta) {
+	public void setFechaAlta(Fecha fechaAlta) throws ModeloException {
 		assert fechaAlta != null;
 		if (fechaAltaValida(fechaAlta)) {
 			this.fechaAlta = fechaAlta;
 		}
-		// Todavía no se gestionan errores de usuario.
-		if (this.fechaAlta == null) {						// Tiempo de construcción.
-			this.fechaAlta = new Usuario().fechaAlta;		// Defecto.
+		else {
+			throw new ModeloException("Usuario: fecha alta no válida.");
 		}
 	}
 
