@@ -1,8 +1,8 @@
 /** Proyecto: Juego de la vida.
- *  Implementa el concepto de Nif según el modelo 1.1  
+ *  Implementa el concepto de Nif según el modelo 1.2 
  *  @since: prototipo1.1
  *  @source: Nif.java 
- *  @version: 1.1 - 2019/01/22 
+ *  @version: 1.2 - 2019/02/22 
  *  @author: ajp
  */
 
@@ -34,6 +34,9 @@ public class Nif {
 			this.texto = texto;
 		}
 		else {
+			if (this.texto == null) {					// En tiempo de constructor.	
+				this.texto = new Nif().getTexto();		// Valor por defecto.
+			}
 			throw new ModeloException("Nif: formato no válido.");
 		}
 	}
@@ -54,6 +57,10 @@ public class Nif {
 		return texto.charAt(8) == "TRWAGMYFPDXBNJZSQVHLCKE".charAt(numeroNIF % 23);
 	} 
 	
+	/**
+	 * Reproduce el estado -valores de atributos- de objeto en forma de texto. 
+	 * @return el texto formateado.  
+	 */
 	@Override
 	public String toString() {
 		return this.texto;

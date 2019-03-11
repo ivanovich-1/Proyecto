@@ -1,8 +1,8 @@
 /** Proyecto: Juego de la vida.
- *  Prueba Junit5 de la clase SesionUsuario según el modelo1.1
+ *  Prueba Junit5 de la clase SesionUsuario según el modelo1.2
  *  @since: prototipo1.0
  *  @source: SesionUsuarioTest.java 
- *  @version: 1.1 - 2019/01/22
+ *  @version: 1.2 - 2019/02/22
  *  @author: ajp
  */
 
@@ -39,7 +39,7 @@ class SesionUsuarioTest {
 	public static void iniciarlizarDatosFijos() {
 		// Objetos no modicados en las pruebas.
 		try {
-			usr = new Usuario(new Nif("00000001T"), 
+			usr = new Usuario(new Nif("00000001R"), 
 					"Luis", "Roca Mora",
 					new DireccionPostal("Roncal", "10", "30130", "Murcia"), 
 					new Correo("luis@gmail.com"), 
@@ -47,11 +47,12 @@ class SesionUsuarioTest {
 					new Fecha(2018,10,17), 
 					new ClaveAcceso("Miau#12"), 
 					Usuario.RolUsuario.NORMAL);
+			fecha = new Fecha(2018, 10, 20, 10, 35, 2);
+			sesion2 = new SesionUsuario(usr, fecha); 
 		} 
 		catch (ModeloException e) {	
+			e.printStackTrace();
 		}
-		fecha = new Fecha(2018, 10, 20, 10, 35, 2);
-		sesion2 = new SesionUsuario(usr, fecha); 
 	}
 
 	/**

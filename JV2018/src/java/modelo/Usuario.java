@@ -1,9 +1,9 @@
 /** Proyecto: Juego de la vida.
- *  Implementa el concepto de Usuario según el modelo1.
+ *  Implementa el concepto de Usuario según el modelo1.2
  *  En esta versión se ha revisado el diseño OO previo.
  *  @since: prototipo1.0
  *  @source: Usuario.java 
- *  @version: 1.1 - 2019/01/21 
+ *  @version: 1.2 - 2019/03/05 
  *  @author: ajp
  */
 
@@ -12,9 +12,9 @@ package modelo;
 import util.Fecha;
 
 public class Usuario {
-	
+
 	public enum RolUsuario {INVITADO, NORMAL, ADMINSTRADOR};
-	
+
 	static final int EDAD_MINIMA = 16;
 	private String id;
 	private Nif nif;
@@ -27,7 +27,6 @@ public class Usuario {
 	private ClaveAcceso claveAcceso;
 	private RolUsuario rol;
 
-	
 	/**
 	 * Constructor convencional. Utiliza métodos set...()
 	 * @param nif
@@ -54,7 +53,6 @@ public class Usuario {
 		setClaveAcceso(claveAcceso);
 		setRol(rol);
 		generarIdUsr();
-		
 	}
 
 	/**
@@ -75,6 +73,7 @@ public class Usuario {
 
 	/**
 	 * Constructor copia.
+	 * genera siempre una variante del id.
 	 * @param usr
 	 */
 	public Usuario(Usuario usr) {
@@ -90,28 +89,9 @@ public class Usuario {
 		this.claveAcceso = new ClaveAcceso(usr.claveAcceso);
 		this.rol = usr.rol;
 		this.id = new String(usr.id);
-	}
-
-	/**
-	 * Constructor para variar id.
-	 * @param usr
-	 */
-	public Usuario(Usuario usr, String id) {
-		this.nif = new Nif(usr.nif);
-		this.nombre = new String(usr.nombre);
-		this.apellidos = new String(usr.apellidos);
-		this.domicilio = new DireccionPostal(usr.domicilio);
-		this.correo = new Correo(usr.correo);
-		this.fechaNacimiento = new Fecha(usr.fechaNacimiento.getAño(), 
-				usr.fechaNacimiento.getMes(), usr.fechaNacimiento.getDia());
-		this.fechaAlta = new Fecha(usr.fechaAlta.getAño(), 
-				usr.fechaAlta.getMes(), usr.fechaAlta.getDia());
-		this.claveAcceso = new ClaveAcceso(usr.claveAcceso);
-		this.rol = usr.rol;
-		this.id = id;
 		generarVarianteIdUsr();
 	}
-	
+
 	/**
 	 * Genera un identificador sintético a partir de:
 	 * La letra inicial del nombre, 
@@ -124,10 +104,10 @@ public class Usuario {
 		assert this.apellidos != null;
 		String[] apellidos = this.apellidos.split(" ");
 		this.id = ""+ this.nombre.charAt(0) 
-				+ apellidos[0].charAt(0) + apellidos[1].charAt(0)
-				+ this.nif.getTexto().substring(7);
+		+ apellidos[0].charAt(0) + apellidos[1].charAt(0)
+		+ this.nif.getTexto().substring(7);
 	}
-	
+
 	/**
 	 * Genera una variante cambiando la última letra del idUsr 
 	 * por la siguiente en el alfabeto previsto para el nif.
@@ -138,11 +118,11 @@ public class Usuario {
 		this.id = this.id.substring(0, 4) 
 				+ alfabetoNifDesplazado.charAt(alfabetoNif.indexOf(id.charAt(4)));
 	}
-	
+
 	public String getId() {
 		return this.id;
 	}
-	
+
 	public Nif getNif() {
 		return this.nif;
 	}
@@ -162,6 +142,9 @@ public class Usuario {
 			this.nombre = nombre;
 		}
 		else {
+			if (this.nombre == null) {						// En tiempo de constructor.	
+				this.nombre = new Usuario().getNombre();	// Valor por defecto.
+			}
 			throw new ModeloException("Usuario: formato nombre no válido.");
 		}
 	}
@@ -185,7 +168,10 @@ public class Usuario {
 			this.apellidos = apellidos;
 		}
 		else {
-			throw new ModeloException("Usuario: formato apellidos no válido.");
+			if (this.apellidos == null) {						// En tiempo de constructor.	
+				this.apellidos = new Usuario().getApellidos();	// Valor por defecto.
+			}
+			throw new ModeloException("Usuario: formato apellidos no válidos.");
 		}
 	}
 
@@ -213,7 +199,7 @@ public class Usuario {
 
 	public void setCorreo(Correo correo) {
 		assert correo != null;
-			this.correo = correo;
+		this.correo = correo;
 	}
 
 	public Fecha getFechaNacimiento() {
@@ -226,6 +212,9 @@ public class Usuario {
 			this.fechaNacimiento = fechaNacimiento;
 		}
 		else {
+			if (this.fechaNacimiento == null) {						    	// En tiempo de constructor.	
+				this.fechaNacimiento = new Usuario().getFechaNacimiento();	// Valor por defecto.
+			}
 			throw new ModeloException("Usuario: fecha nacimiento no válida.");
 		}
 	}
@@ -249,6 +238,9 @@ public class Usuario {
 			this.fechaAlta = fechaAlta;
 		}
 		else {
+			if (this.fechaAlta == null) {						// En tiempo de constructor.	
+				this.fechaAlta = new Usuario().getFechaAlta();	// Valor por defecto.
+			}
 			throw new ModeloException("Usuario: fecha alta no válida.");
 		}
 	}
@@ -280,8 +272,47 @@ public class Usuario {
 		this.rol = rol;
 	}
 
+	/**
+	 * Reproduce el estado -valores de atributos- de objeto en forma de texto. 
+	 * @return el texto formateado.  
+	 */
+	@Override
+	public String toString() {
+		return String.format(
+				"%-16s %s\n"
+						+ "%-16s %s\n"
+						+ "%-16s %s\n"
+						+ "%-16s %s\n"
+						+ "%-16s %s\n"
+						+ "%-16s %s\n"
+						+ "%-16s %s\n"
+						+ "%-16s %s\n"
+						+ "%-16s %s\n"
+						+ "%-16s %s\n",
+						"id: ", id,
+						"nif:", nif, 
+						"nombre:", this.nombre, 
+						"apellidos:", this.apellidos,  
+						"domicilio:", this.domicilio, 
+						"correo:", this.correo, 
+						"fechaNacimiento:", this.fechaNacimiento.getAño() + "." 
+								+ this.fechaNacimiento.getMes() + "." 
+								+ this.fechaNacimiento.getDia(),	
+								"fechaAlta:", this.fechaAlta.getAño() + "." 
+										+ this.fechaAlta.getMes() + "." 
+										+ this.fechaAlta.getDia(), 
+										"claveAcceso:", this.claveAcceso, 
+										"rol:", this.rol
+				);		
+	}
 	
-
+	/**
+	 * hashCode() complementa al método equals y sirve para comparar objetos de forma 
+	 * rápida en estructuras Hash. 
+	 * Cuando Java compara dos objetos en estructuras de tipo hash (HashMap, HashSet etc)
+	 * primero invoca al método hashcode y luego el equals.
+	 * @return un número entero de 32 bit.
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -299,98 +330,43 @@ public class Usuario {
 		return result;
 	}
 
+	/**
+	 * Dos objetos son iguales si: 
+	 * Son de la misma clase.
+	 * Tienen los mismos valores en los atributos; o son el mismo objeto.
+	 * @return falso si no cumple las condiciones.
+	*/
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Usuario other = (Usuario) obj;
-		if (apellidos == null) {
-			if (other.apellidos != null)
-				return false;
-		} else if (!apellidos.equals(other.apellidos))
-			return false;
-		if (claveAcceso == null) {
-			if (other.claveAcceso != null)
-				return false;
-		} else if (!claveAcceso.equals(other.claveAcceso))
-			return false;
-		if (correo == null) {
-			if (other.correo != null)
-				return false;
-		} else if (!correo.equals(other.correo))
-			return false;
-		if (domicilio == null) {
-			if (other.domicilio != null)
-				return false;
-		} else if (!domicilio.equals(other.domicilio))
-			return false;
-		if (fechaAlta == null) {
-			if (other.fechaAlta != null)
-				return false;
-		} else if (!fechaAlta.equals(other.fechaAlta))
-			return false;
-		if (fechaNacimiento == null) {
-			if (other.fechaNacimiento != null)
-				return false;
-		} else if (!fechaNacimiento.equals(other.fechaNacimiento))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (nif == null) {
-			if (other.nif != null)
-				return false;
-		} else if (!nif.equals(other.nif))
-			return false;
-		if (nombre == null) {
-			if (other.nombre != null)
-				return false;
-		} else if (!nombre.equals(other.nombre))
-			return false;
-		if (rol != other.rol)
-			return false;
-		return true;
+		if (obj != null && getClass() == obj.getClass()) {
+			if (this == obj) {
+				return true;
+			}
+			if (id.equals(((Usuario)obj).id) 
+					&& nif.equals(((Usuario)obj).nif) 
+					&& nombre.equals(((Usuario)obj).nombre) 
+					&& apellidos.equals(((Usuario)obj).apellidos)  
+					&& domicilio.equals(((Usuario)obj).domicilio) 
+					&& correo.equals(((Usuario)obj).correo) 
+					&& fechaNacimiento.equals(((Usuario)obj).fechaNacimiento) 
+					&& fechaAlta.equals(((Usuario)obj).fechaAlta) 
+					&& claveAcceso.equals(((Usuario)obj).claveAcceso) 
+					&& rol.equals(((Usuario)obj).rol) 
+				) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
-	 * Redefine el método heredado de la clase Objecto.
-	 * @return el texto formateado del estado -valores de atributos- de objeto de la clase Usuario.  
+	 * Genera un clon del propio objeto realizando una copia profunda.
+	 * @return el objeto clonado.
 	 */
 	@Override
-	public String toString() {
-		return String.format(
-		"%-16s %s\n"
-		+ "%-16s %s\n"
-		+ "%-16s %s\n"
-		+ "%-16s %s\n"
-		+ "%-16s %s\n"
-		+ "%-16s %s\n"
-		+ "%-16s %s\n"
-		+ "%-16s %s\n"
-		+ "%-16s %s\n"
-		+ "%-16s %s\n",
-		"id: ", id,
-		"nif:", nif, 
-		"nombre:", this.nombre, 
-		"apellidos:", this.apellidos,  
-		"domicilio:", this.domicilio, 
-		"correo:", this.correo, 
-		"fechaNacimiento:", this.fechaNacimiento.getAño() + "." 
-				+ this.fechaNacimiento.getMes() + "." 
-				+ this.fechaNacimiento.getDia(),	
-		"fechaAlta:", this.fechaAlta.getAño() + "." 
-				+ this.fechaAlta.getMes() + "." 
-				+ this.fechaAlta.getDia(), 
-		"claveAcceso:", this.claveAcceso, 
-		"rol:", this.rol
-		);		
+	public Usuario clone() {
+		return new Usuario(this);
 	}
-
+	
 } // class
 

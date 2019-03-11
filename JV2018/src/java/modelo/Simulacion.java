@@ -1,6 +1,6 @@
 /** 
  * Proyecto: Juego de la vida.
- * Organiza aspectos de gestión de la simulación según el modelo1.1.
+ * Organiza aspectos de gestión de la simulación según el modelo1.2
  * @since: prototipo1.0
  * @source: Simulacion.java 
  * @version: 1.2 - 2019.02.25
@@ -87,10 +87,62 @@ public class Simulacion {
 		return this.usr.getId() + "-" + fecha.toStringMarcaTiempo();
 	}
 	
+	/**
+	 * Reproduce el estado -valores de atributos- de objeto en forma de texto. 
+	 * @return el texto formateado.  
+	 */
 	@Override
 	public String toString() {
 		return String.format(
 				"Simulacion [usr=%s, fecha=%s, mundo=%s]", usr, fecha, mundo);
+	}
+	
+	/**
+	 * hashCode() complementa al método equals y sirve para comparar objetos de forma 
+	 * rápida en estructuras Hash. 
+	 * Cuando Java compara dos objetos en estructuras de tipo hash (HashMap, HashSet etc)
+	 * primero invoca al método hashcode y luego el equals.
+	 * @return un número entero de 32 bit.
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((fecha == null) ? 0 : fecha.hashCode());
+		result = prime * result + ((mundo == null) ? 0 : mundo.hashCode());
+		result = prime * result + ((usr == null) ? 0 : usr.hashCode());
+		return result;
+	}
+
+	/**
+	 * Dos objetos son iguales si: 
+	 * Son de la misma clase.
+	 * Tienen los mismos valores en los atributos; o son el mismo objeto.
+	 * @return falso si no cumple las condiciones.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && getClass() == obj.getClass()) {
+			if (this == obj) {
+				return true;
+			}
+			if (usr.equals(((Simulacion)obj).usr) 
+					&& fecha.equals(((Simulacion)obj).fecha) 
+					&& mundo.equals(((Simulacion)obj).mundo)
+					) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Genera un clon del propio objeto realizando una copia profunda.
+	 * @return el objeto clonado.
+	 */
+	@Override
+	public Object clone() {
+		return new Simulacion(this);
 	}
 
 } //class

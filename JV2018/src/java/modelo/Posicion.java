@@ -1,6 +1,6 @@
 /** 
  * Proyecto: Juego de la vida.
- * Coordenada de una celda del espacio según el modelo1.1.
+ * Coordenada de una celda del espacio según el modelo1.2
  * @since: prototipo1.2
  * @source: Posicion.java 
  * @version: 1.2 - 2019.02.25
@@ -57,6 +57,22 @@ public class Posicion {
 		}
 	}
 
+	/**
+	 * Reproduce el estado -valores de atributos- de objeto en forma de texto. 
+	 * @return el texto formateado.  
+	 */
+	@Override
+	public String toString() {
+		return String.format("Posicion [x=%s, y=%s]", x, y);
+	}
+	
+	/**
+	 * hashCode() complementa al método equals y sirve para comparar objetos de forma 
+	 * rápida en estructuras Hash. 
+	 * Cuando Java compara dos objetos en estructuras de tipo hash (HashMap, HashSet etc)
+	 * primero invoca al método hashcode y luego el equals.
+	 * @return un número entero de 32 bit.
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -66,29 +82,33 @@ public class Posicion {
 		return result;
 	}
 
+	/**
+	 * Dos objetos son iguales si: 
+	 * Son de la misma clase.
+	 * Tienen los mismos valores en los atributos; o son el mismo objeto.
+	 * @return falso si no cumple las condiciones.
+	*/
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Posicion other = (Posicion) obj;
-		if (x != other.x)
-			return false;
-		if (y != other.y)
-			return false;
-		return true;
+		if (obj != null && getClass() == obj.getClass()) {
+			if (this == obj) {
+				return true;
+			}
+			if (x == ((Posicion)obj).x 
+					&& y == ((Posicion)obj).y  
+				) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
+	/**
+	 * Genera un clon del propio objeto realizando una copia profunda.
+	 * @return el objeto clonado.
+	 */
 	public Posicion clone() {
 		return new Posicion(this);
-	}
-
-	@Override
-	public String toString() {
-		return String.format("Posicion [x=%s, y=%s]", x, y);
 	}
 	
 } // class

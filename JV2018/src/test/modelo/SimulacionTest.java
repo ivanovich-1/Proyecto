@@ -1,12 +1,13 @@
-package modelo;
+
 /** Proyecto: Juego de la vida.
- *  Prueba Junit5 de la clase Simulacion según el modelo1.1
+ *  Prueba Junit5 de la clase Simulacion según el modelo1.2
  *  @since: prototipo1.0
  *  @source: CorreoTest.java 
- *  @version: 1.1 - 2019/01/22
+ *  @version: 1.2 - 2019/02/22
  *  @author: ajp
  */
 
+package modelo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -43,20 +44,21 @@ public class SimulacionTest {
 	public static void iniciarlizarDatosFijos() {
 		// Objetos no modicados en las pruebas.
 		try {
-			usr = new Usuario(new Nif("00000001T"), 
+			usr = new Usuario(new Nif("00000001R"), 
 					"Luis", "Roca Mora",
 					new DireccionPostal("Roncal", "10", "30130", "Murcia"), 
 					new Correo("luis@gmail.com"), 
 					new Fecha(2000, 03, 21),
-					new Fecha(2018,10,17), 
+					new Fecha(2018, 10, 17), 
 					new ClaveAcceso("Miau#12"), 
 					Usuario.RolUsuario.NORMAL);
+			fecha = new Fecha(2018, 10, 20, 10, 35, 2);
+			mundo = new Mundo();
+			simulacion1 = new Simulacion(usr, fecha, mundo);
 		} 
 		catch (ModeloException e) {
+			e.printStackTrace();
 		}
-		fecha = new Fecha(2018, 10, 20, 10, 35, 2);
-		mundo = new Mundo();
-		simulacion1 = new Simulacion(usr, fecha, mundo);
 	}
 
 	@AfterAll
@@ -73,7 +75,6 @@ public class SimulacionTest {
 		}
 	}
 
-
 	// Test's con DATOS VALIDOS
 	@Test
 	public void testSimulacionConvencional() {	
@@ -86,13 +87,14 @@ public class SimulacionTest {
 	public void testSimulacionDefecto() {
 		try {
 			assertEquals(simulacion2.getUsr().getNif(), new Usuario().getNif());
+			assertEquals(simulacion2.getFecha().getAño(), new Fecha().getAño());
+			assertEquals(simulacion2.getFecha().getMes(), new Fecha().getMes());
+			assertEquals(simulacion2.getFecha().getDia(), new Fecha().getDia());
+			assertNotNull(simulacion2.getMundo());
 		} 
 		catch (ModeloException e) {
 		}
-		assertEquals(simulacion2.getFecha().getAño(), new Fecha().getAño());
-		assertEquals(simulacion2.getFecha().getMes(), new Fecha().getMes());
-		assertEquals(simulacion2.getFecha().getDia(), new Fecha().getDia());
-		assertNotNull(simulacion2.getMundo());
+	
 	}
 
 	@Test

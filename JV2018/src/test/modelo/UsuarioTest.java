@@ -1,16 +1,18 @@
-package modelo;
 /** 
  * Proyecto: Juego de la vida.
- * Clase JUnit5 de prueba automatizada de las características de la clase Usuario según el modelo1.1
+ * Clase JUnit5 de prueba automatizada de las características de la clase Usuario según el modelo1.2
  * @since: prototipo1.0
  * @source: TestUsuario.java 
- * @version: 1.1 - 2019.01.21
+ * @version: 1.2 - 2019.02.21
  * @author: ajp
  */
+
+package modelo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -94,7 +96,6 @@ public class UsuarioTest {
 			assertEquals(usuario1.getRol(), RolUsuario.NORMAL);
 		} 
 		catch (ModeloException e) {
-
 		}
 	}
 
@@ -245,7 +246,6 @@ public class UsuarioTest {
 
 	@Test
 	public void testUsuarioAtributosIncorrectos() {
-
 		Usuario usuario = null;
 		try {
 			usuario = new Usuario(
@@ -259,10 +259,10 @@ public class UsuarioTest {
 					new ClaveAcceso(" "), 
 					RolUsuario.NORMAL
 					);
-					fail();				// No debe llegar aquí.
+				fail("No debe llegar aquí...");
 		} 
 		catch (ModeloException e) {
-			//assertTrue(true);
+			assertNull(usuario);
 		} 
 	}
 
@@ -273,7 +273,7 @@ public class UsuarioTest {
 			fail("No debe llegar aquí...");
 		} 
 		catch (AssertionError e) { 
-			assertTrue(usuario2.getNif() != null);
+			assertNotNull(usuario2.getNif());
 		}
 	}
 
@@ -284,7 +284,7 @@ public class UsuarioTest {
 			fail("No debe llegar aquí...");
 		} 
 		catch (AssertionError | ModeloException e) { 
-			assertTrue(usuario2.getNombre() != null);
+			assertNotNull(usuario2.getNombre());
 		}
 	}
 
@@ -292,10 +292,11 @@ public class UsuarioTest {
 	public void testSetNombreBlanco() {
 		try {
 			usuario2.setNombre("  ");
+			assertEquals(usuario2.getNombre(), "Nombre");
 		} 
 		catch (ModeloException e) {
 		}	
-		assertEquals(usuario2.getNombre(), "Nombre");
+		
 	}
 
 	@Test
@@ -313,10 +314,10 @@ public class UsuarioTest {
 	public void testSetApellidosBlanco() {
 		try {
 			usuario2.setApellidos("  ");
+			assertEquals(usuario2.getApellidos(), "Apellido Apellido");
 		} 
 		catch (ModeloException e) {
 		}	
-		assertEquals(usuario2.getApellidos(), "Apellido Apellido");
 	}
 
 	@Test
@@ -356,10 +357,10 @@ public class UsuarioTest {
 	public void testSetFechaNacimientoFuturo() {	
 		try {
 			usuario1.setFechaNacimiento(new Fecha(3020, 9, 10));
+			assertEquals(usuario1.getFechaNacimiento(), new Fecha(2000, 03, 21));
 		} 
 		catch (ModeloException e) {
 		}
-		assertEquals(usuario1.getFechaNacimiento(), new Fecha(2000, 03, 21));
 	}
 
 	@Test
@@ -377,10 +378,10 @@ public class UsuarioTest {
 	public void testSetFechaAltaFuturo() {	
 		try {
 			usuario1.setFechaAlta(new Fecha(3020, 9, 10));
+			assertEquals(usuario1.getFechaAlta(), new Fecha(2018, 10, 17));
 		} 
 		catch (ModeloException e) {
 		}
-		assertEquals(usuario1.getFechaAlta(), new Fecha(2018, 10, 17));
 	}
 
 	@Test

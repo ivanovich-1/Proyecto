@@ -1,10 +1,10 @@
 /** 
  *  Proyecto: Juego de la vida.
- *  Implementa el concepto de ClaveAcceso según el modelo 1.1
+ *  Implementa el concepto de ClaveAcceso según el modelo 1.2
  *  Utiliza un string para representar el texto del ClaveAcceso.  
  *  @since: prototipo1.2
  *  @source: ClaveAcceso.java 
- *  @version: 1.1 - 2019/01/22 
+ *  @version: 1.2 - 2019/02/22 
  *  @author: ajp
  */
 
@@ -32,10 +32,13 @@ public class ClaveAcceso {
 
 	public void setTexto(String texto) throws ModeloException {
 		assert texto != null;
-		if (ClaveAccesoValido(texto)) {
+		if (ClaveAccesoValida(texto)) {
 			this.texto = encriptarCesar(texto);
 		}
 		else {
+			if (this.texto == null) {							// En tiempo de constructor.	
+				this.texto = new ClaveAcceso().getTexto();		// Valor por defecto.
+			}
 			throw new ModeloException("ClaveAcceso: formato no válido.");
 		}
 	}
@@ -64,10 +67,14 @@ public class ClaveAcceso {
 		return textoEncriptado.toString();
 	}
 	
-	private boolean ClaveAccesoValido(String texto) {
+	private boolean ClaveAccesoValida(String texto) {
 		return texto.matches("(?=.*\\d)(?=.*[A-ZÑ])(?=.*[a-zñ])(?=.*[#$*-+&!?%]).{6,}");
 	}
 
+	/**
+	 * Reproduce el estado -valores de atributos- de objeto en forma de texto. 
+	 * @return el texto formateado.  
+	 */
 	@Override
 	public String toString() {
 		return texto;

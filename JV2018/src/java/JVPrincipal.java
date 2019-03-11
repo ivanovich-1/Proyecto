@@ -1,59 +1,60 @@
 /** 
 Proyecto: Juego de la vida.
- * Implementa el control de inicio de sesión y ejecución de la simulación por defecto. 
+ * Implementa el control de inicio de sesión y ejecución de la simulación por defecto.
+ * Todavía resulta demasiado grande.
  * @since: prototipo1.0
  * @source: JVPrincipal.java 
- * @version: 1.2 - 2019/02/25
+ * @version: 1.2 - 2019/03/05
  * @author: ajp
  */
 
 import accesoDatos.Datos;
+import accesoDatos.DatosException;
 import accesoUsr.Presentacion;
+import modelo.ModeloException;
 import modelo.SesionUsuario;
 import util.Fecha;
 
 public class JVPrincipal {
 
-	private static Datos datos;
-	private static Presentacion interfazUsr;
+	private Datos datos;
+	private Presentacion interfazUsr;
 
 	/**
 	 * Secuencia principal del programa.
+	 * @throws ModeloException 
+	 * @throws DatosException 
 	 */
-	public static void main(String[] args) {		
-		try {
-			datos = new Datos();
-			datos.cargarUsuariosPrueba();		
-			datos.mostrarTodosUsuarios();
-			datos.cargarMundoDemo();
+	public static void main(String[] args) throws ModeloException, DatosException {		
+			JVPrincipal jv = new JVPrincipal();
+			jv.datos = new Datos();
+			jv.datos.cargarUsuariosPrueba();		
+			jv.datos.mostrarTodosUsuarios();
+			jv.datos.cargarMundoDemo();
 
-			interfazUsr = new Presentacion();
-			if (interfazUsr.inicioSesionCorrecto()) {
+			jv.interfazUsr = new Presentacion();
+			if (jv.interfazUsr.inicioSesionCorrecto()) {
 
 				SesionUsuario sesion = new SesionUsuario();
-				sesion.setUsr(interfazUsr.getUsrEnSesion());
+				sesion.setUsr(jv.interfazUsr.getUsrEnSesion());
 				sesion.setFecha(new Fecha()); 
-				datos.altaSesion(sesion);
+				jv.datos.altaSesion(sesion);
 
-				interfazUsr.getSimulacion().setUsr(interfazUsr.getUsrEnSesion());
-				interfazUsr.getSimulacion().setFecha(new Fecha());
-				interfazUsr.getSimulacion().setMundo(datos.buscarMundo("Demo1"));
-				datos.altaSimulacion(interfazUsr.getSimulacion());
+				jv.interfazUsr.getSimulacion().setUsr(jv.interfazUsr.getUsrEnSesion());
+				jv.interfazUsr.getSimulacion().setFecha(new Fecha());
+				jv.interfazUsr.getSimulacion().setMundo(jv.datos.buscarMundo("Demo1"));
+				jv.datos.altaSimulacion(jv.interfazUsr.getSimulacion());
 
-				System.out.println("Sesión: " + datos.getSesionesRegistradas() + '\n' + "Iniciada por: " 
-						+ 	interfazUsr.getUsrEnSesion().getNombre() + " " 
-						+ interfazUsr.getUsrEnSesion().getApellidos());	
+				System.out.println("Sesión: " + jv.datos.getSesionesRegistradas() + '\n' + "Iniciada por: " 
+						+ 	jv.interfazUsr.getUsrEnSesion().getNombre() + " " 
+						+ jv.interfazUsr.getUsrEnSesion().getApellidos());	
 
-				interfazUsr.mostrarSimulacion();
+				jv.interfazUsr.mostrarSimulacion();
 			}
 			else {
 				System.out.println("\nDemasiados intentos fallidos...");
 			}		
 			System.out.println("Fin del programa.");
-		} 
-		catch (Exception e) {
-			//e.printStackTrace();
-		}
 	}
 
 

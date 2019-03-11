@@ -1,7 +1,9 @@
 /** 
  * Proyecto: Juego de la vida.
  * Implementa el almacén de datos del programa en la API Collection.
- * Tiene defectos de metodos repetidos.
+ * Tiene defectos:
+ * - Código repetido poco genérico.
+ * - Clase acaparadora que realiza tareas diversas; hace que sea grande.
  * @since: prototipo1.1
  * @source: Datos.java 
  * @version: 1.2 - 2019/02/26
@@ -110,7 +112,7 @@ public class Datos {
 		int intentos = "ABCDEFGHJKLMNPQRSTUVWXYZ".length();
 		do {
 			// Generar variante y comprueba de nuevo.
-			usr = new Usuario(usr, usr.getId());	
+			usr = new Usuario(usr);	
 			int posInsercion = indexSortUsuarios(usr.getId());
 			if (posInsercion < 0) {
 				datosUsuarios.add(-posInsercion - 1, usr); // Inserta el usuario en orden.
@@ -150,13 +152,13 @@ public class Datos {
 				altaUsuario(new Usuario(new Nif("0000000" + i + "TRWAGMYFPDXBNJZSQVHLCKE".charAt(i)), 
 						"Pepe", "López Pérez", 
 						new DireccionPostal("Luna", "27", "30132", "Murcia"),
-						new Correo("pepe" + i + "gmail.com"), 
+						new Correo("pepe" + i + "@gmail.com"), 
 						new Fecha(1999, 11, 12), 
 						new Fecha(2018, 01, 03), 
 						new ClaveAcceso("Miau#" + i), RolUsuario.NORMAL));
 			} 
 			catch (ModeloException | DatosException e) {
-				//e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
 	}

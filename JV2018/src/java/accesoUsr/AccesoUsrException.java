@@ -1,6 +1,6 @@
 /** 
  * Proyecto: Juego de la vida.
- * Clase de excepción para errores del modelo.
+ * Clase de excepción para errores de usuario en las clases del accesoUsr.
  * @since: prototipo1.2
  * @source: AccesoUsrException.java 
  * @version: 1.2 - 2019.03.02

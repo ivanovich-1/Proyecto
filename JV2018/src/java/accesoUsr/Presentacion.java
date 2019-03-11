@@ -1,6 +1,9 @@
 /** 
  * Proyecto: Juego de la vida.
- * Implementa los mecanismos de interaccion con el usuario. 
+ * Implementa los mecanismos de interaccion con el usuario.
+ *  Tiene defectos:
+ * - Clase acaparadora que realiza tareas diversas.
+ * - Está demasiado acoplada la lógica con la tecnología de E/S de usuario.
  * @since: prototipo1.1
  * @source: Presentacion.java 
  * @version: 1.2 - 2019/02/13
@@ -34,7 +37,6 @@ public class Presentacion {
 
 	public Simulacion getSimulacion() {
 		return this.simulacion;
-
 	}
 
 	/**
@@ -50,7 +52,6 @@ public class Presentacion {
 			System.out.println(simulacion.getMundo().toStringEstadoMundo());
 		}
 		while (generacion < simulacion.CICLOS_SIMULACION);
-
 	}
 
 	/**

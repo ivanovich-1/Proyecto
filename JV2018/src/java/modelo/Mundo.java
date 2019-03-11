@@ -1,6 +1,6 @@
 /** 
  * Proyecto: Juego de la vida.
- * Organiza aspectos de gestión de la simulación según el modelo1.1.
+ * Organiza aspectos de gestión de la simulación según el modelo1.2
  * @since: prototipo1.2
  * @source: Simulacion.java 
  * @version: 1.2 - 2019.02.25
@@ -23,24 +23,26 @@ public class Mundo {
 	private List<Posicion> distribucion;
 	private Map<String, int[]> constantes;
 
-	enum FormaEspacio { PLANO, ESFERICO }
-	private static final FormaEspacio TIPO_MUNDO = FormaEspacio.PLANO;
+	public enum FormaEspacio { PLANO, ESFERICO }
+	private FormaEspacio tipoMundo;
 
 	public Mundo(String nombre, byte[][] espacio, 
-			List distribucion, Map constantes) {
+			List distribucion, Map constantes, FormaEspacio tipoMundo) {
 		this.nombre = nombre;
 		this.espacio = espacio;
 		this.constantes = constantes;
 		this.distribucion = new LinkedList<Posicion>();
+		this.tipoMundo = tipoMundo;
 		//cargarDistribucion();
 		this.tamañoMundo = espacio.length;	
+		
 		establecerLeyes();
 	}
 	
 	public Mundo() {	
 		this("Demo1", new byte[TAMAÑO_MUNDO][TAMAÑO_MUNDO], 
 				new LinkedList<Posicion>(), 
-				new HashMap<String, int[]>());
+				new HashMap<String, int[]>(), FormaEspacio.PLANO);
 	}
 
 	public Mundo(Mundo mundo) {
@@ -48,6 +50,7 @@ public class Mundo {
 		this.espacio = mundo.espacio.clone();
 		this.distribucion = new LinkedList<Posicion>(mundo.distribucion);
 		this.constantes = new HashMap<String, int[]>(mundo.constantes);
+		this.tipoMundo = mundo.tipoMundo;
 		this.tamañoMundo = espacio.length;
 		
 		//cargarDistribucion();
@@ -56,6 +59,10 @@ public class Mundo {
 	
 	public String getId() {
 		return nombre;
+	}
+	
+	public FormaEspacio getTipoMundo() {
+		return tipoMundo;
 	}
 	
 	public int getTamañoMundo() {
@@ -110,10 +117,10 @@ public class Mundo {
 	 * Actualiza según la configuración establecida para la forma del espacio.
 	 */
 	public void actualizarMundo() {
-		if (TIPO_MUNDO == FormaEspacio.PLANO) {
+		if (tipoMundo == FormaEspacio.PLANO) {
 			actualizarMundoPlano();
 		}
-		if (TIPO_MUNDO == FormaEspacio.ESFERICO) {
+		if (tipoMundo == FormaEspacio.ESFERICO) {
 			actualizarMundoEsferico();
 		}
 	}
@@ -124,7 +131,45 @@ public class Mundo {
 	 * El mundo representado sería esférico cerrado sin límites para células de dos dimensiones.
 	 */
 	private void actualizarMundoEsferico()  {     					
-		// Pendiente de implementar.
+		byte[][] nuevoEstado = new byte[espacio.length][espacio.length];
+
+		for (int i = 0; i < espacio.length; i++) {
+			for (int j = 0; j < espacio.length; j++) {
+
+				int filaSuperior = i-1;
+				int filaInferior = i+1;
+				// Reajusta filas adyacentes.
+				if (i == 0) {
+					filaSuperior = espacio.length-1;
+				}
+				if (i == espacio.length-1) {
+					filaInferior = 0;
+				}
+
+				int colAnterior = j-1;
+				int colPosterior = j+1;
+				// Reajusta columnas adyacentes.
+				if (j == 0) {
+					colAnterior = espacio.length-1;
+				}
+				if (j == espacio.length-1) {
+					colPosterior = 0;
+				}
+
+				int vecinas = 0;							
+				vecinas += espacio[filaSuperior][colAnterior];			// Celda NO
+				vecinas += espacio[filaSuperior][j];					// Celda N		NO | N | NE
+				vecinas += espacio[filaSuperior][colPosterior];			// Celda NE   	-----------
+				vecinas += espacio[i][colPosterior];					// Celda E		 O | * | E
+				vecinas += espacio[filaInferior][colPosterior];			// Celda SE	  	----------- 
+				vecinas += espacio[filaInferior][j]; 					// Celda S		SO | S | SE
+				vecinas += espacio[filaInferior][colAnterior]; 			// Celda SO 
+				vecinas += espacio[i][colAnterior];						// Celda O           			                                     	
+
+				actualizarCelda(nuevoEstado, i, j, vecinas);
+			}
+		}
+		espacio = nuevoEstado;
 	}
 
 	/**
@@ -278,6 +323,5 @@ public class Mundo {
 		}
 		return 0;
 	}
-
 
 } // class

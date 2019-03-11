@@ -1,10 +1,10 @@
 /** 
  *  Proyecto: Juego de la vida.
- *  Implementa el concepto de correo según el modelo 1.1.
+ *  Implementa el concepto de correo según el modelo 1.2
  *  Utiliza un string para representar el texto del correo.  
  *  @since: prototipo1.1
  *  @source: Correo.java 
- *  @version: 1.1 - 2019/01/22 
+ *  @version: 1.2 - 2019/02/22 
  *  @author: ajp
  */
 
@@ -36,6 +36,9 @@ public class Correo {
 			this.texto = texto;
 		}
 		else {
+			if (this.texto == null) {						// En tiempo de constructor.	
+				this.texto = new Correo().getTexto();		// Valor por defecto.
+			}
 			throw new ModeloException("Correo: formato no válido.");
 		}
 	}
@@ -55,6 +58,10 @@ public class Correo {
 		return true;
 	}
 	
+	/**
+	 * Reproduce el estado -valores de atributos- de objeto en forma de texto. 
+	 * @return el texto formateado.  
+	 */
 	@Override
 	public String toString() {
 		return texto;

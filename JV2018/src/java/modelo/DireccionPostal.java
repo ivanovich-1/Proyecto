@@ -1,10 +1,10 @@
 /** 
  *  Proyecto: Juego de la vida.
- *  Implementa el concepto de direccion postal según el modelo 1.1
+ *  Implementa el concepto de direccion postal según el modelo 1.2
  *  Utiliza un varios string para representar los distintos campos.  
  *  @since: prototipo1.1
  *  @source: DireccionPostal.java 
- *  @version: 1.1 - 2019/01/22 
+ *  @version: 1.2 - 2019/03/02 
  *  @author: ajp
  */
 
@@ -42,6 +42,9 @@ public class DireccionPostal {
 			this.calle = calle;
 		}
 		else {
+			if (this.calle == null) {							// En tiempo de constructor.	
+				this.calle = new DireccionPostal().getCalle();	// Valor por defecto.
+			}
 			throw new ModeloException("DireccionPostal: formato no válido.");
 		}
 	}
@@ -61,6 +64,9 @@ public class DireccionPostal {
 			this.numero = numero;
 		}
 		else {
+			if (this.numero == null) {								// En tiempo de constructor.	
+				this.numero = new DireccionPostal().getNumero();	// Valor por defecto.
+			}
 			throw new ModeloException("DireccionPostal: formato no válido.");
 		}
 	}
@@ -80,6 +86,9 @@ public class DireccionPostal {
 			this.cp = cp;
 		}
 		else {
+			if (this.cp == null) {							// En tiempo de constructor.	
+				this.cp = new DireccionPostal().getCp();	// Valor por defecto.
+			}
 			throw new ModeloException("DireccionPostal: formato no válido.");
 		}
 	}
@@ -100,6 +109,9 @@ public class DireccionPostal {
 			this.poblacion = poblacion;
 		}
 		else {
+			if (this.poblacion == null) {								// En tiempo de constructor.	
+				this.poblacion = new DireccionPostal().getPoblacion();	// Valor por defecto.
+			}
 			throw new ModeloException("DireccionPostal: formato no válido.");
 		}
 	}
@@ -129,6 +141,15 @@ public class DireccionPostal {
 		return poblacion;
 	}
 
+	/**
+	 * Reproduce el estado -valores de atributos- de objeto en forma de texto. 
+	 * @return el texto formateado.  
+	 */
+	@Override
+	public String toString() {
+		return calle + ", " + numero + ", " + cp + ", " + poblacion;
+	}
+	
 	/**
 	 * hashCode() complementa al método equals y sirve para comparar objetos de forma 
 	 * rápida en estructuras Hash. 
@@ -178,11 +199,6 @@ public class DireccionPostal {
 	public Object clone() {
 		// Utiliza el constructor copia.
 		return new DireccionPostal(this);
-	}
-
-	@Override
-	public String toString() {
-		return calle + ", " + numero + ", " + cp + ", " + poblacion;
 	}
 
 } // class
