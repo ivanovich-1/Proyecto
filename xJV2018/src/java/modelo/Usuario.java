@@ -13,7 +13,7 @@ import util.Fecha;
 
 public class Usuario {
 
-	public enum RolUsuario {INVITADO, NORMAL, ADMINSTRADOR};
+	public enum RolUsuario {INVITADO, NORMAL, ADMINISTRADOR};
 
 	static final int EDAD_MINIMA = 16;
 	private String id;
@@ -112,7 +112,7 @@ public class Usuario {
 	 * Genera una variante cambiando la última letra del idUsr 
 	 * por la siguiente en el alfabeto previsto para el nif.
 	 */
-	private void generarVarianteIdUsr() {
+	public void generarVarianteIdUsr() {
 		String alfabetoNif = "ABCDEFGHJKLMNPQRSTUVWXYZ";
 		String alfabetoNifDesplazado = "BCDEFGHJKLMNPQRSTUVWXYZA";
 		this.id = this.id.substring(0, 4) 
