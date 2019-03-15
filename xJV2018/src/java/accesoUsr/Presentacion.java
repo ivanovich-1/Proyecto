@@ -15,6 +15,7 @@ package accesoUsr;
 import java.util.Scanner;
 
 import accesoDatos.Datos;
+import accesoDatos.DatosException;
 import modelo.ClaveAcceso;
 import modelo.ModeloException;
 import modelo.Simulacion;
@@ -22,12 +23,13 @@ import modelo.Usuario;
 
 public class Presentacion {
 
-	private static Datos datos = new Datos();
+	private static Datos datos;
 	public static final int MAX_INTENTOS_FALLIDOS = 3;
 	private Usuario usrEnSesion;
 	private Simulacion simulacion;
 
-	public Presentacion() throws ModeloException  {
+	public Presentacion() throws ModeloException, DatosException  {
+		Datos datos = new Datos();
 		simulacion = new Simulacion();
 	}
 
@@ -74,13 +76,13 @@ public class Presentacion {
 				clave.setTexto(teclado.nextLine());
 
 				// Busca usuario coincidente con las credenciales.
-				usrEnSesion = datos.buscarUsuario(id);
+				usrEnSesion = datos.obtenerUsuario(id);
 
 				// Encripta clave tecleada utilizando un objeto temporal
 				// que ejecutará automáticamente el método privado.
 				aux = new Usuario();
 			} 
-			catch (ModeloException e) {
+			catch (ModeloException | DatosException e) {
 				System.out.println(e.getMessage());
 				//e.printStackTrace();
 			}

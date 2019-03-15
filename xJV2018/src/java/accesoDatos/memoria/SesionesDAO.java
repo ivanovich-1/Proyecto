@@ -4,7 +4,7 @@
  *  Colabora en el patron Fachada.
  *  @since: prototipo2.0
  *  @source: SesionesDAO.java 
- *  @version: 2.0 - 2018/04/20 
+ *  @version: 2.0 - 2019/03/15 
  *  @author: ajp
  */
 
@@ -17,6 +17,7 @@ import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
 import modelo.ModeloException;
 import modelo.SesionUsuario;
+import modelo.Simulacion;
 
 public class SesionesDAO implements OperacionesDAO {
 
@@ -58,7 +59,7 @@ public class SesionesDAO implements OperacionesDAO {
 	@Override
 	public SesionUsuario obtener(String idSesion) throws DatosException  {
 		if (idSesion != null) {
-			int posicion = obtenerPosicion(idSesion);			// En base 1
+			int posicion = indexSort(idSesion);			// En base 1
 			if (posicion >= 0) {
 				return datosSesiones.get(posicion - 1);     	// En base 0
 			}
@@ -72,10 +73,10 @@ public class SesionesDAO implements OperacionesDAO {
 	/**
 	 *  Obtiene por búsqueda binaria, la posición que ocupa, o ocuparía,  una sesión en 
 	 *  la estructura.
-	 *	@param idSesion - id de Sesion a buscar.
+	 *	@param id - id de Sesion a buscar.
 	 *	@return - la posición, en base 1, que ocupa un objeto o la que ocuparía (negativo).
 	 */
-	private int obtenerPosicion(String idSesion) {
+	private int indexSort(String id) {
 		int comparacion;
 		int inicio = 0;
 		int fin = datosSesiones.size() - 1;
@@ -83,7 +84,7 @@ public class SesionesDAO implements OperacionesDAO {
 		while (inicio <= fin) {
 			medio = (inicio + fin) / 2;			// Calcula posición central.
 			// Obtiene > 0 si idSesion va después que medio.
-			comparacion = idSesion.compareTo(datosSesiones.get(medio).getIdSesion());
+			comparacion = id.compareTo(datosSesiones.get(medio).getId());
 			if (comparacion == 0) {			
 				return medio + 1;   			// Posción ocupada, base 1	  
 			}		
@@ -105,9 +106,18 @@ public class SesionesDAO implements OperacionesDAO {
 	 */
 	@Override
 	public SesionUsuario obtener(Object obj) throws DatosException  {
-		return this.obtener(((SesionUsuario) obj).getIdSesion());
+		return this.obtener(((SesionUsuario) obj).getId());
 	}	
 
+	/**
+	 * obtiene todas las sesiones en una lista.
+	 * @return - la lista.
+	 */
+	@Override
+	public List obtenerTodos() {
+		return datosSesiones;
+	}
+	
 	/**
 	 * Búsqueda de todas la sesiones de un mismo usuario.
 	 * @param idUsr - el identificador de usuario a buscar.
@@ -120,7 +130,7 @@ public class SesionesDAO implements OperacionesDAO {
 		aux = new SesionUsuario();
 		aux.setUsr(UsuariosDAO.getInstancia().obtener(idUsr));
 		//Busca posición inserción ordenada por idUsr + fecha. La última para el mismo usuario.
-		return separarSesionesUsr(obtenerPosicion(aux.getIdSesion()) - 1);
+		return separarSesionesUsr(indexSort(aux.getId()) - 1);
 	}
 
 	/**
@@ -130,9 +140,9 @@ public class SesionesDAO implements OperacionesDAO {
 	 */
 	private List<SesionUsuario> separarSesionesUsr(int ultima) {
 		// Localiza primera sesión del mismo usuario.
-		String idUsr = datosSesiones.get(ultima).getUsr().getIdUsr();
+		String idUsr = datosSesiones.get(ultima).getUsr().getId();
 		int primera = ultima;
-		for (int i = ultima; i >= 0 && datosSesiones.get(i).getUsr().getIdUsr().equals(idUsr); i--) {
+		for (int i = ultima; i >= 0 && datosSesiones.get(i).getUsr().getId().equals(idUsr); i--) {
 			primera = i;
 		}
 		// devuelve la sublista de sesiones buscadas.
@@ -149,12 +159,12 @@ public class SesionesDAO implements OperacionesDAO {
 	public void alta(Object obj) throws DatosException  {
 		assert obj != null;
 		SesionUsuario sesionNueva = (SesionUsuario) obj;							// Para conversión cast
-		int posicionInsercion = obtenerPosicion(sesionNueva.getIdSesion()); 
+		int posicionInsercion = indexSort(sesionNueva.getId()); 
 		if (posicionInsercion < 0) {
 			datosSesiones.add(-posicionInsercion - 1, sesionNueva); 				// Inserta la sesión en orden.
 		}
 		else {
-			throw new DatosException("Alta: "+ sesionNueva.getIdSesion() + " ya existe");
+			throw new DatosException("Alta: "+ sesionNueva.getId() + " ya existe");
 		}
 		
 	}
@@ -168,7 +178,7 @@ public class SesionesDAO implements OperacionesDAO {
 	@Override
 	public SesionUsuario baja(String idSesion) throws DatosException  {
 		assert (idSesion != null);
-		int posicion = obtenerPosicion(idSesion); 									// En base 1
+		int posicion = indexSort(idSesion); 									// En base 1
 		if (posicion > 0) {
 			return datosSesiones.remove(posicion - 1); 								// En base 0
 		}
@@ -186,13 +196,13 @@ public class SesionesDAO implements OperacionesDAO {
 	public void actualizar(Object obj) throws DatosException {
 		assert obj != null;
 		SesionUsuario sesionActualizada = (SesionUsuario) obj;						// Para conversión cast
-		int posicion = obtenerPosicion(sesionActualizada.getIdSesion()); 			// En base 1
+		int posicion = indexSort(sesionActualizada.getId()); 			// En base 1
 		if (posicion > 0) {
 			// Reemplaza elemento
 			datosSesiones.set(posicion - 1, sesionActualizada);  					// En base 0		
 		}
 		else {
-			throw new DatosException("Actualizar: "+ sesionActualizada.getIdSesion() + " no existe");
+			throw new DatosException("Actualizar: "+ sesionActualizada.getId() + " no existe");
 		}
 	}
 	
@@ -233,5 +243,5 @@ public class SesionesDAO implements OperacionesDAO {
 	public void cerrar() {
 		// Nada que hacer si no hay persistencia.	
 	}
-	
+
 }//class

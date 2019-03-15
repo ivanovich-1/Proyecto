@@ -9,6 +9,10 @@
 
 package accesoDatos;
 
+import java.util.List;
+
+import modelo.Simulacion;
+
 public interface OperacionesDAO {
 
 	/**
@@ -27,6 +31,12 @@ public interface OperacionesDAO {
 	 * @throws DatosException 
 	 */
 	Object obtener(Object obj) throws DatosException;
+	
+	/**
+	 * obtiene todos los objetos almacenados en una lista.
+	 * @return - la lista.
+	 */
+	List obtenerTodos();
 	
 	/**
 	 *  Alta de un objeto en el almacén de datos, 

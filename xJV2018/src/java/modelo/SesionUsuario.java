@@ -9,21 +9,26 @@
 
 package modelo;
 
+import modelo.SesionUsuario.EstadoSesion;
 import util.Fecha;
 
 public class SesionUsuario {
 
+	public enum EstadoSesion { EN_PREPARACION, ACTIVA, CERRADA }
 	private Usuario usr;
-	private Fecha fecha; 
+	private Fecha fecha;
+	private EstadoSesion estado;
+	
 
 	/**
 	 * Constructor convencional. Utiliza métodos set...()
 	 * @param usr
 	 * @param fecha
 	 */
-	public SesionUsuario(Usuario usr, Fecha fecha) {
+	public SesionUsuario(Usuario usr, Fecha fecha, EstadoSesion estado) {
 		setUsr(usr);
 		setFecha(fecha);
+		setEstado(estado);
 	}
 
 	/**
@@ -31,7 +36,7 @@ public class SesionUsuario {
 	 * @throws ModeloException 
 	 */
 	public SesionUsuario() throws ModeloException {
-		this(new Usuario(), new Fecha());
+		this(new Usuario(), new Fecha(), EstadoSesion.EN_PREPARACION);
 	}
 
 	/**
@@ -40,10 +45,14 @@ public class SesionUsuario {
 	 */
 	public SesionUsuario(SesionUsuario sesion) {
 		this.usr = new Usuario(sesion.usr);
-		this.fecha = new Fecha(sesion.fecha.getAño(), 
-				sesion.fecha.getMes(), sesion.fecha.getDia());
+		this.fecha = new Fecha(sesion.fecha.getAño(), sesion.fecha.getMes(), sesion.fecha.getDia());
+		this.estado = sesion.estado;
 	}
 
+	public String getId() {	
+		return this.usr.getId() + ":" + fecha.toStringMarcaTiempo();
+	}
+	
 	public Usuario getUsr() {
 		return usr;
 	}
@@ -62,18 +71,23 @@ public class SesionUsuario {
 		this.fecha = fecha;
 	}
 
-	public String getId() {	
-		return this.usr.getId() + ":" + fecha.toStringMarcaTiempo();
+	public EstadoSesion getEstado() {
+		return estado;
+	}
+	
+	public void setEstado(EstadoSesion estado) {
+		this.estado = estado;
 	}
 	
 	/**
-	 * Reproduce el estado -valores de atributos- de objeto en forma de texto. 
-	 * @return el texto formateado.  
+	 * Redefine el método heredado de la clase Objecto.
+	 * @return el texto formateado del estado (valores de atributos) 
+	 * del objeto de la clase SesionUsuario  
 	 */
 	@Override
 	public String toString() {
-		return usr.toString() 
-				+ String.format("%s\n", fecha);	
+		return String.format("SesionUsuario \n[usr=%s, \nfecha=%s, \nestado=%s]",
+				usr, fecha, estado);
 	}
 
 	/**
@@ -87,6 +101,7 @@ public class SesionUsuario {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((estado == null) ? 0 : estado.hashCode());
 		result = prime * result + ((fecha == null) ? 0 : fecha.hashCode());
 		result = prime * result + ((usr == null) ? 0 : usr.hashCode());
 		return result;
@@ -97,26 +112,29 @@ public class SesionUsuario {
 	 * Son de la misma clase.
 	 * Tienen los mismos valores en los atributos; o son el mismo objeto.
 	 * @return falso si no cumple las condiciones.
-	*/
+	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && getClass() == obj.getClass()) {
 			if (this == obj) {
 				return true;
 			}
-			if (usr.equals(((SesionUsuario)obj).usr) 
-					&& fecha.equals(((SesionUsuario)obj).fecha)
-				) {
+			if (usr.equals(((SesionUsuario)obj).usr) &&
+					fecha.equals(((SesionUsuario)obj).fecha) &&
+					estado.equals(((SesionUsuario)obj).estado) 
+					) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Genera un clon del propio objeto realizando una copia profunda.
 	 * @return el objeto clonado.
-	*/
-	public SesionUsuario clone() {
+	 */
+	@Override
+	public Object clone() {
 		// Utiliza el constructor copia.
 		return new SesionUsuario(this);
 	}

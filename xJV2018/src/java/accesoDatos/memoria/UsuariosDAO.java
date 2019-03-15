@@ -13,6 +13,7 @@ package accesoDatos.memoria;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import accesoDatos.DatosException;
@@ -104,7 +105,7 @@ public class UsuariosDAO  implements OperacionesDAO {
 	public Usuario obtener(String id) throws DatosException {
 		String idUsr = equivalenciasId.get(id);
 		if (idUsr != null) {
-			int posicion = obtenerPosicion(idUsr);			// En base 1
+			int posicion = indexSort(idUsr);			// En base 1
 			if (posicion > 0) {
 				return datosUsuarios.get(posicion - 1);     // En base 0
 			}
@@ -116,12 +117,21 @@ public class UsuariosDAO  implements OperacionesDAO {
 	}
 
 	/**
+	 * obtiene todas los usuarios en una lista.
+	 * @return - la lista.
+	 */
+	@Override
+	public List obtenerTodos() {
+		return datosUsuarios;
+	}
+	
+	/**
 	 *  Obtiene por búsqueda binaria, la posición que ocupa, o ocuparía,  un usuario en 
 	 *  la estructura.
-	 *	@param IdUsr - id de Usuario a buscar.
+	 *	@param Id - id de Usuario a buscar.
 	 *	@return - la posición, en base 1, que ocupa un objeto o la que ocuparía (negativo).
 	 */
-	private int obtenerPosicion(String idUsr) {
+	private int indexSort(String id) {
 		int comparacion;
 		int inicio = 0;
 		int fin = datosUsuarios.size() - 1;
@@ -129,7 +139,7 @@ public class UsuariosDAO  implements OperacionesDAO {
 		while (inicio <= fin) {
 			medio = (inicio + fin) / 2;			// Calcula posición central.
 			// Obtiene > 0 si idUsr va después que medio.
-			comparacion = idUsr.compareTo(datosUsuarios.get(medio).getId());
+			comparacion = id.compareTo(datosUsuarios.get(medio).getId());
 			if (comparacion == 0) {			
 				return medio + 1;   			// Posción ocupada, base 1	  
 			}		
@@ -164,7 +174,7 @@ public class UsuariosDAO  implements OperacionesDAO {
 	public void alta(Object obj) throws DatosException  {
 		assert obj != null : "Usuario null...";
 		Usuario usrNuevo = (Usuario) obj;										// Para conversión cast
-		int posicionInsercion = obtenerPosicion(usrNuevo.getId()); 
+		int posicionInsercion = indexSort(usrNuevo.getId()); 
 		if (posicionInsercion < 0) {
 			datosUsuarios.add(-posicionInsercion - 1, usrNuevo); 				// Inserta el usuario en orden.
 			registrarEquivalenciaId(usrNuevo);
@@ -193,15 +203,15 @@ public class UsuariosDAO  implements OperacionesDAO {
 			int intentos = "TRWAGMYFPDXBNJZSQVHLCKE".length();				// 24 letras
 			do {
 				usrNuevo.generarVarianteIdUsr();
-				posicionInsercion = obtenerPosicion(usrNuevo.getId());
+				posicionInsercion = indexSort(usrNuevo.getId());
 				if (posicionInsercion < 0) {
 					return posicionInsercion;
 				}
 				intentos--;
 			} while (intentos > 0);
-			throw new DatosException("Variar idUsr: " + usrNuevo.getIdUsr() + " imposible generar variante.");
+			throw new DatosException("Variar idUsr: " + usrNuevo.getId() + " imposible generar variante.");
 		}
-		throw new DatosException("Alta: " + usrNuevo.getIdUsr() + " usuario ya existe.");
+		throw new DatosException("Alta: " + usrNuevo.getId() + " usuario ya existe.");
 	}
 
 	/**
@@ -210,9 +220,9 @@ public class UsuariosDAO  implements OperacionesDAO {
 	 */
 	private void registrarEquivalenciaId(Usuario usr) {
 		assert usr != null;
-		equivalenciasId.put(usr.getIdUsr(), usr.getIdUsr());
-		equivalenciasId.put(usr.getNif().getTexto(), usr.getIdUsr());
-		equivalenciasId.put(usr.getCorreo().getTexto(), usr.getIdUsr());
+		equivalenciasId.put(usr.getId(), usr.getId());
+		equivalenciasId.put(usr.getNif().getTexto(), usr.getId());
+		equivalenciasId.put(usr.getCorreo().getTexto(), usr.getId());
 	}
 
 	/**
@@ -224,10 +234,10 @@ public class UsuariosDAO  implements OperacionesDAO {
 	@Override
 	public Object baja(String idUsr) throws DatosException {
 		assert (idUsr != null);
-		int posicion = obtenerPosicion(idUsr); 							// En base 1
+		int posicion = indexSort(idUsr); 							// En base 1
 		if (posicion > 0) {
 			Usuario usrEliminado = datosUsuarios.remove(posicion-1); 	// En base 0
-			equivalenciasId.remove(usrEliminado.getIdUsr());
+			equivalenciasId.remove(usrEliminado.getId());
 			equivalenciasId.remove(usrEliminado.getNif().getTexto());
 			equivalenciasId.remove(usrEliminado.getCorreo().getTexto());
 			return usrEliminado;
@@ -247,19 +257,19 @@ public class UsuariosDAO  implements OperacionesDAO {
 	public void actualizar(Object obj) throws DatosException  {
 		assert obj != null;
 		Usuario usrActualizado = (Usuario) obj;							// Para conversión cast
-		int posicion = obtenerPosicion(usrActualizado.getIdUsr()); 		// En base 1
+		int posicion = indexSort(usrActualizado.getId()); 		// En base 1
 		if (posicion > 0) {
 			// Reemplaza equivalencias de Nif y Correo
 			Usuario usrModificado = datosUsuarios.get(posicion-1); 	    // En base 0
 			equivalenciasId.remove(usrModificado.getNif().getTexto());
 			equivalenciasId.remove(usrModificado.getCorreo().getTexto());
-			equivalenciasId.put(usrActualizado.getNif().getTexto(), usrActualizado.getIdUsr());
-			equivalenciasId.put(usrActualizado.getCorreo().getTexto(), usrActualizado.getIdUsr());	
+			equivalenciasId.put(usrActualizado.getNif().getTexto(), usrActualizado.getId());
+			equivalenciasId.put(usrActualizado.getCorreo().getTexto(), usrActualizado.getId());	
 			// Reemplaza elemento
 			datosUsuarios.set(posicion-1, usrActualizado);  			// En base 0		
 		}
 		else {
-			throw new DatosException("actualizar: "+ usrActualizado.getIdUsr() + " no existe");
+			throw new DatosException("actualizar: "+ usrActualizado.getId() + " no existe");
 		}
 	} 
 

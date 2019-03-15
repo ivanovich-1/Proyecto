@@ -11,12 +11,16 @@
 package accesoDatos.memoria;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
 import modelo.Mundo;
 import modelo.Posicion;
+import modelo.Mundo.FormaEspacio;
 
 public class MundosDAO implements OperacionesDAO {
 	
@@ -68,7 +72,7 @@ public class MundosDAO implements OperacionesDAO {
 			{ 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Flip-Flop
 			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // 1x Still Life
 		};
-		Mundo mundoDemo = new Mundo("MundoDemo", new ArrayList<Integer>(), new Hashtable<Patron,Posicion>());
+		Mundo mundoDemo = new Mundo("MundoDemo", espacioDemo, new ArrayList<Posicion>(), new HashMap<String, int[]>(), FormaEspacio.ESFERICO);
 		datosMundos.add(mundoDemo);
 	}
 	
@@ -82,7 +86,7 @@ public class MundosDAO implements OperacionesDAO {
 	@Override
 	public Mundo obtener(String nombre) throws DatosException {
 		if (nombre != null) {
-			int posicion = obtenerPosicion(nombre);				// En base 1
+			int posicion = indexSort(nombre);				// En base 1
 			if (posicion >= 0) {
 				return datosMundos.get(posicion - 1);     		// En base 0
 			}
@@ -96,10 +100,10 @@ public class MundosDAO implements OperacionesDAO {
 	/**
 	 *  Obtiene por búsqueda binaria, la posición que ocupa, o ocuparía,  un Mundo en 
 	 *  la estructura.
-	 *	@param nombre - id de Mundo a buscar.
+	 *	@param id - id de Mundo a buscar.
 	 *	@return - la posición, en base 1, que ocupa un objeto o la que ocuparía (negativo).
 	 */
-	private int obtenerPosicion(String nombre) {
+	private int indexSort(String id) {
 		int comparacion;
 		int inicio = 0;
 		int fin = datosMundos.size() - 1;
@@ -107,7 +111,7 @@ public class MundosDAO implements OperacionesDAO {
 		while (inicio <= fin) {
 			medio = (inicio + fin) / 2;			// Calcula posición central.
 			// Obtiene > 0 si nombre va después que medio.
-			comparacion = nombre.compareTo(datosMundos.get(medio).getNombre());
+			comparacion = id.compareTo(datosMundos.get(medio).getId());
 			if (comparacion == 0) {			
 				return medio + 1;   			// Posción ocupada, base 1	  
 			}		
@@ -129,7 +133,16 @@ public class MundosDAO implements OperacionesDAO {
 	 */
 	@Override
 	public Mundo obtener(Object obj) throws DatosException  {
-		return this.obtener(((Mundo) obj).getNombre());
+		return this.obtener(((Mundo) obj).getId());
+	}
+	
+	/**
+	 * obtiene todos los mundos en una lista.
+	 * @return - la lista.
+	 */
+	@Override
+	public List obtenerTodos() {
+		return datosMundos;
 	}
 	
 	/**
@@ -142,12 +155,12 @@ public class MundosDAO implements OperacionesDAO {
 	public void alta(Object obj) throws DatosException  {
 		assert obj != null;
 		Mundo mundoNuevo = (Mundo) obj;										// Para conversión cast
-		int posicionInsercion = obtenerPosicion(mundoNuevo.getNombre()); 
+		int posicionInsercion = indexSort(mundoNuevo.getId()); 
 		if (posicionInsercion < 0) {
 			datosMundos.add(-posicionInsercion - 1, mundoNuevo); 			// Inserta la sesión en orden.
 		}
 		else {
-			throw new DatosException("Alta: "+ mundoNuevo.getNombre() + " ya existe");
+			throw new DatosException("Alta: "+ mundoNuevo.getId() + " ya existe");
 		}
 	}
 
@@ -160,7 +173,7 @@ public class MundosDAO implements OperacionesDAO {
 	@Override
 	public Mundo baja(String nombre) throws DatosException  {
 		assert (nombre != null);
-		int posicion = obtenerPosicion(nombre); 									// En base 1
+		int posicion = indexSort(nombre); 									// En base 1
 		if (posicion > 0) {
 			return datosMundos.remove(posicion - 1); 								// En base 0
 		}
@@ -178,13 +191,13 @@ public class MundosDAO implements OperacionesDAO {
 	public void actualizar(Object obj) throws DatosException  {
 		assert obj != null;
 		Mundo mundoActualizado = (Mundo) obj;										// Para conversión cast
-		int posicion = obtenerPosicion(mundoActualizado.getNombre()); 				// En base 1
+		int posicion = indexSort(mundoActualizado.getId()); 				// En base 1
 		if (posicion > 0) {
 			// Reemplaza elemento
 			datosMundos.set(posicion - 1, mundoActualizado);  						// En base 0		
 		}
 		else {
-			throw new DatosException("Actualizar: "+ mundoActualizado.getNombre() + " no existe");
+			throw new DatosException("Actualizar: "+ mundoActualizado.getId() + " no existe");
 		}
 	}
 

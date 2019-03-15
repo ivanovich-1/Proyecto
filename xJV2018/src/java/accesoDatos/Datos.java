@@ -3,7 +3,7 @@
  * Almacén de datos del programa. Utiliza patron Façade.
  * @since: prototipo2.0
  * @source: Datos.java 
- * @version: 2.0 - 2018.04.29
+ * @version: 2.0 - 2019.03.15
  * @author: ajp
  */
 
@@ -11,10 +11,9 @@ package accesoDatos;
 
 import java.util.List;
 
-import accesoDatos.db4o.*;
+import accesoDatos.memoria.*;
 import modelo.ModeloException;
 import modelo.Mundo;
-import modelo.Patron;
 import modelo.SesionUsuario;
 import modelo.Simulacion;
 import modelo.Usuario;
@@ -25,7 +24,6 @@ public class Datos {
 	private SesionesDAO sesionesDAO;
 	private SimulacionesDAO simulacionesDAO;
 	private MundosDAO mundosDAO;
-	private PatronesDAO patronesDAO;
 	
 	/**
 	 * Constructor por defecto.
@@ -36,7 +34,6 @@ public class Datos {
 		sesionesDAO = SesionesDAO.getInstancia();
 		simulacionesDAO = SimulacionesDAO.getInstancia();
 		mundosDAO = MundosDAO.getInstancia();
-		patronesDAO = PatronesDAO.getInstancia();	
 	}
 
 	/**
@@ -47,7 +44,6 @@ public class Datos {
 		sesionesDAO.cerrar();
 		simulacionesDAO.cerrar();
 		mundosDAO.cerrar();
-		patronesDAO.cerrar();
 	}
 
 	// FACHADA usuariosDAO
@@ -142,7 +138,7 @@ public class Datos {
 	 * @throws DatosException - si no existe.
 	 */	
 	public SesionUsuario obtenerSesion(SesionUsuario sesion) throws DatosException {
-		return sesionesDAO.obtener(sesion.getIdSesion());
+		return sesionesDAO.obtener(sesion.getId());
 	}
 	
 	/**
@@ -353,78 +349,6 @@ public class Datos {
 	 */
 	public void borrarTodosMundos() {
 		mundosDAO.borrarTodo();
-	}
-	
-	// FACHADA patronesDAO
-	/**
-	 * Método fachada para obtener un Patron dado su nombre. 
-	 * Reenvia petición al método DAO específico.
-	 * @param id - el nombre de Patron a buscar.
-	 * @return - el Patron encontrado.
-	 * @throws DatosException - si no existe.
-	 */
-	public Patron obtenerPatron(String nombre) throws DatosException {
-		return (Patron) patronesDAO.obtener(nombre);
-	}
-
-	/**
-	 * Método fachada para obtener un Patron dado un objeto. 
-	 * Reenvia petición al método DAO específico.
-	 * @param patron - el objeto de Patron a buscar.
-	 * @return - el Patron encontrado.
-	 * @throws DatosException - si no existe.
-	 */
-	public Patron obtenerPatron(Patron patron) throws DatosException {
-		return (Patron) patronesDAO.obtener(patron);
-	}
-	
-	/**
-	 * Método fachada para alta de una Patron. 
-	 * Reenvia petición al método DAO específico.
-	 * @param patron - el objeto Patron a dar de alta.
-	 * @throws DatosException - si ya existe.
-	 */
-	public void altaPatron(Patron patron) throws DatosException  {
-		patronesDAO.alta(patron);
-	}
-
-	/**
-	 * Método fachada para baja de un Patron. 
-	 * Reenvia petición al método DAO específico.
-	 * @param nombre - el nombre de Patron a dar de baja.
-	 * @throws DatosException - si ya existe.
-	 */
-	public Patron bajaPatron(String nombre) throws DatosException  {
-		return (Patron) patronesDAO.baja(nombre);
-	}
-
-	/**
-	 * Método fachada para modicar un Patron. 
-	 * Reenvia petición al método DAO específico.
-	 * @param patron - el objeto Patron a modificar.
-	 * @throws DatosException - si no existe.
-	 */
-	public void actualizarPatron(Patron patron) throws DatosException  {
-		patronesDAO.actualizar(patron);
-	}
-
-	/**
-	 * Método fachada para obtener listado de todos
-	 * los objetos en forma de texto.  
-	 * Reenvia petición al método DAO específico.
-	 * @return - el texto.
-	 */
-	public String toStringDatosPatrones() {
-		return patronesDAO.listarDatos();
-	}
-
-	/**
-	 * Método fachada para eliminar todos
-	 * los patrones.  
-	 * Reenvia petición al método DAO específico.
-	 */
-	public void borrarTodosPatrones() {
-		patronesDAO.borrarTodo();
 	}
 	
 } //class

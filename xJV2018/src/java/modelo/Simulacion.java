@@ -9,14 +9,17 @@
 
 package modelo;
 
+import modelo.Simulacion.EstadoSimulacion;
 import util.Fecha;
 
 public class Simulacion {
 
+	public enum EstadoSimulacion  {PREPARADA, INICIADA, COMPLETADA}
 	public static final int CICLOS_SIMULACION = 20;
 	private Usuario usr;
 	private Fecha fecha;
 	private Mundo mundo;
+	private EstadoSimulacion estado;
 
 	/**
 	 * Constructor convencional.
@@ -26,11 +29,13 @@ public class Simulacion {
 	 * @param usr
 	 * @param fecha
 	 * @param mundo
+	 * @param estado 
 	 */
-	public Simulacion(Usuario usr, Fecha fecha, Mundo mundo) {
+	public Simulacion(Usuario usr, Fecha fecha, Mundo mundo, EstadoSimulacion estado) {
 		setUsr(usr);
 		setFecha(fecha);
 		setMundo(mundo);
+		setEstado(estado);
 	}
 
 	/**
@@ -40,7 +45,7 @@ public class Simulacion {
 	 * @throws ModeloException 
 	 */
 	public Simulacion() throws ModeloException {
-		this(new Usuario(), new Fecha(), new Mundo());
+		this(new Usuario(), new Fecha(), new Mundo(), EstadoSimulacion.PREPARADA);
 	}
 
 	/**
@@ -56,6 +61,10 @@ public class Simulacion {
 		setMundo(new Mundo(simul.mundo));
 	}
 
+	public String getId() {	
+		return this.usr.getId() + "-" + fecha.toStringMarcaTiempo();
+	}
+	
 	public Usuario getUsr() {
 		return usr;
 	}
@@ -82,21 +91,21 @@ public class Simulacion {
 		assert fecha != null;
 		this.fecha = fecha;
 	}
-
-	public String getId() {	
-		return this.usr.getId() + "-" + fecha.toStringMarcaTiempo();
+	
+	public EstadoSimulacion getEstado() {
+		return estado;
 	}
 	
-	/**
-	 * Reproduce el estado -valores de atributos- de objeto en forma de texto. 
-	 * @return el texto formateado.  
-	 */
+	public void setEstado(EstadoSimulacion estado) {
+		this.estado = estado;
+	}
+	
 	@Override
 	public String toString() {
 		return String.format(
-				"Simulacion [usr=%s, fecha=%s, mundo=%s]", usr, fecha, mundo);
+				"Simulacion [usr=%s, fecha=%s, mundo=%s, estado=%s]", usr, fecha, mundo, estado);
 	}
-	
+
 	/**
 	 * hashCode() complementa al método equals y sirve para comparar objetos de forma 
 	 * rápida en estructuras Hash. 
@@ -108,6 +117,7 @@ public class Simulacion {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((estado == null) ? 0 : estado.hashCode());
 		result = prime * result + ((fecha == null) ? 0 : fecha.hashCode());
 		result = prime * result + ((mundo == null) ? 0 : mundo.hashCode());
 		result = prime * result + ((usr == null) ? 0 : usr.hashCode());
@@ -126,9 +136,10 @@ public class Simulacion {
 			if (this == obj) {
 				return true;
 			}
-			if (usr.equals(((Simulacion)obj).usr) 
-					&& fecha.equals(((Simulacion)obj).fecha) 
-					&& mundo.equals(((Simulacion)obj).mundo)
+			if (usr.equals(((Simulacion)obj).usr) &&
+					fecha.equals(((Simulacion)obj).fecha) &&
+					mundo.equals(((Simulacion)obj).mundo) &&
+					estado.equals(((Simulacion)obj).estado) 
 					) {
 				return true;
 			}
@@ -142,7 +153,9 @@ public class Simulacion {
 	 */
 	@Override
 	public Object clone() {
+		// Utiliza el constructor copia.
 		return new Simulacion(this);
 	}
+
 
 } //class
