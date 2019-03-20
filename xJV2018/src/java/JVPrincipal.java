@@ -28,9 +28,9 @@ public class JVPrincipal {
 	public static void main(String[] args) throws ModeloException, DatosException {		
 			JVPrincipal jv = new JVPrincipal();
 			jv.datos = new Datos();
-			jv.datos.cargarUsuariosPrueba();		
-			jv.datos.mostrarTodosUsuarios();
-			jv.datos.cargarMundoDemo();
+			//jv.datos.cargarUsuariosPrueba();		
+			System.out.println(jv.datos.toStringDatosUsuarios());
+			//jv.datos.cargarMundoDemo();
 
 			jv.interfazUsr = new Presentacion();
 			if (jv.interfazUsr.inicioSesionCorrecto()) {
@@ -42,7 +42,7 @@ public class JVPrincipal {
 
 				jv.interfazUsr.getSimulacion().setUsr(jv.interfazUsr.getUsrEnSesion());
 				jv.interfazUsr.getSimulacion().setFecha(new Fecha());
-				jv.interfazUsr.getSimulacion().setMundo(jv.datos.buscarMundo("Demo1"));
+				jv.interfazUsr.getSimulacion().setMundo(jv.datos.obtenerMundo("Demo1"));
 				jv.datos.altaSimulacion(jv.interfazUsr.getSimulacion());
 
 				System.out.println("Sesión: " + jv.datos.getSesionesRegistradas() + '\n' + "Iniciada por: " 

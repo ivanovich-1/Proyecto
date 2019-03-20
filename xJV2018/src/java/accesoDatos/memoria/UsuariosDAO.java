@@ -29,7 +29,7 @@ import util.Fecha;
 
 public class UsuariosDAO  implements OperacionesDAO {
 
-	// Requerido por el Singleton. 
+	// Singleton. 
 	private static UsuariosDAO instancia = null;
 
 	// Elementos de almacenamiento.
@@ -96,22 +96,17 @@ public class UsuariosDAO  implements OperacionesDAO {
 
 	//OPERACIONES DAO
 	/**
-	 * Búsqueda de usuario dado su idUsr, el correo o su nif.
+	 * Búsqueda de usuario dado su id, el correo o su nif.
 	 * @param id - el id de Usuario a buscar.
-	 * @return - el Usuario encontrado. 
-	 * @throws DatosException - si no existe.
+	 * @return - el Usuario encontrado o null si no existe. 
 	 */
 	@Override
-	public Usuario obtener(String id) throws DatosException {
+	public Usuario obtener(String id) {
+		assert id != null;
 		String idUsr = equivalenciasId.get(id);
-		if (idUsr != null) {
-			int posicion = indexSort(idUsr);			// En base 1
-			if (posicion > 0) {
-				return datosUsuarios.get(posicion - 1);     // En base 0
-			}
-		}
-		else {
-			throw new DatosException("Obtener: "+ id + " no existe");
+		int posicion = indexSort(idUsr);			  // En base 1
+		if (posicion > 0) {
+			return datosUsuarios.get(posicion - 1);   // En base 0
 		}
 		return null;				
 	}
@@ -124,7 +119,7 @@ public class UsuariosDAO  implements OperacionesDAO {
 	public List obtenerTodos() {
 		return datosUsuarios;
 	}
-	
+
 	/**
 	 *  Obtiene por búsqueda binaria, la posición que ocupa, o ocuparía,  un usuario en 
 	 *  la estructura.
@@ -154,38 +149,38 @@ public class UsuariosDAO  implements OperacionesDAO {
 	}
 
 	/**
-	 * Búsqueda de Usuario dado un objeto, reenvía al método que utiliza idUsr.
+	 * Búsqueda de Usuario dado un objeto, reenvía al método que utiliza id.
 	 * @param obj - el Usuario a buscar.
-	 * @return - el Usuario encontrado.
-	 * @throws DatosException - si no existe.
+	 * @return - el Usuario encontrado; null si no encuentra.
 	 */
 	@Override
-	public Usuario obtener(Object obj) throws DatosException  {
+	public Usuario obtener(Object obj) {
 		return this.obtener(((Usuario) obj).getId());
 	}	
 
 	/**
-	 *  Alta de un nuevo usuario en orden y sin repeticiones según el campo idUsr. 
-	 *  Localiza previamente la posición de inserción, en orden, que le corresponde.
-	 *	@param obj - Objeto a almacenar.
-	 *  @throws DatosException si ya existe o no puede generar variante de idUsr.
+	 * Registro de nuevo usuario.
+	 * @param usr 
+	 * @throws DatosException 
 	 */
 	@Override
-	public void alta(Object obj) throws DatosException  {
-		assert obj != null : "Usuario null...";
-		Usuario usrNuevo = (Usuario) obj;										// Para conversión cast
-		int posicionInsercion = indexSort(usrNuevo.getId()); 
-		if (posicionInsercion < 0) {
-			datosUsuarios.add(-posicionInsercion - 1, usrNuevo); 				// Inserta el usuario en orden.
-			registrarEquivalenciaId(usrNuevo);
+	public void alta(Object usr) throws DatosException {
+		assert usr != null;
+		int posInsercion = indexSort(((Usuario) usr).getId());
+
+		if (posInsercion < 0) {
+			datosUsuarios.add(Math.abs(posInsercion)-1 ,(Usuario) usr);  // Inserta en orden.
+			registrarEquivalenciaId((Usuario) usr);
 		}
 		else {
-			posicionInsercion = reintentarNuevaPosicion(usrNuevo, posicionInsercion);
-			datosUsuarios.add(-posicionInsercion-1, usrNuevo); 	                // Inserta el usuario en orden.
-			registrarEquivalenciaId(usrNuevo);
-		}	
+			if (!datosUsuarios.get(posInsercion-1).equals(usr)) {
+				producirVariantesIdUsr((Usuario) usr);
+			}
+			else {
+				throw new DatosException("ALTA Usuario: Ya existe.");
+			}
+		}
 	}
-
 	/**
 	 *  Si hay coincidencia de identificador hace 23 intentos de variar la última letra
 	 *  procedente del NIF. Llama al generarVarianteIdUsr() de la clase Usuario.
@@ -193,26 +188,24 @@ public class UsuariosDAO  implements OperacionesDAO {
 	 * @param posicionInsercion
 	 * @throws DatosException
 	 */
-	private int reintentarNuevaPosicion(Usuario usrNuevo, int posicionInsercion) throws DatosException {
-		// Hay coincidencia de identificador con un usuario ya almacenado.
-		Usuario usrPrevio = datosUsuarios.get(posicionInsercion-1);
-		// Comprueba que no haya coincidencia de Correo y Nif
-		boolean condicion = !(usrNuevo.getCorreo().equals(usrPrevio.getCorreo())
-				|| usrNuevo.getNif().equals(usrPrevio.getNif()));
-		if (condicion) {
-			int intentos = "TRWAGMYFPDXBNJZSQVHLCKE".length();				// 24 letras
-			do {
-				usrNuevo.generarVarianteIdUsr();
-				posicionInsercion = indexSort(usrNuevo.getId());
-				if (posicionInsercion < 0) {
-					return posicionInsercion;
-				}
-				intentos--;
-			} while (intentos > 0);
-			throw new DatosException("Variar idUsr: " + usrNuevo.getId() + " imposible generar variante.");
-		}
-		throw new DatosException("Alta: " + usrNuevo.getId() + " usuario ya existe.");
+	private void producirVariantesIdUsr(Usuario usr) throws DatosException {
+		int posInsercion;
+		// Coincidencia de id. Hay que generar variante
+		int intentos = "ABCDEFGHJKLMNPQRSTUVWXYZ".length();
+		do {
+			// Generar variante y comprueba de nuevo.
+			usr = new Usuario(usr);	
+			posInsercion = indexSort(usr.getId());
+			if (posInsercion < 0) {
+				datosUsuarios.add(-posInsercion - 1, usr); // Inserta el usuario en orden.
+				registrarEquivalenciaId(usr);
+				return;
+			}
+			intentos--;
+		} while (intentos >= 0);
+		throw new DatosException("ALTA Usuario: imposible generar variante del " + usr.getId());
 	}
+
 
 	/**
 	 *  Añade nif y correo como equivalencias de idUsr para el inicio de sesión. 

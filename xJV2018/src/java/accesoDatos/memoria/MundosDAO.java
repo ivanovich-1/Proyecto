@@ -12,19 +12,17 @@ package accesoDatos.memoria;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
 import modelo.Mundo;
-import modelo.Posicion;
 import modelo.Mundo.FormaEspacio;
+import modelo.Posicion;
 
 public class MundosDAO implements OperacionesDAO {
-	
-	// Requerido por el patrón Singleton
+
+	// Singleton
 	private static MundosDAO instancia;
 
 	// Elementos de almacenamiento.
@@ -75,28 +73,23 @@ public class MundosDAO implements OperacionesDAO {
 		Mundo mundoDemo = new Mundo("MundoDemo", espacioDemo, new ArrayList<Posicion>(), new HashMap<String, int[]>(), FormaEspacio.ESFERICO);
 		datosMundos.add(mundoDemo);
 	}
-	
+
 	//OPERACIONES DAO
 	/**
 	 * Obtiene el objeto dado el id utilizado para el almacenamiento.
-	 * @param nombre - id del mundo a obtener.
-	 * @return - el Mundo encontrado.
-	 * @throws DatosException - si no existe.
+	 * @param id - id del mundo a obtener.
+	 * @return - el Mundo encontrado; null si no encuentra.
 	 */	
 	@Override
-	public Mundo obtener(String nombre) throws DatosException {
-		if (nombre != null) {
-			int posicion = indexSort(nombre);				// En base 1
-			if (posicion >= 0) {
-				return datosMundos.get(posicion - 1);     		// En base 0
-			}
-			else {
-				throw new DatosException("Obtener: "+ nombre + " no existe");
-			}
+	public Mundo obtener(String id) {
+		assert id != null;
+		int posicion = indexSort(id);					// En base 1
+		if (posicion >= 0) {
+			return datosMundos.get(posicion - 1);     	// En base 0
 		}
 		return null;
 	}
-	
+
 	/**
 	 *  Obtiene por búsqueda binaria, la posición que ocupa, o ocuparía,  un Mundo en 
 	 *  la estructura.
@@ -128,14 +121,13 @@ public class MundosDAO implements OperacionesDAO {
 	/**
 	 * Búsqueda de Mundo dado un objeto, reenvía al método que utiliza nombre.
 	 * @param obj - el Mundo a buscar.
-	 * @return - el Mundo encontrado.
-	 * @throws DatosException - si no existe.
+	 * @return - el Mundo encontrado; null si no encuentra.
 	 */
 	@Override
-	public Mundo obtener(Object obj) throws DatosException  {
+	public Mundo obtener(Object obj) {
 		return this.obtener(((Mundo) obj).getId());
 	}
-	
+
 	/**
 	 * obtiene todos los mundos en una lista.
 	 * @return - la lista.
@@ -144,7 +136,7 @@ public class MundosDAO implements OperacionesDAO {
 	public List obtenerTodos() {
 		return datosMundos;
 	}
-	
+
 	/**
 	 *  Alta de un objeto en el almacén de datos, 
 	 *  sin repeticiones, según el campo id previsto. 
@@ -232,5 +224,5 @@ public class MundosDAO implements OperacionesDAO {
 	public void cerrar() {
 		// Nada que hacer si no hay persistencia.	
 	}
-	
+
 } // class

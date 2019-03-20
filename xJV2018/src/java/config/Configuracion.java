@@ -22,7 +22,7 @@ public class Configuracion {
 
 	/**
 	 *  Método estático de acceso a la instancia única.
-	 *  Si no existe la crea invocando al constructor interno.
+	 *  Si no existe la crea invocando al constructor privado.
 	 *  Utiliza inicialización diferida.
 	 *  Sólo se crea una vez; instancia única -patrón singleton-
 	 *  @return instancia
@@ -36,13 +36,12 @@ public class Configuracion {
 	
 	/**
 	 * Constructor por defecto de uso interno.
-	 * Sólo se ejecutará una vez.
 	 */
 	private Configuracion() {
 		configuracion = new Properties();
 		InputStream is = null;
 		try {
-			is = new FileInputStream("jv.config");
+			is = new FileInputStream("jv2018.cfg");
 			configuracion.load(is);
 		} 
 		catch(IOException e) {

@@ -10,6 +10,7 @@
 package modelo;
 
 import modelo.SesionUsuario.EstadoSesion;
+import modelo.Simulacion.EstadoSimulacion;
 import util.Fecha;
 
 public class SesionUsuario {

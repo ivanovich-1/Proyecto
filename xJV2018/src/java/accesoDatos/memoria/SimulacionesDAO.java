@@ -31,7 +31,7 @@ import util.Fecha;
 
 public class SimulacionesDAO implements OperacionesDAO {
 
-	// Requerido por el Singleton 
+	// Singleton 
 	private static SimulacionesDAO instancia;
 
 	// Elemento de almacenamiento.
@@ -67,33 +67,24 @@ public class SimulacionesDAO implements OperacionesDAO {
 	private void cargarPredeterminados() {
 		// Obtiene usuario (invitado) y mundo predeterminados.
 		Usuario usrDemo = null;
-		try {
-			usrDemo = UsuariosDAO.getInstancia().obtener("III1R");
-			Mundo mundoDemo = MundosDAO.getInstancia().obtener("MundoDemo");
-			Simulacion simulacionDemo = new Simulacion(usrDemo, new Fecha(), mundoDemo, EstadoSimulacion.PREPARADA);
-			datosSimulaciones.add(simulacionDemo);
-		} catch (DatosException e) {
-			e.printStackTrace();
-		}
+		usrDemo = UsuariosDAO.getInstancia().obtener("III1R");
+		Mundo mundoDemo = MundosDAO.getInstancia().obtener("Demo1");
+		Simulacion simulacionDemo = new Simulacion(usrDemo, new Fecha(), mundoDemo, EstadoSimulacion.PREPARADA);
+		datosSimulaciones.add(simulacionDemo);
 	}
-	
+
 	// OPERACIONES DAO
 	/**
 	 * Búsqueda de Simulacion dado idUsr y fecha.
-	 * @param idSimulacion - el idUsr+fecha de la Simulacion a buscar. 
-	 * @return - la Simulacion encontrada. 
-	 * @throws DatosException - si no existe.
+	 * @param id - el idUsr+fecha de la Simulacion a buscar. 
+	 * @return - la Simulacion encontrada; null si no encuentra. 
 	 */	
 	@Override
-	public Simulacion obtener(String idSimulacion) throws DatosException {
-		if (idSimulacion != null) {
-			int posicion = indexSort(idSimulacion);			// En base 1
-			if (posicion >= 0) {
-				return datosSimulaciones.get(posicion - 1);     	// En base 0
-			}
-			else {
-				throw new DatosException("Obtener: "+ idSimulacion + " no existe");
-			}
+	public Simulacion obtener(String id) {
+		assert id != null;
+		int posicion = indexSort(id);						// En base 1
+		if (posicion >= 0) {
+			return datosSimulaciones.get(posicion - 1);     // En base 0
 		}
 		return null;
 	}
@@ -129,10 +120,9 @@ public class SimulacionesDAO implements OperacionesDAO {
 	/**
 	 * Búsqueda de simulacion dado un objeto, reenvía al método que utiliza idSimulacion.
 	 * @param obj - la Simulacion a buscar.
-	 * @return - la Simulacion encontrada.
-	 * @throws DatosException - si no existe.
+	 * @return - la Simulacion encontrada; null si no encuentra.
 	 */
-	public Simulacion obtener(Object obj) throws DatosException  {
+	public Simulacion obtener(Object obj)  {
 		return this.obtener(((Simulacion) obj).getId());
 	}
 
@@ -144,7 +134,7 @@ public class SimulacionesDAO implements OperacionesDAO {
 	public List obtenerTodos() {
 		return datosSimulaciones;
 	}
-	
+
 	/**
 	 * Búsqueda de todas la simulaciones de un usuario.
 	 * @param idUsr - el identificador de usuario a buscar.
@@ -263,5 +253,5 @@ public class SimulacionesDAO implements OperacionesDAO {
 	public void cerrar() {
 		// Nada que hacer si no hay persistencia.	
 	}
-	
+
 } //class

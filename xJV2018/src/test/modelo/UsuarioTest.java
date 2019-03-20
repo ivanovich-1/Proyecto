@@ -1,21 +1,21 @@
+package modelo;
 /** 
  * Proyecto: Juego de la vida.
- * Clase JUnit5 de prueba automatizada de las características de la clase Usuario según el modelo1.2
+ * Clase JUnit5 de prueba automatizada de las características de la clase Usuario según el modelo1.1
  * @since: prototipo1.0
  * @source: TestUsuario.java 
- * @version: 1.2 - 2019.02.21
+ * @version: 1.1 - 2019.01.21
  * @author: ajp
  */
-
-package modelo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.util.Properties;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -23,12 +23,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import config.Configuracion;
 import modelo.Usuario.RolUsuario;
 import util.Fecha;
 
 public class UsuarioTest {
+	private Properties config = Configuracion.get();
 	private static Usuario usuario1; 
-	private Usuario usuario2; 
+	private Usuario usuario2;
 
 	/**
 	 * Método que se ejecuta antes de cada @Test para preparar datos de prueba.
@@ -96,11 +98,13 @@ public class UsuarioTest {
 			assertEquals(usuario1.getRol(), RolUsuario.NORMAL);
 		} 
 		catch (ModeloException e) {
+
 		}
 	}
 
 	@Test
 	public void testUsuarioDefecto() {
+		int edadMinima = Integer.parseInt(Configuracion.get().getProperty("usuario.edadMinima"));
 		try {
 			assertEquals(usuario2.getNif(), new Nif("00000000T"));
 			assertEquals(usuario2.getNombre(), "Nombre");
@@ -108,7 +112,7 @@ public class UsuarioTest {
 			assertEquals(usuario2.getDomicilio(), new DireccionPostal());
 			assertEquals(usuario2.getCorreo(), new Correo());
 			assertEquals(usuario2.getFechaNacimiento().getAño(), 
-					new Fecha().addAños(-Usuario.EDAD_MINIMA).getAño());
+					new Fecha().addAños(-edadMinima).getAño());
 			assertEquals(usuario2.getFechaNacimiento().getMes(), new Fecha().getMes());
 			assertEquals(usuario2.getFechaNacimiento().getDia(), new Fecha().getDia());
 			assertEquals(usuario2.getFechaAlta().getAño(), new Fecha().getAño());
@@ -228,13 +232,13 @@ public class UsuarioTest {
 	@Test
 	public void testToString() {
 		assertEquals(usuario1.toString(), 
-				 	    "id:              LRM1R\n" +
-						"nif:             00000001R\n" +
+				 	    "nif:             00000001R\n" +
 						"nombre:          Luis\n" +
 						"apellidos:       Roca Mora\n" +
 						"domicilio:       Roncal, 10, 30130, Murcia\n" +
 						"correo:          luis@gmail.com\n" +
 						"fechaNacimiento: 2000.2.21\n" +
+						"id:              LRM1R\n" +
 						"fechaAlta:       2018.9.17\n" +
 						"claveAcceso:     Pmezd9!\n" +
 						"rol:             NORMAL\n"
@@ -246,6 +250,7 @@ public class UsuarioTest {
 
 	@Test
 	public void testUsuarioAtributosIncorrectos() {
+
 		Usuario usuario = null;
 		try {
 			usuario = new Usuario(
@@ -259,10 +264,10 @@ public class UsuarioTest {
 					new ClaveAcceso(" "), 
 					RolUsuario.NORMAL
 					);
-				fail("No debe llegar aquí...");
+					fail();				// No debe llegar aquí.
 		} 
 		catch (ModeloException e) {
-			assertNull(usuario);
+			//assertTrue(true);
 		} 
 	}
 
@@ -273,7 +278,7 @@ public class UsuarioTest {
 			fail("No debe llegar aquí...");
 		} 
 		catch (AssertionError e) { 
-			assertNotNull(usuario2.getNif());
+			assertTrue(usuario2.getNif() != null);
 		}
 	}
 
@@ -284,7 +289,7 @@ public class UsuarioTest {
 			fail("No debe llegar aquí...");
 		} 
 		catch (AssertionError | ModeloException e) { 
-			assertNotNull(usuario2.getNombre());
+			assertTrue(usuario2.getNombre() != null);
 		}
 	}
 
@@ -292,11 +297,10 @@ public class UsuarioTest {
 	public void testSetNombreBlanco() {
 		try {
 			usuario2.setNombre("  ");
-			assertEquals(usuario2.getNombre(), "Nombre");
 		} 
 		catch (ModeloException e) {
 		}	
-		
+		assertEquals(usuario2.getNombre(), "Nombre");
 	}
 
 	@Test
@@ -314,10 +318,10 @@ public class UsuarioTest {
 	public void testSetApellidosBlanco() {
 		try {
 			usuario2.setApellidos("  ");
-			assertEquals(usuario2.getApellidos(), "Apellido Apellido");
 		} 
 		catch (ModeloException e) {
 		}	
+		assertEquals(usuario2.getApellidos(), "Apellido Apellido");
 	}
 
 	@Test
@@ -357,10 +361,10 @@ public class UsuarioTest {
 	public void testSetFechaNacimientoFuturo() {	
 		try {
 			usuario1.setFechaNacimiento(new Fecha(3020, 9, 10));
-			assertEquals(usuario1.getFechaNacimiento(), new Fecha(2000, 03, 21));
 		} 
 		catch (ModeloException e) {
 		}
+		assertEquals(usuario1.getFechaNacimiento(), new Fecha(2000, 03, 21));
 	}
 
 	@Test
@@ -378,10 +382,10 @@ public class UsuarioTest {
 	public void testSetFechaAltaFuturo() {	
 		try {
 			usuario1.setFechaAlta(new Fecha(3020, 9, 10));
-			assertEquals(usuario1.getFechaAlta(), new Fecha(2018, 10, 17));
 		} 
 		catch (ModeloException e) {
 		}
+		assertEquals(usuario1.getFechaAlta(), new Fecha(2018, 10, 17));
 	}
 
 	@Test

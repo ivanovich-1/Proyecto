@@ -9,7 +9,6 @@
 
 package modelo;
 
-import modelo.Simulacion.EstadoSimulacion;
 import util.Fecha;
 
 public class Simulacion {

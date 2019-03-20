@@ -23,13 +23,13 @@ import modelo.Usuario;
 
 public class Presentacion {
 
-	private static Datos datos;
+	private Datos datos;
 	public static final int MAX_INTENTOS_FALLIDOS = 3;
 	private Usuario usrEnSesion;
 	private Simulacion simulacion;
 
 	public Presentacion() throws ModeloException, DatosException  {
-		Datos datos = new Datos();
+		datos = new Datos();
 		simulacion = new Simulacion();
 	}
 
@@ -44,8 +44,9 @@ public class Presentacion {
 	/**
 	 * Despliega en la consola el estado almacenado, corresponde
 	 * a una generación del Juego de la vida.
+	 * @throws ModeloException 
 	 */
-	public void mostrarSimulacion() {
+	public void mostrarSimulacion() throws ModeloException {
 		int generacion = 0; 
 		do {
 			System.out.println("\nGeneración: " + generacion);
@@ -70,32 +71,32 @@ public class Presentacion {
 			String id = teclado.nextLine().toUpperCase();
 			System.out.print("Introduce clave acceso: ");
 			ClaveAcceso clave = null;
-			Usuario aux = null;
 			try {
-				clave = new ClaveAcceso("Miau#0");
-				clave.setTexto(teclado.nextLine());
+				clave = new ClaveAcceso();
+				clave = new ClaveAcceso(teclado.nextLine());
 
 				// Busca usuario coincidente con las credenciales.
+
 				usrEnSesion = datos.obtenerUsuario(id);
 
 				// Encripta clave tecleada utilizando un objeto temporal
 				// que ejecutará automáticamente el método privado.
-				aux = new Usuario();
+				Usuario aux = new Usuario();
+				aux.setClaveAcceso(new ClaveAcceso(clave));
+				clave = aux.getClaveAcceso();
 			} 
-			catch (ModeloException | DatosException e) {
-				System.out.println(e.getMessage());
+			catch (ModeloException e) { 	
+				//System.out.println(e.getMessage());
 				//e.printStackTrace();
 			}
-
-			aux.setClaveAcceso(clave);
-			clave = aux.getClaveAcceso();
 			if (usrEnSesion != null && usrEnSesion.getClaveAcceso().equals(clave)) {
+				simulacion.setUsr(usrEnSesion);
 				return true;
 			} else {
 				intentosPermitidos--;
 				System.out.print("Credenciales incorrectas: ");
 				System.out.println("Quedan " + intentosPermitidos + " intentos... ");
-			} 
+			}
 		} while (intentosPermitidos > 0);
 
 		return false;

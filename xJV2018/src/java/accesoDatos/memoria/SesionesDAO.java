@@ -17,7 +17,6 @@ import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
 import modelo.ModeloException;
 import modelo.SesionUsuario;
-import modelo.Simulacion;
 
 public class SesionesDAO implements OperacionesDAO {
 
@@ -48,24 +47,19 @@ public class SesionesDAO implements OperacionesDAO {
 		}
 		return instancia;
 	}
-	
+
 	//OPERACIONES DAO
 	/**
 	 * Búsqueda de sesión por idSesion.
-	 * @param idSesion - el idUsr+fecha a buscar.
-	 * @return - la sesión encontrada. 
-	 * @throws DatosException - si no existe. 
+	 * @param id - el idUsr+fecha a buscar.
+	 * @return - la sesión encontrada; sin encuentra. 
 	 */
 	@Override
-	public SesionUsuario obtener(String idSesion) throws DatosException  {
-		if (idSesion != null) {
-			int posicion = indexSort(idSesion);			// En base 1
-			if (posicion >= 0) {
-				return datosSesiones.get(posicion - 1);     	// En base 0
-			}
-			else {
-				throw new DatosException("Obtener: "+ idSesion + " no existe");
-			}
+	public SesionUsuario obtener(String id) {
+		assert id != null;
+		int posicion = indexSort(id);					// En base 1
+		if (posicion >= 0) {
+			return datosSesiones.get(posicion - 1);     // En base 0
 		}
 		return null;
 	}
@@ -97,7 +91,7 @@ public class SesionesDAO implements OperacionesDAO {
 		}	
 		return -(inicio + 1);					// Posición que ocuparía -negativo- base 1
 	}
-	
+
 	/**
 	 * Búsqueda de Sesion dado un objeto, reenvía al método que utiliza idSesion.
 	 * @param obj - la SesionUsuario a buscar.
@@ -117,7 +111,7 @@ public class SesionesDAO implements OperacionesDAO {
 	public List obtenerTodos() {
 		return datosSesiones;
 	}
-	
+
 	/**
 	 * Búsqueda de todas la sesiones de un mismo usuario.
 	 * @param idUsr - el identificador de usuario a buscar.
@@ -148,7 +142,7 @@ public class SesionesDAO implements OperacionesDAO {
 		// devuelve la sublista de sesiones buscadas.
 		return datosSesiones.subList(primera, ultima+1);
 	}
-	
+
 	/**
 	 * Alta de una nueva SesionUsuario en orden y sin repeticiones según IdUsr + fecha. 
 	 * Busca previamente la posición que le corresponde por búsqueda binaria.
@@ -166,7 +160,7 @@ public class SesionesDAO implements OperacionesDAO {
 		else {
 			throw new DatosException("Alta: "+ sesionNueva.getId() + " ya existe");
 		}
-		
+
 	}
 
 	/**
@@ -186,7 +180,7 @@ public class SesionesDAO implements OperacionesDAO {
 			throw new DatosException("Baja: "+ idSesion + " no existe");
 		}
 	}
-	
+
 	/**
 	 *  Actualiza datos de una SesionUsuario reemplazando el almacenado por el recibido.
 	 *	@param obj - SesionUsuario con las modificaciones.
@@ -205,7 +199,7 @@ public class SesionesDAO implements OperacionesDAO {
 			throw new DatosException("Actualizar: "+ sesionActualizada.getId() + " no existe");
 		}
 	}
-	
+
 	/**
 	 * Obtiene el listado de todos las sesiones almacenadas.
 	 * @return el texto con el volcado de datos.

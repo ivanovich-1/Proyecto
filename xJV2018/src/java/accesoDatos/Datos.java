@@ -32,8 +32,9 @@ public class Datos {
 	public Datos() throws DatosException {
 		usuariosDAO = UsuariosDAO.getInstancia();
 		sesionesDAO = SesionesDAO.getInstancia();
-		simulacionesDAO = SimulacionesDAO.getInstancia();
 		mundosDAO = MundosDAO.getInstancia();
+		simulacionesDAO = SimulacionesDAO.getInstancia();
+		
 	}
 
 	/**
@@ -50,22 +51,20 @@ public class Datos {
 	/**
 	 * Método fachada que obtiene un Usuario dado el id. 
 	 * Reenvia petición al método DAO específico.
-	 * @param idUsr - el idUsr de Usuario a obtener.
-	 * @return - el Usuario encontrado; DatosException si no existe.
-	 * @throws DatosException 
+	 * @param id - el id de Usuario a obtener.
+	 * @return - el Usuario encontrado; null si no encuentra.
 	 */	
-	public Usuario obtenerUsuario(String idUsr) throws DatosException {
-		return usuariosDAO.obtener(idUsr);
+	public Usuario obtenerUsuario(String id) {
+		return usuariosDAO.obtener(id);
 	}
 
 	/**
 	 * Método fachada que obtiene un Usuario dado un objeto. 
 	 * Reenvia petición al método DAO específico.
 	 * @param usr - el objeto Usuario a obtener.
-	 * @return - el Usuario encontrado; DatosException si no existe.
-	 * @throws DatosException 
+	 * @return - el Usuario encontrado; null si no encuentra. 
 	 */	
-	public Usuario obtenerUsuario(Usuario usr) throws DatosException {
+	public Usuario obtenerUsuario(Usuario usr)  {
 		return usuariosDAO.obtener(usr);
 	}
 	
