@@ -20,17 +20,17 @@ import modelo.ClaveAcceso;
 import modelo.ModeloException;
 import modelo.Simulacion;
 import modelo.Usuario;
+import util.Fecha;
 
 public class Presentacion {
 
-	private Datos datos;
 	public static final int MAX_INTENTOS_FALLIDOS = 3;
+	private Datos datos;
 	private Usuario usrEnSesion;
 	private Simulacion simulacion;
 
 	public Presentacion() throws ModeloException, DatosException  {
 		datos = new Datos();
-		simulacion = new Simulacion();
 	}
 
 	public Usuario getUsrEnSesion() {
@@ -90,7 +90,7 @@ public class Presentacion {
 				//e.printStackTrace();
 			}
 			if (usrEnSesion != null && usrEnSesion.getClaveAcceso().equals(clave)) {
-				simulacion.setUsr(usrEnSesion);
+				simulacion = datos.obtenerSimulacion("III1R-" + new Fecha(0001, 01, 01, 01, 01, 01).toStringMarcaTiempo());
 				return true;
 			} else {
 				intentosPermitidos--;

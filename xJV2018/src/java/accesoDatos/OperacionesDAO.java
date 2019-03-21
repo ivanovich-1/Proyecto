@@ -11,8 +11,6 @@ package accesoDatos;
 
 import java.util.List;
 
-import modelo.Simulacion;
-
 public interface OperacionesDAO {
 
 	/**
@@ -67,6 +65,12 @@ public interface OperacionesDAO {
 	 */
 	String listarDatos();
 
+	/**
+	 * Obtiene el listado de todos id de los objetos almacenados.
+	 * @return el texto con el volcado de id.
+	 */
+	String listarId();
+	
 	/**
 	 * Elimina todos los datos y restaura predeterminados.
 	 */

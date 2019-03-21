@@ -33,8 +33,8 @@ public class UsuariosDAO  implements OperacionesDAO {
 	private static UsuariosDAO instancia = null;
 
 	// Elementos de almacenamiento.
-	private static ArrayList <Usuario> datosUsuarios;
-	private static Map <String,String> equivalenciasId;
+	private ArrayList <Usuario> datosUsuarios;
+	private Map <String,String> equivalenciasId;
 
 	/**
 	 * Constructor por defecto de uso interno.
@@ -64,34 +64,23 @@ public class UsuariosDAO  implements OperacionesDAO {
 	 *  Método para generar de datos predeterminados.
 	 */
 	private void cargarPredeterminados() {
-		String nombreUsr = "Admin";
-		String password = "Miau#0";	
-		Usuario usrPredeterminado = null;
 		try {
-			usrPredeterminado = new Usuario(new Nif("00000000T"), nombreUsr, "Admin Admin", 
+			String nombreUsr = "Admin";
+			String password = "Miau#0";	
+			alta(new Usuario(new Nif("00000000T"), nombreUsr, "Admin Admin", 
 					new DireccionPostal("Iglesia", "0", "30012", "Murcia"), 
 					new Correo("jv.admin" + "@gmail.com"), new Fecha(2000, 01, 01), 
-					new Fecha(), new ClaveAcceso(password), RolUsuario.ADMINISTRADOR);
-		} 
-		catch (ModeloException e) {
-			e.printStackTrace();
-		}
-		datosUsuarios.add(usrPredeterminado);
-		registrarEquivalenciaId(usrPredeterminado);
-
-		nombreUsr = "Invitado";
-		password = "Miau#0";	
-		try {
-			usrPredeterminado = new Usuario(new Nif("00000001R"), nombreUsr, "Invitado Invitado", 
+					new Fecha(), new ClaveAcceso(password), RolUsuario.ADMINISTRADOR));
+			nombreUsr = "Invitado";
+			password = "Miau#0";	
+			alta(new Usuario(new Nif("00000001R"), nombreUsr, "Invitado Invitado", 
 					new DireccionPostal("Iglesia", "00", "30012", "Murcia"), 
 					new Correo("jv.invitado" + "@gmail.com"), new Fecha(2000, 01, 01), 
-					new Fecha(), new ClaveAcceso(password), RolUsuario.INVITADO);
+					new Fecha(), new ClaveAcceso(password), RolUsuario.INVITADO));
 		} 
-		catch (ModeloException e) {
+		catch (ModeloException | DatosException e) {
 			e.printStackTrace();
 		}
-		datosUsuarios.add(usrPredeterminado);
-		registrarEquivalenciaId(usrPredeterminado);
 	}
 
 	//OPERACIONES DAO
@@ -164,23 +153,25 @@ public class UsuariosDAO  implements OperacionesDAO {
 	 * @throws DatosException 
 	 */
 	@Override
-	public void alta(Object usr) throws DatosException {
-		assert usr != null;
-		int posInsercion = indexSort(((Usuario) usr).getId());
+	public void alta(Object obj) throws DatosException {
+		assert obj != null;
+		Usuario usr = (Usuario) obj;									// Para conversión cast
+		int posInsercion = indexSort(usr.getId());
 
 		if (posInsercion < 0) {
-			datosUsuarios.add(Math.abs(posInsercion)-1 ,(Usuario) usr);  // Inserta en orden.
-			registrarEquivalenciaId((Usuario) usr);
+			datosUsuarios.add(Math.abs(posInsercion)-1 , usr);  		// Inserta en orden.
+			registrarEquivalenciaId(usr);
 		}
 		else {
 			if (!datosUsuarios.get(posInsercion-1).equals(usr)) {
-				producirVariantesIdUsr((Usuario) usr);
+				producirVariantesIdUsr(usr);
 			}
 			else {
-				throw new DatosException("ALTA Usuario: Ya existe.");
+				throw new DatosException("UsuariosDAO.alta:" + usr.getId() +" Ya existe.");
 			}
 		}
 	}
+	
 	/**
 	 *  Si hay coincidencia de identificador hace 23 intentos de variar la última letra
 	 *  procedente del NIF. Llama al generarVarianteIdUsr() de la clase Usuario.
@@ -203,9 +194,8 @@ public class UsuariosDAO  implements OperacionesDAO {
 			}
 			intentos--;
 		} while (intentos >= 0);
-		throw new DatosException("ALTA Usuario: imposible generar variante del " + usr.getId());
+		throw new DatosException("UsuariosDAO.alta: imposible generar variante del " + usr.getId());
 	}
-
 
 	/**
 	 *  Añade nif y correo como equivalencias de idUsr para el inicio de sesión. 
@@ -220,14 +210,14 @@ public class UsuariosDAO  implements OperacionesDAO {
 
 	/**
 	 * Elimina el objeto, dado el id utilizado para el almacenamiento.
-	 * @param idUsr - el identificador del objeto a eliminar.
+	 * @param id - el identificador del objeto a eliminar.
 	 * @return - el Objeto eliminado. 
 	 * @throws DatosException - si no existe.
 	 */
 	@Override
-	public Object baja(String idUsr) throws DatosException {
-		assert (idUsr != null);
-		int posicion = indexSort(idUsr); 							// En base 1
+	public Object baja(String id) throws DatosException {
+		assert (id != null);
+		int posicion = indexSort(id); 									// En base 1
 		if (posicion > 0) {
 			Usuario usrEliminado = datosUsuarios.remove(posicion-1); 	// En base 0
 			equivalenciasId.remove(usrEliminado.getId());
@@ -236,7 +226,7 @@ public class UsuariosDAO  implements OperacionesDAO {
 			return usrEliminado;
 		}
 		else {
-			throw new DatosException("Baja: "+ idUsr + " no existe");
+			throw new DatosException("UsuariosDAO.baja: "+ id + " no existe");
 		}
 	} 
 
@@ -250,7 +240,7 @@ public class UsuariosDAO  implements OperacionesDAO {
 	public void actualizar(Object obj) throws DatosException  {
 		assert obj != null;
 		Usuario usrActualizado = (Usuario) obj;							// Para conversión cast
-		int posicion = indexSort(usrActualizado.getId()); 		// En base 1
+		int posicion = indexSort(usrActualizado.getId()); 				// En base 1
 		if (posicion > 0) {
 			// Reemplaza equivalencias de Nif y Correo
 			Usuario usrModificado = datosUsuarios.get(posicion-1); 	    // En base 0
@@ -262,7 +252,7 @@ public class UsuariosDAO  implements OperacionesDAO {
 			datosUsuarios.set(posicion-1, usrActualizado);  			// En base 0		
 		}
 		else {
-			throw new DatosException("actualizar: "+ usrActualizado.getId() + " no existe");
+			throw new DatosException("UsuariosDAO.actualizar: "+ usrActualizado.getId() + " no existe");
 		}
 	} 
 
@@ -272,15 +262,26 @@ public class UsuariosDAO  implements OperacionesDAO {
 	 */
 	@Override
 	public String listarDatos() {
-		StringBuilder listado = new StringBuilder();
-		for (Usuario usuario: datosUsuarios) {
-			if (usuario != null) {
-				listado.append("\n" + usuario); 
-			}
+		StringBuilder result = new StringBuilder();
+		for (Usuario usr: datosUsuarios) {
+			result.append("\n" + usr); 
 		}
-		return listado.toString();
+		return result.toString();
 	}
 
+	/**
+	 * Obtiene el listado de todos id de los objetos almacenados.
+	 * @return el texto con el volcado de id.
+	 */
+	@Override
+	public String listarId() {
+		StringBuilder result = new StringBuilder();
+		for (Usuario usr: datosUsuarios) {
+			result.append("\n" + usr.getId()); 
+		}
+		return result.toString();
+	}
+	
 	/**
 	 * Elimina todos los usuarios almacenados y regenera los predeterminados.
 	 */

@@ -34,7 +34,6 @@ public class Datos {
 		sesionesDAO = SesionesDAO.getInstancia();
 		mundosDAO = MundosDAO.getInstancia();
 		simulacionesDAO = SimulacionesDAO.getInstancia();
-		
 	}
 
 	/**
@@ -203,7 +202,7 @@ public class Datos {
 	 * @return - la Simulacion encontrada.
 	 * @throws DatosException - si no existe.
 	 */	
-	public Simulacion obtenerSimulacion(String idSimulacion) throws DatosException {
+	public Simulacion obtenerSimulacion(String idSimulacion) {
 		return simulacionesDAO.obtener(idSimulacion);
 	}
 	
@@ -214,7 +213,7 @@ public class Datos {
 	 * @return - la Simulacion encontrada.
 	 * @throws DatosException - si no existe.
 	 */	
-	public Simulacion obtenerSimulacion(Simulacion simulacion) throws DatosException {
+	public Simulacion obtenerSimulacion(Simulacion simulacion) {
 		return simulacionesDAO.obtener(simulacion);
 	}
 	
@@ -224,9 +223,8 @@ public class Datos {
 	 * @param simulacion - el objeto Simulacion a obtener.
 	 * @return - lista de simulaciones encontradas.
 	 * @throws ModeloException 
-	 * @throws DatosException - si no existe.
 	 */	
-	public List<Simulacion> obtenerSimulacionesUsuario(String idUsr) throws ModeloException, DatosException {
+	public List<Simulacion> obtenerSimulacionesUsuario(String idUsr) throws ModeloException {
 		return simulacionesDAO.obtenerTodasMismoUsr(idUsr);
 	}
 	

@@ -24,7 +24,7 @@ public class SesionesDAO implements OperacionesDAO {
 	private static SesionesDAO instancia = null;
 
 	// Elemento de almacenamiento. 
-	private static ArrayList<SesionUsuario> datosSesiones;
+	private ArrayList<SesionUsuario> datosSesiones;
 
 	/**
 	 * Constructor por defecto de uso interno.
@@ -153,14 +153,13 @@ public class SesionesDAO implements OperacionesDAO {
 	public void alta(Object obj) throws DatosException  {
 		assert obj != null;
 		SesionUsuario sesionNueva = (SesionUsuario) obj;							// Para conversión cast
-		int posicionInsercion = indexSort(sesionNueva.getId()); 
-		if (posicionInsercion < 0) {
-			datosSesiones.add(-posicionInsercion - 1, sesionNueva); 				// Inserta la sesión en orden.
+		int posInsercion = indexSort(sesionNueva.getId()); 
+		if (posInsercion < 0) {
+			datosSesiones.add(Math.abs(posInsercion)-1, sesionNueva); 				// Inserta la sesión en orden.
 		}
 		else {
-			throw new DatosException("Alta: "+ sesionNueva.getId() + " ya existe");
+			throw new DatosException("SesionesDAO.alta: "+ sesionNueva.getId() + " ya existe");
 		}
-
 	}
 
 	/**
@@ -177,7 +176,7 @@ public class SesionesDAO implements OperacionesDAO {
 			return datosSesiones.remove(posicion - 1); 								// En base 0
 		}
 		else {
-			throw new DatosException("Baja: "+ idSesion + " no existe");
+			throw new DatosException("SesionesDAO.baja: "+ idSesion + " no existe");
 		}
 	}
 
@@ -189,14 +188,14 @@ public class SesionesDAO implements OperacionesDAO {
 	@Override
 	public void actualizar(Object obj) throws DatosException {
 		assert obj != null;
-		SesionUsuario sesionActualizada = (SesionUsuario) obj;						// Para conversión cast
-		int posicion = indexSort(sesionActualizada.getId()); 			// En base 1
+		SesionUsuario sesionActualizada = (SesionUsuario) obj;				// Para conversión cast
+		int posicion = indexSort(sesionActualizada.getId()); 				// En base 1
 		if (posicion > 0) {
 			// Reemplaza elemento
-			datosSesiones.set(posicion - 1, sesionActualizada);  					// En base 0		
+			datosSesiones.set(posicion - 1, sesionActualizada);  			// En base 0		
 		}
 		else {
-			throw new DatosException("Actualizar: "+ sesionActualizada.getId() + " no existe");
+			throw new DatosException("SesionesDAO.actualizar: "+ sesionActualizada.getId() + " no existe");
 		}
 	}
 
@@ -206,15 +205,26 @@ public class SesionesDAO implements OperacionesDAO {
 	 */
 	@Override
 	public String listarDatos() {
-		StringBuilder listado = new StringBuilder();
+		StringBuilder result = new StringBuilder();
 		for (SesionUsuario sesiones: datosSesiones) {
-			if (sesiones != null) {
-				listado.append("\n" + sesiones);
-			}
+			result.append("\n" + sesiones);
 		}
-		return listado.toString();
+		return result.toString();
 	}
 
+	/**
+	 * Obtiene el listado de todos id de los objetos almacenados.
+	 * @return el texto con el volcado de id.
+	 */
+	@Override
+	public String listarId() {
+		StringBuilder result = new StringBuilder();
+		for (SesionUsuario sesiones: datosSesiones) {
+			result.append("\n" + sesiones.getId()); 
+		}
+		return result.toString();
+	}
+	
 	/**
 	 * Elimina todos las sesiones almacenadas.
 	 */

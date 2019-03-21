@@ -4,26 +4,20 @@
  *  Colabora en el patron Fachada.
  *  @since: prototipo2.0
  *  @source: SimulacionesDAO.java 
- *  @version: 2.0 - 2018/04/20 
+ *  @version: 2.0 - 2019/03/20 
  *  @author: ajp
  */
 
 package accesoDatos.memoria;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
-import config.Configuracion;
 import modelo.ModeloException;
 import modelo.Mundo;
+import modelo.SesionUsuario;
 import modelo.Simulacion;
 import modelo.Simulacion.EstadoSimulacion;
 import modelo.Usuario;
@@ -35,7 +29,7 @@ public class SimulacionesDAO implements OperacionesDAO {
 	private static SimulacionesDAO instancia;
 
 	// Elemento de almacenamiento.
-	private static ArrayList<Simulacion> datosSimulaciones;
+	private ArrayList<Simulacion> datosSimulaciones;
 
 	/**
 	 * Constructor por defecto de uso interno.
@@ -62,15 +56,18 @@ public class SimulacionesDAO implements OperacionesDAO {
 	}
 
 	/**
-	 *  Método para generar de datos predeterminados. 
+	 *  Método para generar datos predeterminados. 
 	 */
 	private void cargarPredeterminados() {
-		// Obtiene usuario (invitado) y mundo predeterminados.
-		Usuario usrDemo = null;
-		usrDemo = UsuariosDAO.getInstancia().obtener("III1R");
-		Mundo mundoDemo = MundosDAO.getInstancia().obtener("Demo1");
-		Simulacion simulacionDemo = new Simulacion(usrDemo, new Fecha(), mundoDemo, EstadoSimulacion.PREPARADA);
-		datosSimulaciones.add(simulacionDemo);
+		try {
+			// Obtiene usuario (invitado) y mundo predeterminados.
+			Usuario usrDemo = UsuariosDAO.getInstancia().obtener("III1R");
+			Mundo mundoDemo = MundosDAO.getInstancia().obtener("Demo1");
+			alta(new Simulacion(usrDemo, new Fecha(0001, 01, 01, 01, 01, 01), mundoDemo, EstadoSimulacion.PREPARADA));
+		} 
+		catch (DatosException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// OPERACIONES DAO
@@ -140,9 +137,8 @@ public class SimulacionesDAO implements OperacionesDAO {
 	 * @param idUsr - el identificador de usuario a buscar.
 	 * @return - Sublista con las simulaciones encontrada; null si no existe ninguna.
 	 * @throws ModeloException 
-	 * @throws DatosException 
 	 */
-	public List<Simulacion> obtenerTodasMismoUsr(String idUsr) throws ModeloException, DatosException {
+	public List<Simulacion> obtenerTodasMismoUsr(String idUsr) throws ModeloException {
 		Simulacion aux = null;
 		aux = new Simulacion();
 		aux.setUsr(UsuariosDAO.getInstancia().obtener(idUsr));
@@ -174,13 +170,13 @@ public class SimulacionesDAO implements OperacionesDAO {
 	 */	
 	public void alta(Object obj) throws DatosException  {
 		assert obj != null;
-		Simulacion simulNueva = (Simulacion) obj;								// Para conversión cast
-		int posicionInsercion = indexSort(simulNueva.getId()); 
-		if (posicionInsercion < 0) {
-			datosSimulaciones.add(-posicionInsercion - 1, simulNueva); 			// Inserta la simulación en orden.
+		Simulacion simulacion = (Simulacion) obj;								// Para conversión cast
+		int posInsercion = indexSort(simulacion.getId()); 
+		if (posInsercion < 0) {
+			datosSimulaciones.add(Math.abs(posInsercion)-1, simulacion); 		// Inserta la simulación en orden.
 		}
 		else {
-			throw new DatosException("Alta: "+ simulNueva.getId() + " ya existe");
+			throw new DatosException("SimulacionesDAO.alta: "+ simulacion.getId() + " ya existe");
 		}
 	}
 
@@ -193,12 +189,12 @@ public class SimulacionesDAO implements OperacionesDAO {
 	@Override
 	public Simulacion baja(String idSimulacion) throws DatosException  {
 		assert (idSimulacion != null);
-		int posicion = indexSort(idSimulacion); 							// En base 1
+		int posicion = indexSort(idSimulacion); 								// En base 1
 		if (posicion > 0) {
 			return datosSimulaciones.remove(posicion - 1); 						// En base 0
 		}
 		else {
-			throw new DatosException("Baja: "+ idSimulacion + " no existe");
+			throw new DatosException("SimulacionesDAO.baja: "+ idSimulacion + " no existe");
 		}
 	}
 
@@ -212,13 +208,13 @@ public class SimulacionesDAO implements OperacionesDAO {
 	public void actualizar(Object obj) throws DatosException  {
 		assert obj != null;
 		Simulacion simulActualizada = (Simulacion) obj;							// Para conversión cast
-		int posicion = indexSort(simulActualizada.getId()); 	// En base 1
+		int posicion = indexSort(simulActualizada.getId()); 					// En base 1
 		if (posicion > 0) {
 			// Reemplaza elemento
 			datosSimulaciones.set(posicion - 1, simulActualizada);  			// En base 0		
 		}
 		else {
-			throw new DatosException("Actualizar: "+ simulActualizada.getId() + "no existe");
+			throw new DatosException("SimulacionesDAO.actualizar: "+ simulActualizada.getId() + "no existe");
 		}
 	}
 
@@ -228,13 +224,24 @@ public class SimulacionesDAO implements OperacionesDAO {
 	 */
 	@Override
 	public String listarDatos() {
-		StringBuilder listado = new StringBuilder();
+		StringBuilder result = new StringBuilder();
 		for (Simulacion simulacion: datosSimulaciones) {
-			if (simulacion != null) {
-				listado.append("\n" + simulacion);
-			}
+			result.append("\n" + simulacion);
 		}
-		return listado.toString();
+		return result.toString();
+	}
+
+	/**
+	 * Obtiene el listado de todos id de los objetos almacenados.
+	 * @return el texto con el volcado de id.
+	 */
+	@Override
+	public String listarId() {
+		StringBuilder result = new StringBuilder();
+		for (Simulacion simulacion: datosSimulaciones) {
+			result.append("\n" + simulacion.getId()); 
+		}
+		return result.toString();
 	}
 
 	/**

@@ -26,7 +26,7 @@ public class MundosDAO implements OperacionesDAO {
 	private static MundosDAO instancia;
 
 	// Elementos de almacenamiento.
-	private static ArrayList<Mundo> datosMundos;
+	private ArrayList<Mundo> datosMundos;
 
 	/**
 	 * Constructor por defecto de uso interno.
@@ -55,23 +55,27 @@ public class MundosDAO implements OperacionesDAO {
 	 *  Método para generar de datos predeterminados.
 	 */
 	private void cargarPredeterminados() {
-		// En este array los 0 indican celdas con célula muerta y los 1 vivas
-		byte[][] espacioDemo =  new byte[][]{ 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0 }, //
-			{ 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
-			{ 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 }, // 
-			{ 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0 }, //
-			{ 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 }, // Given:
-			{ 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Planeador
-			{ 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Flip-Flop
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // 1x Still Life
-		};
-		Mundo mundoDemo = new Mundo("MundoDemo", espacioDemo, new ArrayList<Posicion>(), new HashMap<String, int[]>(), FormaEspacio.ESFERICO);
-		datosMundos.add(mundoDemo);
+		try {
+			// En este array los 0 indican celdas con célula muerta y los 1 vivas
+			byte[][] espacioDemo =  new byte[][]{ 
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+				{ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0 }, //
+				{ 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
+				{ 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 }, // 
+				{ 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 }, // Given:
+				{ 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Planeador
+				{ 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Flip-Flop
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // 1x Still Life
+			};
+			alta(new Mundo("Demo1", espacioDemo, new ArrayList<Posicion>(), new HashMap<String, int[]>(), FormaEspacio.ESFERICO));
+		} 
+		catch (DatosException e) {
+			e.printStackTrace();
+		}
 	}
 
 	//OPERACIONES DAO
@@ -147,12 +151,12 @@ public class MundosDAO implements OperacionesDAO {
 	public void alta(Object obj) throws DatosException  {
 		assert obj != null;
 		Mundo mundoNuevo = (Mundo) obj;										// Para conversión cast
-		int posicionInsercion = indexSort(mundoNuevo.getId()); 
-		if (posicionInsercion < 0) {
-			datosMundos.add(-posicionInsercion - 1, mundoNuevo); 			// Inserta la sesión en orden.
+		int posInsercion = indexSort(mundoNuevo.getId()); 
+		if (posInsercion < 0) {
+			datosMundos.add(Math.abs(posInsercion)-1, mundoNuevo); 			// Inserta la sesión en orden.
 		}
 		else {
-			throw new DatosException("Alta: "+ mundoNuevo.getId() + " ya existe");
+			throw new DatosException("MundosDAO.alta: "+ mundoNuevo.getId() + " ya existe");
 		}
 	}
 
@@ -167,10 +171,10 @@ public class MundosDAO implements OperacionesDAO {
 		assert (nombre != null);
 		int posicion = indexSort(nombre); 									// En base 1
 		if (posicion > 0) {
-			return datosMundos.remove(posicion - 1); 								// En base 0
+			return datosMundos.remove(posicion - 1); 						// En base 0
 		}
 		else {
-			throw new DatosException("Baja: "+ nombre + " no existe");
+			throw new DatosException("MundosDAO.baja: "+ nombre + " no existe");
 		}
 	}
 
@@ -182,14 +186,14 @@ public class MundosDAO implements OperacionesDAO {
 	@Override
 	public void actualizar(Object obj) throws DatosException  {
 		assert obj != null;
-		Mundo mundoActualizado = (Mundo) obj;										// Para conversión cast
+		Mundo mundoActualizado = (Mundo) obj;								// Para conversión cast
 		int posicion = indexSort(mundoActualizado.getId()); 				// En base 1
 		if (posicion > 0) {
 			// Reemplaza elemento
-			datosMundos.set(posicion - 1, mundoActualizado);  						// En base 0		
+			datosMundos.set(posicion - 1, mundoActualizado);  				// En base 0		
 		}
 		else {
-			throw new DatosException("Actualizar: "+ mundoActualizado.getId() + " no existe");
+			throw new DatosException("MundosDAO.actualizar : "+ mundoActualizado.getId() + " no existe");
 		}
 	}
 
@@ -199,15 +203,26 @@ public class MundosDAO implements OperacionesDAO {
 	 */
 	@Override
 	public String listarDatos() {
-		StringBuilder listado = new StringBuilder();
+		StringBuilder result = new StringBuilder();
 		for (Mundo mundo: datosMundos) {
-			if (mundo != null) {
-				listado.append("\n" + mundo);
-			}
+			result.append("\n" + mundo);
 		}
-		return listado.toString();
+		return result.toString();
 	}
 
+	/**
+	 * Obtiene el listado de todos id de los objetos almacenados.
+	 * @return el texto con el volcado de id.
+	 */
+	@Override
+	public String listarId() {
+		StringBuilder result = new StringBuilder();
+		for (Mundo mundo: datosMundos) {
+			result.append("\n" + mundo.getId());
+		}
+		return result.toString();
+	}
+	
 	/**
 	 * Elimina todos los mundos almacenados y regenera el demo predeterminado.
 	 */
