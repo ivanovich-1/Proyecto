@@ -3,7 +3,7 @@
  * Almacén de datos del programa. Utiliza patron Façade.
  * @since: prototipo2.0
  * @source: Datos.java 
- * @version: 2.0 - 2019.03.15
+ * @version: 2.0 - 2019.03.23
  * @author: ajp
  */
 
@@ -11,7 +11,7 @@ package accesoDatos;
 
 import java.util.List;
 
-import accesoDatos.memoria.*;
+import accesoDatos.fichero.*;
 import modelo.ModeloException;
 import modelo.Mundo;
 import modelo.SesionUsuario;
@@ -19,12 +19,12 @@ import modelo.Simulacion;
 import modelo.Usuario;
 
 public class Datos {
-	
+
 	private UsuariosDAO usuariosDAO; 
 	private SesionesDAO sesionesDAO;
 	private SimulacionesDAO simulacionesDAO;
 	private MundosDAO mundosDAO;
-	
+
 	/**
 	 * Constructor por defecto.
 	 * @throws DatosException 
@@ -45,7 +45,7 @@ public class Datos {
 		simulacionesDAO.cerrar();
 		mundosDAO.cerrar();
 	}
-
+	
 	// FACHADA usuariosDAO
 	/**
 	 * Método fachada que obtiene un Usuario dado el id. 
@@ -64,9 +64,9 @@ public class Datos {
 	 * @return - el Usuario encontrado; null si no encuentra. 
 	 */	
 	public Usuario obtenerUsuario(Usuario usr)  {
-		return usuariosDAO.obtener(usr);
+		return usuariosDAO.obtener(usr.getId());
 	}
-	
+
 	/**
 	 * Método fachada para alta de un Usuario. 
 	 * Reenvia petición al método DAO específico.
@@ -78,13 +78,33 @@ public class Datos {
 	}
 
 	/**
-	 * Método fachada para alta de un Usuario. 
+	 * Método fachada para baja de un Usuario y sus dependencias. 
 	 * Reenvia petición al método DAO específico.
-	 * @param id - el idUsr de Usuario a dar de baja.
-	 * @throws DatosException - si ya existe.
+	 * @param idUsr - el id de Usuario a dar de baja.
+	 * @throws DatosException - si no existe.
+	 * @throws ModeloException 
 	 */
-	public Usuario bajaUsuario(String idUsr) throws DatosException  {
-		return (Usuario) usuariosDAO.baja(idUsr);
+	public Usuario bajaUsuario(String idUsr) throws DatosException, ModeloException  {
+		assert idUsr != null;
+		Usuario usrBaja = usuariosDAO.baja(idUsr);
+		// Baja de sesiones y simulaciones dependientes.
+		for (SesionUsuario sesionBaja : sesionesDAO.obtenerTodasMismoUsr(idUsr)) {
+			sesionesDAO.baja(sesionBaja.getId());
+		}
+		for (Simulacion simulBaja : simulacionesDAO.obtenerTodasMismoUsr(idUsr)) {
+			simulacionesDAO.baja(simulBaja.getId());
+		}	
+		return usrBaja;
+	}
+
+	/**
+	 * Método fachada para baja de un Usuario y sus dependencias. 
+	 * @param usr - el objeto Usuario a dar de baja.
+	 * @throws DatosException - si no existe.
+	 * @throws ModeloException 
+	 */
+	public Usuario bajaUsuario(Usuario usr) throws DatosException, ModeloException  {
+		return bajaUsuario(usr.getId());
 	}
 
 	/**
@@ -108,14 +128,16 @@ public class Datos {
 	}
 
 	/**
-	 * Método fachada para eliminar todos
-	 * los usuarios.  
+	 * Método fachada para eliminar todos los usuarios y sus dependencias.  
 	 * Reenvia petición al método DAO específico.
 	 */
 	public void borrarTodosUsuarios() {
-		 usuariosDAO.borrarTodo();
+		usuariosDAO.borrarTodo();
+		// Dependencias.
+		sesionesDAO.borrarTodo();
+		simulacionesDAO.borrarTodo();
 	}
-	
+
 	// FACHADA sesionesDAO
 	/**
 	 * Método fachada que obtiene un Usuario dado el idSesion. 
@@ -129,7 +151,7 @@ public class Datos {
 	}
 
 	/**
-	 * Método fachada que obtiene un Usuario dado un objeto. 
+	 * Método fachada que obtiene un Usuario dado un objeto.
 	 * Reenvia petición al método DAO específico.
 	 * @param sesion - la SesionUsuario a obtener.
 	 * @return - la SesionUsuario encontrada.
@@ -138,7 +160,7 @@ public class Datos {
 	public SesionUsuario obtenerSesion(SesionUsuario sesion) throws DatosException {
 		return sesionesDAO.obtener(sesion.getId());
 	}
-	
+
 	/**
 	 * Método fachada para alta de una SesionUsuario. 
 	 * Reenvia petición al método DAO específico.
@@ -152,11 +174,21 @@ public class Datos {
 	/**
 	 * Método fachada para baja de una SesionUsuario. 
 	 * Reenvia petición al método DAO específico.
-	 * @param idSesion - el idUsr + fecha de la SesionUsuario a dar de baja.
-	 * @throws DatosException - si ya existe.
+	 * @param idSesion - el id de la SesionUsuario a dar de baja.
+	 * @throws DatosException - si no existe.
 	 */
 	public SesionUsuario bajaSesion(String idSesion) throws DatosException  {
-		return (SesionUsuario) sesionesDAO.baja(idSesion);
+		return sesionesDAO.baja(idSesion);
+	}
+
+	/**
+	 * Método fachada para baja de una SesionUsuario. 
+	 * Reenvia petición al método DAO específico.
+	 * @param idSesion - el id de la SesionUsuario a dar de baja.
+	 * @throws DatosException - si no existe.
+	 */
+	public SesionUsuario bajaSesion(SesionUsuario sesion) throws DatosException  {
+		return sesionesDAO.baja(sesion.getId());
 	}
 
 	/**
@@ -185,7 +217,7 @@ public class Datos {
 	public void borrarTodasSesiones() {
 		sesionesDAO.borrarTodo();
 	}
-	
+
 	/**
 	 * Método fachada para obtener total sesiones registradas.  
 	 * Reenvia petición al método DAO específico.
@@ -193,30 +225,30 @@ public class Datos {
 	public int getSesionesRegistradas() {
 		return sesionesDAO.obtenerTodos().size();
 	}
-	
+
 	// FACHADA simulacionesDAO
 	/**
 	 * Método fachada que obtiene una Simulacion dado el idSimulacion. 
 	 * Reenvia petición al método DAO específico.
-	 * @param idSimulacion - el idUsr + fecha de la Simulacion a obtener.
+	 * @param idSimulacion - el id de la Simulacion a obtener.
 	 * @return - la Simulacion encontrada.
 	 * @throws DatosException - si no existe.
 	 */	
 	public Simulacion obtenerSimulacion(String idSimulacion) {
 		return simulacionesDAO.obtener(idSimulacion);
 	}
-	
+
 	/**
-	 * Método fachada que obtiene una Simulacion dado un objeto. 
-	 * Reenvia petición al método DAO específico.
+	 * Método fachada que obtiene una Simulacion dado un objeto.
+	 * Reenvia petición al método DAO específico. 
 	 * @param simulacion - el objeto Simulacion a obtener.
 	 * @return - la Simulacion encontrada.
 	 * @throws DatosException - si no existe.
 	 */	
 	public Simulacion obtenerSimulacion(Simulacion simulacion) {
-		return simulacionesDAO.obtener(simulacion);
+		return simulacionesDAO.obtener(simulacion.getId());
 	}
-	
+
 	/**
 	 * Método fachada que obtiene todas las simulaciones de un usuario. 
 	 * Reenvia petición al método DAO específico.
@@ -227,7 +259,7 @@ public class Datos {
 	public List<Simulacion> obtenerSimulacionesUsuario(String idUsr) throws ModeloException {
 		return simulacionesDAO.obtenerTodasMismoUsr(idUsr);
 	}
-	
+
 	/**
 	 * Método fachada para alta de una Simulacion. 
 	 * Reenvia petición al método DAO específico.
@@ -241,11 +273,21 @@ public class Datos {
 	/**
 	 * Método fachada para baja de una Simulacion dado su idSimulacion. 
 	 * Reenvia petición al método DAO específico.
-	 * @param idSimulacion - el idUsr + fecha de la Simulacion a dar de baja.
-	 * @throws DatosException - si ya existe.
+	 * @param idSimulacion - el id de la Simulacion a dar de baja.
+	 * @throws DatosException - si no existe.
 	 */
 	public Simulacion bajaSimulacion(String idSimulacion) throws DatosException  {
-		return (Simulacion) simulacionesDAO.baja(idSimulacion);
+		return simulacionesDAO.baja(idSimulacion);
+	}
+
+	/**
+	 * Método fachada para baja de una Simulacion dado su idSimulacion.
+	 * Reenvia petición al método DAO específico.
+	 * @param simulacion - el objeto Simulacion a dar de baja.
+	 * @throws DatosException - si no existe.
+	 */
+	public Simulacion bajaSimulacion(Simulacion simulacion) throws DatosException  {
+		return simulacionesDAO.baja(simulacion.getId());
 	}
 
 	/**
@@ -275,7 +317,7 @@ public class Datos {
 	public void borrarTodasSimulaciones() {
 		simulacionesDAO.borrarTodo();
 	}
-	
+
 	// FACHADA mundosDAO
 	/**
 	 * Método fachada para obtener un dado su nombre. 
@@ -289,16 +331,16 @@ public class Datos {
 	}
 
 	/**
-	 * Método fachada para obtener un dado un objeto. 
-	 * Reenvia petición al método DAO específico.
+	 * Método fachada para obtener un dado un objeto.
+	 * Reenvia petición al método DAO específico. 
 	 * @param mundo - el objeto Mundo a buscar.
 	 * @return - el Mundo encontrado.
 	 * @throws DatosException - si no existe.
 	 */
 	public Mundo obtenerMundo(Mundo mundo) throws DatosException {
-		return mundosDAO.obtener(mundo);
+		return mundosDAO.obtener(mundo.getId());
 	}
-	
+
 	/**
 	 * Método fachada para alta de un Mundo. 
 	 * Reenvia petición al método DAO específico.
@@ -313,10 +355,20 @@ public class Datos {
 	 * Método fachada para baja de un Mundo. 
 	 * Reenvia petición al método DAO específico.
 	 * @param nombre - el nombre de un Mundo a dar de baja.
-	 * @throws DatosException - si ya existe.
+	 * @throws DatosException - si no existe.
 	 */
-	public Mundo bajaMundo(String nombre) throws DatosException  {
-		return (Mundo) mundosDAO.baja(nombre);
+	public Mundo bajaMundo(String id) throws DatosException  {
+		return mundosDAO.baja(id);
+	}
+
+	/**
+	 * Método fachada para baja de un Mundo.
+	 * Reenvia petición al método DAO específico.
+	 * @param nombre - el nombre de un Mundo a dar de baja.
+	 * @throws DatosException - si no existe.
+	 */
+	public Mundo bajaMundo(Mundo mundo) throws DatosException  {
+		return mundosDAO.baja(mundo.getId());
 	}
 
 	/**
@@ -347,5 +399,5 @@ public class Datos {
 	public void borrarTodosMundos() {
 		mundosDAO.borrarTodo();
 	}
-	
+
 } //class

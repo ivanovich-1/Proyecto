@@ -1,16 +1,18 @@
 /** 
  *  Proyecto: Juego de la vida.
- *  Implementa el concepto de correo según el modelo 1.2
+ *  Implementa el concepto de correo según el modelo2
  *  Utiliza un string para representar el texto del correo.  
  *  @since: prototipo1.1
  *  @source: Correo.java 
- *  @version: 1.2 - 2019/02/22 
+ *  @version: 2.0 - 2019/03/23 
  *  @author: ajp
  */
 
 package modelo;
 
-public class Correo {
+import java.io.Serializable;
+
+public class Correo implements Serializable {
 
 	private String texto;
 

@@ -58,18 +58,24 @@ public class MundosDAO implements OperacionesDAO {
 		try {
 			// En este array los 0 indican celdas con célula muerta y los 1 vivas
 			byte[][] espacioDemo =  new byte[][]{ 
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0 }, //
-				{ 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
-				{ 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 }, // 
-				{ 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0 }, // Given:
-				{ 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Planeador
-				{ 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Flip-Flop
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // 1x Still Life
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // 
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // 
+				{ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Planeador
+				{ 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Flip-Flop
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 1x Still Life
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  //
 			};
 			alta(new Mundo("Demo1", espacioDemo, new ArrayList<Posicion>(), new HashMap<String, int[]>(), FormaEspacio.ESFERICO));
 		} 
@@ -120,16 +126,6 @@ public class MundosDAO implements OperacionesDAO {
 			}
 		}	
 		return -(inicio + 1);					// Posición que ocuparía -negativo- base 1
-	}
-
-	/**
-	 * Búsqueda de Mundo dado un objeto, reenvía al método que utiliza nombre.
-	 * @param obj - el Mundo a buscar.
-	 * @return - el Mundo encontrado; null si no encuentra.
-	 */
-	@Override
-	public Mundo obtener(Object obj) {
-		return this.obtener(((Mundo) obj).getId());
 	}
 
 	/**
@@ -230,14 +226,6 @@ public class MundosDAO implements OperacionesDAO {
 	public void borrarTodo() {
 		datosMundos.clear();
 		cargarPredeterminados();	
-	}
-
-	/**
-	 *  Cierra almacenes de datos.
-	 */
-	@Override
-	public void cerrar() {
-		// Nada que hacer si no hay persistencia.	
 	}
 
 } // class

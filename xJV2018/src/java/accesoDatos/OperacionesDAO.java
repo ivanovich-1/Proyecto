@@ -22,15 +22,6 @@ public interface OperacionesDAO {
 	Object obtener(String id) throws DatosException;
 	
 	/**
-	 * Obtiene el objeto, dado otro objeto igual.
-	 * reenvía al método que utiliza id.
-	 * @param obj - el Objeto a buscar.
-	 * @return - el Object encontrado; DatosException si no existe.
-	 * @throws DatosException 
-	 */
-	Object obtener(Object obj) throws DatosException;
-	
-	/**
 	 * obtiene todos los objetos almacenados en una lista.
 	 * @return - la lista.
 	 */
@@ -75,10 +66,5 @@ public interface OperacionesDAO {
 	 * Elimina todos los datos y restaura predeterminados.
 	 */
 	void borrarTodo();
-	
-	/**
-	 *  Cierra datos.
-	 */
-	void cerrar();
 	
 } // interface

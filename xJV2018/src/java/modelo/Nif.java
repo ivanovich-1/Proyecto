@@ -1,14 +1,16 @@
 /** Proyecto: Juego de la vida.
- *  Implementa el concepto de Nif según el modelo 1.2 
+ *  Implementa el concepto de Nif según el modelo2 
  *  @since: prototipo1.1
  *  @source: Nif.java 
- *  @version: 1.2 - 2019/02/22 
+ *  @version: 2.0 - 2019/03/23 
  *  @author: ajp
  */
 
 package modelo;
 
-public class Nif {
+import java.io.Serializable;
+
+public class Nif implements Serializable {
 
 	private String texto;
 

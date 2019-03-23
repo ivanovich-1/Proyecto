@@ -4,7 +4,7 @@
  *  Colabora en el patron Fachada.
  *  @since: prototipo2.0
  *  @source: SesionesDAO.java 
- *  @version: 2.0 - 2018/04/29 
+ *  @version: 2.0 - 2019/03/23 
  *  @author: ajp
  */
 
@@ -24,21 +24,22 @@ import accesoDatos.OperacionesDAO;
 import config.Configuracion;
 import modelo.ModeloException;
 import modelo.SesionUsuario;
+import modelo.Usuario;
 
 public class SesionesDAO implements OperacionesDAO, Persistente {
 
-	// Requerido por el Singleton.
+	// Singleton.
 	private static SesionesDAO instancia = null;
+	private static File fSesiones;
 
 	// Elemento de almacenamiento. 
-	private static ArrayList<SesionUsuario> datosSesiones;
-	private static File fSesiones;
+	private ArrayList<SesionUsuario> datosSesiones;
 
 	/**
 	 * Constructor por defecto de uso interno.
 	 * Sólo se ejecutará una vez.
 	 */
-	private SesionesDAO()  {
+	private SesionesDAO() {
 		datosSesiones = new ArrayList<SesionUsuario>();
 		fSesiones = new File(Configuracion.get().getProperty("sesiones.nombreFichero"));
 		try {
@@ -62,15 +63,7 @@ public class SesionesDAO implements OperacionesDAO, Persistente {
 		return instancia;
 	}
 
-	/**
-	 *  Cierra almacenes de datos.
-	 */
-	@Override
-	public void cerrar() {
-		guardarDatos();
-	}
-	
-	//OPERACIONES DE PERSISTENCIA.
+	// OPERACIONES DE PERSISTENCIA
 	/**
 	 *  Recupera el Arraylist sesionesUsuario almacenados en fichero. 
 	 * @throws DatosException 
@@ -116,34 +109,37 @@ public class SesionesDAO implements OperacionesDAO, Persistente {
 		}	
 	}
 	
+	/**
+	 *  Cierra almacenes de datos.
+	 */
+	@Override
+	public void cerrar() {
+		guardarDatos();
+	}
+	
 	//OPERACIONES DAO
 	/**
 	 * Búsqueda de sesión por idSesion.
-	 * @param idSesion - el idUsr+fecha a buscar.
-	 * @return - la sesión encontrada. 
-	 * @throws DatosException - si no existe. 
+	 * @param id - el idUsr+fecha a buscar.
+	 * @return - la sesión encontrada; sin encuentra. 
 	 */
 	@Override
-	public SesionUsuario obtener(String idSesion) throws DatosException  {
-		if (idSesion != null) {
-			int posicion = obtenerPosicion(idSesion);			// En base 1
-			if (posicion >= 0) {
-				return datosSesiones.get(posicion - 1);     	// En base 0
-			}
-			else {
-				throw new DatosException("Obtener: "+ idSesion + " no existe");
-			}
+	public SesionUsuario obtener(String id) {
+		assert id != null;
+		int posicion = indexSort(id);					// En base 1
+		if (posicion >= 0) {
+			return datosSesiones.get(posicion - 1);     // En base 0
 		}
 		return null;
 	}
-
+	
 	/**
 	 *  Obtiene por búsqueda binaria, la posición que ocupa, o ocuparía,  una sesión en 
 	 *  la estructura.
-	 *	@param idSesion - id de Sesion a buscar.
+	 *	@param id - id de Sesion a buscar.
 	 *	@return - la posición, en base 1, que ocupa un objeto o la que ocuparía (negativo).
 	 */
-	private int obtenerPosicion(String idSesion) {
+	private int indexSort(String id) {
 		int comparacion;
 		int inicio = 0;
 		int fin = datosSesiones.size() - 1;
@@ -151,7 +147,7 @@ public class SesionesDAO implements OperacionesDAO, Persistente {
 		while (inicio <= fin) {
 			medio = (inicio + fin) / 2;			// Calcula posición central.
 			// Obtiene > 0 si idSesion va después que medio.
-			comparacion = idSesion.compareTo(datosSesiones.get(medio).getIdSesion());
+			comparacion = id.compareTo(datosSesiones.get(medio).getId());
 			if (comparacion == 0) {			
 				return medio + 1;   			// Posción ocupada, base 1	  
 			}		
@@ -164,17 +160,15 @@ public class SesionesDAO implements OperacionesDAO, Persistente {
 		}	
 		return -(inicio + 1);					// Posición que ocuparía -negativo- base 1
 	}
-	
+
 	/**
-	 * Búsqueda de Sesion dado un objeto, reenvía al método que utiliza idSesion.
-	 * @param obj - la SesionUsuario a buscar.
-	 * @return - la Sesion encontrada.
-	 * @throws DatosException - si no existe
+	 * obtiene todas las sesiones en una lista.
+	 * @return - la lista.
 	 */
 	@Override
-	public SesionUsuario obtener(Object obj) throws DatosException  {
-		return this.obtener(((SesionUsuario) obj).getIdSesion());
-	}	
+	public List obtenerTodos() {
+		return datosSesiones;
+	}
 
 	/**
 	 * Búsqueda de todas la sesiones de un mismo usuario.
@@ -184,11 +178,11 @@ public class SesionesDAO implements OperacionesDAO, Persistente {
 	 * @throws DatosException - si no existe ninguna.
 	 */
 	public List<SesionUsuario> obtenerTodasMismoUsr(String idUsr) throws ModeloException, DatosException  {
-		SesionUsuario aux = null;
-		aux = new SesionUsuario();
+		assert idUsr != null;
+		SesionUsuario aux = new SesionUsuario();
 		aux.setUsr(UsuariosDAO.getInstancia().obtener(idUsr));
 		//Busca posición inserción ordenada por idUsr + fecha. La última para el mismo usuario.
-		return separarSesionesUsr(obtenerPosicion(aux.getIdSesion()) - 1);
+		return separarSesionesUsr(indexSort(aux.getId()) - 1);
 	}
 
 	/**
@@ -197,16 +191,16 @@ public class SesionesDAO implements OperacionesDAO, Persistente {
 	 * @return - Sublista con las sesiones encontrada; null si no existe ninguna.
 	 */
 	private List<SesionUsuario> separarSesionesUsr(int ultima) {
-		// Localiza primera sesión del mismo usuario.
-		String idUsr = datosSesiones.get(ultima).getUsr().getIdUsr();
+		String idUsr = datosSesiones.get(ultima).getUsr().getId();
 		int primera = ultima;
-		for (int i = ultima; i >= 0 && datosSesiones.get(i).getUsr().getIdUsr().equals(idUsr); i--) {
+		// Localiza primera sesión del mismo usuario.
+		for (int i = ultima; i >= 0 && datosSesiones.get(i).getUsr().getId().equals(idUsr); i--) {
 			primera = i;
 		}
 		// devuelve la sublista de sesiones buscadas.
 		return datosSesiones.subList(primera, ultima+1);
 	}
-	
+
 	/**
 	 * Alta de una nueva SesionUsuario en orden y sin repeticiones según IdUsr + fecha. 
 	 * Busca previamente la posición que le corresponde por búsqueda binaria.
@@ -217,14 +211,13 @@ public class SesionesDAO implements OperacionesDAO, Persistente {
 	public void alta(Object obj) throws DatosException  {
 		assert obj != null;
 		SesionUsuario sesionNueva = (SesionUsuario) obj;							// Para conversión cast
-		int posicionInsercion = obtenerPosicion(sesionNueva.getIdSesion()); 
-		if (posicionInsercion < 0) {
-			datosSesiones.add(-posicionInsercion - 1, sesionNueva); 				// Inserta la sesión en orden.
+		int posInsercion = indexSort(sesionNueva.getId()); 
+		if (posInsercion < 0) {
+			datosSesiones.add(Math.abs(posInsercion)-1, sesionNueva); 				// Inserta la sesión en orden.
 		}
 		else {
-			throw new DatosException("Alta: "+ sesionNueva.getIdSesion() + " ya existe");
+			throw new DatosException("SesionesDAO.alta: "+ sesionNueva.getId() + " ya existe");
 		}
-		
 	}
 
 	/**
@@ -235,13 +228,13 @@ public class SesionesDAO implements OperacionesDAO, Persistente {
 	 */
 	@Override
 	public SesionUsuario baja(String idSesion) throws DatosException  {
-		assert (idSesion != null);
-		int posicion = obtenerPosicion(idSesion); 									// En base 1
+		assert idSesion != null;
+		int posicion = indexSort(idSesion); 										// En base 1
 		if (posicion > 0) {
 			return datosSesiones.remove(posicion - 1); 								// En base 0
 		}
 		else {
-			throw new DatosException("Baja: "+ idSesion + " no existe");
+			throw new DatosException("SesionesDAO.baja: "+ idSesion + " no existe");
 		}
 	}
 	
@@ -253,32 +246,43 @@ public class SesionesDAO implements OperacionesDAO, Persistente {
 	@Override
 	public void actualizar(Object obj) throws DatosException {
 		assert obj != null;
-		SesionUsuario sesionActualizada = (SesionUsuario) obj;						// Para conversión cast
-		int posicion = obtenerPosicion(sesionActualizada.getIdSesion()); 			// En base 1
+		SesionUsuario sesionActualizada = (SesionUsuario) obj;				// Para conversión cast
+		int posicion = indexSort(sesionActualizada.getId()); 				// En base 1
 		if (posicion > 0) {
 			// Reemplaza elemento
-			datosSesiones.set(posicion - 1, sesionActualizada);  					// En base 0		
+			datosSesiones.set(posicion - 1, sesionActualizada);  			// En base 0		
 		}
 		else {
-			throw new DatosException("Actualizar: "+ sesionActualizada.getIdSesion() + " no existe");
+			throw new DatosException("SesionesDAO.actualizar: "+ sesionActualizada.getId() + " no existe");
 		}
 	}
-	
+
 	/**
 	 * Obtiene el listado de todos las sesiones almacenadas.
 	 * @return el texto con el volcado de datos.
 	 */
 	@Override
 	public String listarDatos() {
-		StringBuilder listado = new StringBuilder();
+		StringBuilder result = new StringBuilder();
 		for (SesionUsuario sesiones: datosSesiones) {
-			if (sesiones != null) {
-				listado.append("\n" + sesiones);
-			}
+			result.append("\n" + sesiones);
 		}
-		return listado.toString();
+		return result.toString();
 	}
 
+	/**
+	 * Obtiene el listado de todos id de los objetos almacenados.
+	 * @return el texto con el volcado de id.
+	 */
+	@Override
+	public String listarId() {
+		StringBuilder result = new StringBuilder();
+		for (SesionUsuario sesiones: datosSesiones) {
+			result.append("\n" + sesiones.getId()); 
+		}
+		return result.toString();
+	}
+	
 	/**
 	 * Elimina todos las sesiones almacenadas.
 	 */

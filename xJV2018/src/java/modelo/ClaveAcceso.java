@@ -1,16 +1,18 @@
 /** 
  *  Proyecto: Juego de la vida.
- *  Implementa el concepto de ClaveAcceso según el modelo 1.2
+ *  Implementa el concepto de ClaveAcceso según el modelo2
  *  Utiliza un string para representar el texto del ClaveAcceso.  
  *  @since: prototipo1.2
  *  @source: ClaveAcceso.java 
- *  @version: 1.2 - 2019/02/22 
+ *  @version: 2.0 - 2019/03/23
  *  @author: ajp
  */
 
 package modelo;
 
-public class ClaveAcceso {
+import java.io.Serializable;
+
+public class ClaveAcceso implements Serializable {
 
 	private String texto;
 

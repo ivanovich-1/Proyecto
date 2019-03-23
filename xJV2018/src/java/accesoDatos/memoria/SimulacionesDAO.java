@@ -115,15 +115,6 @@ public class SimulacionesDAO implements OperacionesDAO {
 	}
 
 	/**
-	 * Búsqueda de simulacion dado un objeto, reenvía al método que utiliza idSimulacion.
-	 * @param obj - la Simulacion a buscar.
-	 * @return - la Simulacion encontrada; null si no encuentra.
-	 */
-	public Simulacion obtener(Object obj)  {
-		return this.obtener(((Simulacion) obj).getId());
-	}
-
-	/**
 	 * obtiene todas las simulaciones en una lista.
 	 * @return - la lista.
 	 */
@@ -197,7 +188,7 @@ public class SimulacionesDAO implements OperacionesDAO {
 			throw new DatosException("SimulacionesDAO.baja: "+ idSimulacion + " no existe");
 		}
 	}
-
+	
 	/**
 	 *  Actualiza datos de una Simulacion reemplazando el almacenado por el recibido.
 	 *  No admitirá cambios en usr ni en la fecha.
@@ -251,14 +242,6 @@ public class SimulacionesDAO implements OperacionesDAO {
 	public void borrarTodo() {
 		datosSimulaciones.clear();
 		cargarPredeterminados();
-	}
-
-	/**
-	 *  Cierra almacenes de datos.
-	 */
-	@Override
-	public void cerrar() {
-		// Nada que hacer si no hay persistencia.	
 	}
 
 } //class

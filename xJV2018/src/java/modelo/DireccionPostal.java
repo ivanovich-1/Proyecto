@@ -1,16 +1,18 @@
 /** 
  *  Proyecto: Juego de la vida.
- *  Implementa el concepto de direccion postal según el modelo 1.2
+ *  Implementa el concepto de direccion postal según el modelo2
  *  Utiliza un varios string para representar los distintos campos.  
  *  @since: prototipo1.1
  *  @source: DireccionPostal.java 
- *  @version: 1.2 - 2019/03/02 
+ *  @version: 2.0 - 2019/03/23 
  *  @author: ajp
  */
 
 package modelo;
 
-public class DireccionPostal {
+import java.io.Serializable;
+
+public class DireccionPostal implements Serializable {
 
 	private String calle;
 	private String numero;

@@ -2,16 +2,18 @@
  *  Implementa el concepto de Persona según el modelo2.
  *  @since: prototipo2.0
  *  @source: Persona.java 
- *  @version: 2.0 - 2019/03/12 
+ *  @version: 2.0 - 2019/03/23 
  *  @author: ajp
  */
 
 package modelo;
 
+import java.io.Serializable;
+
 import util.Fecha;
 
 
-public abstract class Persona {
+public abstract class Persona implements Serializable {
 	
 	protected Nif nif;
 	protected String nombre;

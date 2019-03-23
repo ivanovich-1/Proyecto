@@ -2,7 +2,7 @@
  *  Implementa el concepto de Usuario según el modelo2.
  *  @since: prototipo2.0
  *  @source: Usuario.java 
- *  @version: 2.0 - 2019/03/14
+ *  @version: 2.0 - 2019/03/23
  *  @author: ajp
  */
 

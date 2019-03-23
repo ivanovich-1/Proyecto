@@ -68,19 +68,27 @@ public class UsuariosDAO  implements OperacionesDAO {
 			String nombreUsr = "Admin";
 			String password = "Miau#0";	
 			alta(new Usuario(new Nif("00000000T"), nombreUsr, "Admin Admin", 
-					new DireccionPostal("Iglesia", "0", "30012", "Murcia"), 
-					new Correo("jv.admin" + "@gmail.com"), new Fecha(2000, 01, 01), 
-					new Fecha(), new ClaveAcceso(password), RolUsuario.ADMINISTRADOR));
+					new DireccionPostal(), 
+					new Correo("jv.admin" + "@gmail.com"), 
+					new Fecha(0001, 01, 01), 
+					new Fecha(), 
+					new ClaveAcceso(password), 
+					RolUsuario.ADMINISTRADOR));
+			
 			nombreUsr = "Invitado";
 			password = "Miau#0";	
 			alta(new Usuario(new Nif("00000001R"), nombreUsr, "Invitado Invitado", 
-					new DireccionPostal("Iglesia", "00", "30012", "Murcia"), 
-					new Correo("jv.invitado" + "@gmail.com"), new Fecha(2000, 01, 01), 
-					new Fecha(), new ClaveAcceso(password), RolUsuario.INVITADO));
+					new DireccionPostal(), 
+					new Correo("jv.invitado" + "@gmail.com"), 
+					new Fecha(2000, 01, 01), 
+					new Fecha(), 
+					new ClaveAcceso(password), 
+					RolUsuario.INVITADO));
 		} 
 		catch (ModeloException | DatosException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	//OPERACIONES DAO
@@ -135,16 +143,6 @@ public class UsuariosDAO  implements OperacionesDAO {
 			}
 		}	
 		return -(inicio + 1);					// Posición que ocuparía -negativo- base 1
-	}
-
-	/**
-	 * Búsqueda de Usuario dado un objeto, reenvía al método que utiliza id.
-	 * @param obj - el Usuario a buscar.
-	 * @return - el Usuario encontrado; null si no encuentra.
-	 */
-	@Override
-	public Usuario obtener(Object obj) {
-		return this.obtener(((Usuario) obj).getId());
 	}	
 
 	/**
@@ -215,7 +213,7 @@ public class UsuariosDAO  implements OperacionesDAO {
 	 * @throws DatosException - si no existe.
 	 */
 	@Override
-	public Object baja(String id) throws DatosException {
+	public Usuario baja(String id) throws DatosException {
 		assert (id != null);
 		int posicion = indexSort(id); 									// En base 1
 		if (posicion > 0) {
@@ -229,7 +227,7 @@ public class UsuariosDAO  implements OperacionesDAO {
 			throw new DatosException("UsuariosDAO.baja: "+ id + " no existe");
 		}
 	} 
-
+	
 	/**
 	 *  Actualiza datos de un Usuario reemplazando el almacenado por el recibido. 
 	 *  No admitirá cambios en el idUsr.
@@ -290,14 +288,6 @@ public class UsuariosDAO  implements OperacionesDAO {
 		datosUsuarios.clear();
 		equivalenciasId.clear();
 		cargarPredeterminados();
-	}
-
-	/**
-	 *  Cierra almacenes de datos.
-	 */
-	@Override
-	public void cerrar() {
-		// Nada que hacer si no hay persistencia.	
 	}
 
 } //class

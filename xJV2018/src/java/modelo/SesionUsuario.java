@@ -1,19 +1,19 @@
 /** 
  * Proyecto: Juego de la vida.
- *  Implementa el concepto de SesionUsuario según el modelo1.2
+ *  Implementa el concepto de SesionUsuario según el modelo2
  *  @since: prototipo1.0
  *  @source: SesionUsuario.java 
- *  @version: 1.2 - 2019/03/05
+ *  @version: 2.0 - 2019.03.23
  *  @author: ajp
  */
 
 package modelo;
 
-import modelo.SesionUsuario.EstadoSesion;
-import modelo.Simulacion.EstadoSimulacion;
+import java.io.Serializable;
+
 import util.Fecha;
 
-public class SesionUsuario {
+public class SesionUsuario implements Serializable {
 
 	public enum EstadoSesion { EN_PREPARACION, ACTIVA, CERRADA }
 	private Usuario usr;

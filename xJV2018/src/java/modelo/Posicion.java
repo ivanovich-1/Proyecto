@@ -1,15 +1,17 @@
 /** 
  * Proyecto: Juego de la vida.
- * Coordenada de una celda del espacio según el modelo1.2
+ * Coordenada de una celda del espacio según el modelo2
  * @since: prototipo1.2
  * @source: Posicion.java 
- * @version: 1.2 - 2019.02.25
+ * @version: 2.0 - 2019.03.25
  * @author: ajp
  */
 
 package modelo;
 
-public class Posicion {
+import java.io.Serializable;
+
+public class Posicion implements Serializable {
 	private int x;
 	private int y;
 	

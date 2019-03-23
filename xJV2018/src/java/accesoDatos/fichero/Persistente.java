@@ -3,7 +3,7 @@
  * Interfaz con las operaciones básicas de persistencia en fichero.
  * @since: prototipo2.0
  * @source: Persistente.java  
- * @version: 2.0 - 2018.04.29 
+ * @version: 2.0 - 2019.03.23 
  * @author: ajp
  */
 
@@ -23,5 +23,10 @@ public interface Persistente {
 	 * @throws DatosException 
 	 */
 	void recuperarDatos() throws DatosException;
+	
+	/**
+	 *  Cierra datos.
+	 */
+	void cerrar();
 	
 } // interface

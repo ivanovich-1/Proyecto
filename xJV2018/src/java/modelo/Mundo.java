@@ -1,20 +1,21 @@
 /** 
  * Proyecto: Juego de la vida.
- * Organiza aspectos de gestión de la simulación según el modelo1.2
+ * Organiza aspectos de gestión de la simulación según el modelo2
  * @since: prototipo1.2
  * @source: Simulacion.java 
- * @version: 1.2 - 2019.02.25
+ * @version: 2.0 - 2019.03.23
  * @author: ajp
  */
 
 package modelo;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Mundo {
+public class Mundo implements Serializable {
 
 	public static final int TAMAÑO_MUNDO = 18;
 	private String nombre;

@@ -44,6 +44,7 @@ public class JVPrincipal {
 				else {
 					System.out.println("\nDemasiados intentos fallidos...");
 				}		
+				jv.datos.cerrar();
 				System.out.println("Fin del programa.");
 		} 
 		catch (Exception e) {

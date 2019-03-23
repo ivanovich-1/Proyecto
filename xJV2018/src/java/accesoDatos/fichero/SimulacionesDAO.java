@@ -4,7 +4,7 @@
  *  Colabora en el patron Fachada.
  *  @since: prototipo2.0
  *  @source: SimulacionesDAO.java 
- *  @version: 2.0 - 2018/04/29 
+ *  @version: 2.0 - 2019/03/23 
  *  @author: ajp
  */
 
@@ -31,13 +31,13 @@ import util.Fecha;
 
 public class SimulacionesDAO implements OperacionesDAO, Persistente {
 
-	// Requerido por el Singleton 
+	// Singleton. 
 	private static SimulacionesDAO instancia;
 
 	// Elemento de almacenamiento.
-	private static ArrayList<Simulacion> datosSimulaciones;
+	private ArrayList<Simulacion> datosSimulaciones;
 	private static File fSimulaciones;
-
+	
 	/**
 	 * Constructor por defecto de uso interno.
 	 * Sólo se ejecutará una vez.
@@ -70,31 +70,21 @@ public class SimulacionesDAO implements OperacionesDAO, Persistente {
 	}
 
 	/**
-	 *  Método para generar de datos predeterminados. 
+	 *  Método para generar datos predeterminados. 
 	 */
 	private void cargarPredeterminados() {
-		// Obtiene usuario (invitado) y mundo predeterminados.
-		Usuario usrDemo = null;
 		try {
-			usrDemo = UsuariosDAO.getInstancia().obtener("III1R");
-			Mundo mundoDemo = MundosDAO.getInstancia().obtener("MundoDemo");
-			Simulacion simulacionDemo = new Simulacion(usrDemo, new Fecha(), mundoDemo, EstadoSimulacion.PREPARADA);
-			datosSimulaciones.add(simulacionDemo);
+			// Obtiene usuario (invitado) y mundo predeterminados.
+			Usuario usrDemo = UsuariosDAO.getInstancia().obtener("III1R");
+			Mundo mundoDemo = MundosDAO.getInstancia().obtener("Demo1");
+			alta(new Simulacion(usrDemo, new Fecha(0001, 01, 01, 01, 01, 01), mundoDemo, EstadoSimulacion.PREPARADA));
 		} 
 		catch (DatosException e) {
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 *  Cierra almacenes de datos.
-	 */
-	@Override
-	public void cerrar() {
-		guardarDatos();
-	}
 	
-	//OPERACIONES DE PERSISTENCIA.
+	// OPERACIONES DE PERSISTENCIA
 	/**
 	 *  Recupera el Arraylist datosSimulaciones almacenados en fichero. 
 	 * @throws DatosException 
@@ -139,24 +129,27 @@ public class SimulacionesDAO implements OperacionesDAO, Persistente {
 			e.printStackTrace();
 		}	
 	}
-
+	
+	/**
+	 *  Cierra almacenes de datos.
+	 */
+	@Override
+	public void cerrar() {
+		guardarDatos();
+	}
+	
 	// OPERACIONES DAO
 	/**
 	 * Búsqueda de Simulacion dado idUsr y fecha.
-	 * @param idSimulacion - el idUsr+fecha de la Simulacion a buscar. 
-	 * @return - la Simulacion encontrada. 
-	 * @throws DatosException - si no existe.
+	 * @param id - el idUsr+fecha de la Simulacion a buscar. 
+	 * @return - la Simulacion encontrada; null si no encuentra. 
 	 */	
 	@Override
-	public Simulacion obtener(String idSimulacion) throws DatosException {
-		if (idSimulacion != null) {
-			int posicion = obtenerPosicion(idSimulacion);			// En base 1
-			if (posicion >= 0) {
-				return datosSimulaciones.get(posicion - 1);     	// En base 0
-			}
-			else {
-				throw new DatosException("Obtener: "+ idSimulacion + " no existe");
-			}
+	public Simulacion obtener(String id) {
+		assert id != null;
+		int posicion = indexSort(id);						// En base 1
+		if (posicion >= 0) {
+			return datosSimulaciones.get(posicion - 1);     // En base 0
 		}
 		return null;
 	}
@@ -164,10 +157,10 @@ public class SimulacionesDAO implements OperacionesDAO, Persistente {
 	/**
 	 *  Obtiene por búsqueda binaria, la posición que ocupa, o ocuparía,  una simulación en 
 	 *  la estructura.
-	 *	@param idSimulacion - id de Simulacion a buscar.
+	 *	@param id - id de Simulacion a buscar.
 	 *	@return - la posición, en base 1, que ocupa un objeto o la que ocuparía (negativo).
 	 */
-	private int obtenerPosicion(String idSimulacion) {
+	private int indexSort(String id) {
 		int comparacion;
 		int inicio = 0;
 		int fin = datosSimulaciones.size() - 1;
@@ -175,7 +168,7 @@ public class SimulacionesDAO implements OperacionesDAO, Persistente {
 		while (inicio <= fin) {
 			medio = (inicio + fin) / 2;			// Calcula posición central.
 			// Obtiene > 0 si idSimulacion va después que medio.
-			comparacion = idSimulacion.compareTo(datosSimulaciones.get(medio).getIdSimulacion());
+			comparacion = id.compareTo(datosSimulaciones.get(medio).getId());
 			if (comparacion == 0) {			
 				return medio + 1;   			// Posción ocupada, base 1	  
 			}		
@@ -190,13 +183,12 @@ public class SimulacionesDAO implements OperacionesDAO, Persistente {
 	}
 
 	/**
-	 * Búsqueda de simulacion dado un objeto, reenvía al método que utiliza idSimulacion.
-	 * @param obj - la Simulacion a buscar.
-	 * @return - la Simulacion encontrada.
-	 * @throws DatosException - si no existe.
+	 * obtiene todas las simulaciones en una lista.
+	 * @return - la lista.
 	 */
-	public Simulacion obtener(Object obj) throws DatosException  {
-		return this.obtener(((Simulacion) obj).getIdSimulacion());
+	@Override
+	public List obtenerTodos() {
+		return datosSimulaciones;
 	}
 
 	/**
@@ -204,14 +196,13 @@ public class SimulacionesDAO implements OperacionesDAO, Persistente {
 	 * @param idUsr - el identificador de usuario a buscar.
 	 * @return - Sublista con las simulaciones encontrada; null si no existe ninguna.
 	 * @throws ModeloException 
-	 * @throws DatosException 
 	 */
-	public List<Simulacion> obtenerTodasMismoUsr(String idUsr) throws ModeloException, DatosException {
+	public List<Simulacion> obtenerTodasMismoUsr(String idUsr) throws ModeloException {
 		Simulacion aux = null;
 		aux = new Simulacion();
 		aux.setUsr(UsuariosDAO.getInstancia().obtener(idUsr));
 		//Busca posición inserción ordenada por idUsr + fecha. La última para el mismo usuario.
-		return separarSimulacionesUsr(obtenerPosicion(aux.getIdSimulacion()) - 1);
+		return separarSimulacionesUsr(indexSort(aux.getId()) - 1);
 	}
 
 	/**
@@ -221,9 +212,9 @@ public class SimulacionesDAO implements OperacionesDAO, Persistente {
 	 */
 	private List<Simulacion> separarSimulacionesUsr(int ultima) {
 		// Localiza primera simulación del mismo usuario.
-		String idUsr = datosSimulaciones.get(ultima).getUsr().getIdUsr();
+		String idUsr = datosSimulaciones.get(ultima).getUsr().getId();
 		int primera = ultima;
-		for (int i = ultima; i >= 0 && datosSimulaciones.get(i).getUsr().getIdUsr().equals(idUsr); i--) {
+		for (int i = ultima; i >= 0 && datosSimulaciones.get(i).getUsr().getId().equals(idUsr); i--) {
 			primera = i;
 		}
 		// devuelve la sublista de simulaciones buscadas.
@@ -238,13 +229,13 @@ public class SimulacionesDAO implements OperacionesDAO, Persistente {
 	 */	
 	public void alta(Object obj) throws DatosException  {
 		assert obj != null;
-		Simulacion simulNueva = (Simulacion) obj;								// Para conversión cast
-		int posicionInsercion = obtenerPosicion(simulNueva.getIdSimulacion()); 
-		if (posicionInsercion < 0) {
-			datosSimulaciones.add(-posicionInsercion - 1, simulNueva); 			// Inserta la simulación en orden.
+		Simulacion simulacion = (Simulacion) obj;								// Para conversión cast
+		int posInsercion = indexSort(simulacion.getId()); 
+		if (posInsercion < 0) {
+			datosSimulaciones.add(Math.abs(posInsercion)-1, simulacion); 		// Inserta la simulación en orden.
 		}
 		else {
-			throw new DatosException("Alta: "+ simulNueva.getIdSimulacion() + " ya existe");
+			throw new DatosException("SimulacionesDAO.alta: "+ simulacion.getId() + " ya existe");
 		}
 	}
 
@@ -257,15 +248,15 @@ public class SimulacionesDAO implements OperacionesDAO, Persistente {
 	@Override
 	public Simulacion baja(String idSimulacion) throws DatosException  {
 		assert (idSimulacion != null);
-		int posicion = obtenerPosicion(idSimulacion); 							// En base 1
+		int posicion = indexSort(idSimulacion); 								// En base 1
 		if (posicion > 0) {
 			return datosSimulaciones.remove(posicion - 1); 						// En base 0
 		}
 		else {
-			throw new DatosException("Baja: "+ idSimulacion + " no existe");
+			throw new DatosException("SimulacionesDAO.baja: "+ idSimulacion + " no existe");
 		}
 	}
-
+	
 	/**
 	 *  Actualiza datos de una Simulacion reemplazando el almacenado por el recibido.
 	 *  No admitirá cambios en usr ni en la fecha.
@@ -276,13 +267,13 @@ public class SimulacionesDAO implements OperacionesDAO, Persistente {
 	public void actualizar(Object obj) throws DatosException  {
 		assert obj != null;
 		Simulacion simulActualizada = (Simulacion) obj;							// Para conversión cast
-		int posicion = obtenerPosicion(simulActualizada.getIdSimulacion()); 	// En base 1
+		int posicion = indexSort(simulActualizada.getId()); 					// En base 1
 		if (posicion > 0) {
 			// Reemplaza elemento
 			datosSimulaciones.set(posicion - 1, simulActualizada);  			// En base 0		
 		}
 		else {
-			throw new DatosException("Actualizar: "+ simulActualizada.getIdSimulacion() + "no existe");
+			throw new DatosException("SimulacionesDAO.actualizar: "+ simulActualizada.getId() + "no existe");
 		}
 	}
 
@@ -292,13 +283,24 @@ public class SimulacionesDAO implements OperacionesDAO, Persistente {
 	 */
 	@Override
 	public String listarDatos() {
-		StringBuilder listado = new StringBuilder();
+		StringBuilder result = new StringBuilder();
 		for (Simulacion simulacion: datosSimulaciones) {
-			if (simulacion != null) {
-				listado.append("\n" + simulacion);
-			}
+			result.append("\n" + simulacion);
 		}
-		return listado.toString();
+		return result.toString();
+	}
+
+	/**
+	 * Obtiene el listado de todos id de los objetos almacenados.
+	 * @return el texto con el volcado de id.
+	 */
+	@Override
+	public String listarId() {
+		StringBuilder result = new StringBuilder();
+		for (Simulacion simulacion: datosSimulaciones) {
+			result.append("\n" + simulacion.getId()); 
+		}
+		return result.toString();
 	}
 
 	/**

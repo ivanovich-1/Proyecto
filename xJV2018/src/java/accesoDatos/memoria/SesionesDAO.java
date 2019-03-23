@@ -17,10 +17,11 @@ import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
 import modelo.ModeloException;
 import modelo.SesionUsuario;
+import modelo.Usuario;
 
 public class SesionesDAO implements OperacionesDAO {
 
-	// Requerido por el Singleton.
+	// Singleton.
 	private static SesionesDAO instancia = null;
 
 	// Elemento de almacenamiento. 
@@ -63,7 +64,7 @@ public class SesionesDAO implements OperacionesDAO {
 		}
 		return null;
 	}
-
+	
 	/**
 	 *  Obtiene por búsqueda binaria, la posición que ocupa, o ocuparía,  una sesión en 
 	 *  la estructura.
@@ -93,17 +94,6 @@ public class SesionesDAO implements OperacionesDAO {
 	}
 
 	/**
-	 * Búsqueda de Sesion dado un objeto, reenvía al método que utiliza idSesion.
-	 * @param obj - la SesionUsuario a buscar.
-	 * @return - la Sesion encontrada.
-	 * @throws DatosException - si no existe
-	 */
-	@Override
-	public SesionUsuario obtener(Object obj) throws DatosException  {
-		return this.obtener(((SesionUsuario) obj).getId());
-	}	
-
-	/**
 	 * obtiene todas las sesiones en una lista.
 	 * @return - la lista.
 	 */
@@ -120,8 +110,8 @@ public class SesionesDAO implements OperacionesDAO {
 	 * @throws DatosException - si no existe ninguna.
 	 */
 	public List<SesionUsuario> obtenerTodasMismoUsr(String idUsr) throws ModeloException, DatosException  {
-		SesionUsuario aux = null;
-		aux = new SesionUsuario();
+		assert idUsr != null;
+		SesionUsuario aux = new SesionUsuario();
 		aux.setUsr(UsuariosDAO.getInstancia().obtener(idUsr));
 		//Busca posición inserción ordenada por idUsr + fecha. La última para el mismo usuario.
 		return separarSesionesUsr(indexSort(aux.getId()) - 1);
@@ -133,9 +123,9 @@ public class SesionesDAO implements OperacionesDAO {
 	 * @return - Sublista con las sesiones encontrada; null si no existe ninguna.
 	 */
 	private List<SesionUsuario> separarSesionesUsr(int ultima) {
-		// Localiza primera sesión del mismo usuario.
 		String idUsr = datosSesiones.get(ultima).getUsr().getId();
 		int primera = ultima;
+		// Localiza primera sesión del mismo usuario.
 		for (int i = ultima; i >= 0 && datosSesiones.get(i).getUsr().getId().equals(idUsr); i--) {
 			primera = i;
 		}
@@ -170,8 +160,8 @@ public class SesionesDAO implements OperacionesDAO {
 	 */
 	@Override
 	public SesionUsuario baja(String idSesion) throws DatosException  {
-		assert (idSesion != null);
-		int posicion = indexSort(idSesion); 									// En base 1
+		assert idSesion != null;
+		int posicion = indexSort(idSesion); 										// En base 1
 		if (posicion > 0) {
 			return datosSesiones.remove(posicion - 1); 								// En base 0
 		}
@@ -179,7 +169,7 @@ public class SesionesDAO implements OperacionesDAO {
 			throw new DatosException("SesionesDAO.baja: "+ idSesion + " no existe");
 		}
 	}
-
+	
 	/**
 	 *  Actualiza datos de una SesionUsuario reemplazando el almacenado por el recibido.
 	 *	@param obj - SesionUsuario con las modificaciones.
@@ -238,14 +228,6 @@ public class SesionesDAO implements OperacionesDAO {
 	 */
 	public int totalRegistrado() {
 		return datosSesiones.size();
-	}
-
-	/**
-	 *  Cierra almacenes de datos.
-	 */
-	@Override
-	public void cerrar() {
-		// Nada que hacer si no hay persistencia.	
 	}
 
 }//class
