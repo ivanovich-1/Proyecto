@@ -67,4 +67,11 @@ public interface OperacionesDAO {
 	 */
 	void borrarTodo();
 	
+	/**
+	 *  Cierra almacenes de datos.
+	 *  No hace nada en la implementación por defecto.
+	 */
+	default void cerrar() {
+	};
+	
 } // interface

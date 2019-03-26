@@ -24,9 +24,4 @@ public interface Persistente {
 	 */
 	void recuperarDatos() throws DatosException;
 	
-	/**
-	 *  Cierra datos.
-	 */
-	void cerrar();
-	
 } // interface

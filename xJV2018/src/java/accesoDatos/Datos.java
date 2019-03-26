@@ -12,6 +12,7 @@ package accesoDatos;
 import java.util.List;
 
 import accesoDatos.fichero.*;
+import modelo.Identificable;
 import modelo.ModeloException;
 import modelo.Mundo;
 import modelo.SesionUsuario;
@@ -88,10 +89,10 @@ public class Datos {
 		assert idUsr != null;
 		Usuario usrBaja = usuariosDAO.baja(idUsr);
 		// Baja de sesiones y simulaciones dependientes.
-		for (SesionUsuario sesionBaja : sesionesDAO.obtenerTodasMismoUsr(idUsr)) {
+		for (Identificable sesionBaja : sesionesDAO.obtenerTodasMismoUsr(idUsr)) {
 			sesionesDAO.baja(sesionBaja.getId());
 		}
-		for (Simulacion simulBaja : simulacionesDAO.obtenerTodasMismoUsr(idUsr)) {
+		for (Identificable simulBaja : simulacionesDAO.obtenerTodasMismoUsr(idUsr)) {
 			simulacionesDAO.baja(simulBaja.getId());
 		}	
 		return usrBaja;
@@ -256,7 +257,7 @@ public class Datos {
 	 * @return - lista de simulaciones encontradas.
 	 * @throws ModeloException 
 	 */	
-	public List<Simulacion> obtenerSimulacionesUsuario(String idUsr) throws ModeloException {
+	public List<Identificable> obtenerSimulacionesUsuario(String idUsr) throws ModeloException {
 		return simulacionesDAO.obtenerTodasMismoUsr(idUsr);
 	}
 

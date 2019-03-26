@@ -12,7 +12,7 @@ import config.Configuracion;
 import util.Fecha;
 
 
-public class Usuario extends Persona {
+public class Usuario extends Persona implements Identificable {
 	
 	public enum RolUsuario {INVITADO, NORMAL, ADMINISTRADOR};
 	private String id;
@@ -105,6 +105,7 @@ public class Usuario extends Persona {
 				+ alfabetoNifDesplazado.charAt(alfabetoNif.indexOf(id.charAt(4)));
 	}
 	
+	@Override
 	public String getId() {
 		return id;
 	}

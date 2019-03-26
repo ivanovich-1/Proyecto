@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Mundo implements Serializable {
+public class Mundo implements Identificable, Serializable {
 
 	public static final int TAMAÑO_MUNDO = 18;
 	private String nombre;

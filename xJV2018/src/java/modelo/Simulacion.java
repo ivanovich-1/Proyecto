@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 import util.Fecha;
 
-public class Simulacion implements Serializable {
+public class Simulacion implements Identificable, Serializable {
 
 	public enum EstadoSimulacion  {PREPARADA, INICIADA, COMPLETADA}
 	public static final int CICLOS_SIMULACION = 20;

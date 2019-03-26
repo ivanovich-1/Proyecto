@@ -1,7 +1,7 @@
 /** 
  * Proyecto: Juego de la vida.
  * Resuelve todos los aspectos del almacenamiento del DTO Mundo utilizando un ArrayList.
- * Colabora en el patron Fachada.
+ * Colabora en el patrón Façade.
  * @since: prototipo2.0
  * @source: MundosDAO.java 
  * @version: 2.0 - 2018/04/20
@@ -14,26 +14,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import accesoDatos.DAOIndexSort;
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
+import modelo.Identificable;
 import modelo.Mundo;
 import modelo.Mundo.FormaEspacio;
 import modelo.Posicion;
 
-public class MundosDAO implements OperacionesDAO {
+public class MundosDAO extends DAOIndexSort implements OperacionesDAO {
 
-	// Singleton
+	// Singleton.
 	private static MundosDAO instancia;
 
 	// Elementos de almacenamiento.
-	private ArrayList<Mundo> datosMundos;
+	private ArrayList<Identificable> datosMundos;
 
 	/**
 	 * Constructor por defecto de uso interno.
 	 * Sólo se ejecutará una vez.
 	 */
 	private MundosDAO() {
-		datosMundos = new ArrayList<Mundo>();
+		datosMundos = new ArrayList<Identificable>();
 		cargarPredeterminados();
 	}
 
@@ -93,39 +95,11 @@ public class MundosDAO implements OperacionesDAO {
 	@Override
 	public Mundo obtener(String id) {
 		assert id != null;
-		int posicion = indexSort(id);					// En base 1
+		int posicion = indexSort(id, datosMundos);			// En base 1
 		if (posicion >= 0) {
-			return datosMundos.get(posicion - 1);     	// En base 0
+			return (Mundo) datosMundos.get(posicion - 1);   // En base 0
 		}
 		return null;
-	}
-
-	/**
-	 *  Obtiene por búsqueda binaria, la posición que ocupa, o ocuparía,  un Mundo en 
-	 *  la estructura.
-	 *	@param id - id de Mundo a buscar.
-	 *	@return - la posición, en base 1, que ocupa un objeto o la que ocuparía (negativo).
-	 */
-	private int indexSort(String id) {
-		int comparacion;
-		int inicio = 0;
-		int fin = datosMundos.size() - 1;
-		int medio = 0;
-		while (inicio <= fin) {
-			medio = (inicio + fin) / 2;			// Calcula posición central.
-			// Obtiene > 0 si nombre va después que medio.
-			comparacion = id.compareTo(datosMundos.get(medio).getId());
-			if (comparacion == 0) {			
-				return medio + 1;   			// Posción ocupada, base 1	  
-			}		
-			if (comparacion > 0) {
-				inicio = medio + 1;
-			}			
-			else {
-				fin = medio - 1;
-			}
-		}	
-		return -(inicio + 1);					// Posición que ocuparía -negativo- base 1
 	}
 
 	/**
@@ -147,7 +121,7 @@ public class MundosDAO implements OperacionesDAO {
 	public void alta(Object obj) throws DatosException  {
 		assert obj != null;
 		Mundo mundoNuevo = (Mundo) obj;										// Para conversión cast
-		int posInsercion = indexSort(mundoNuevo.getId()); 
+		int posInsercion = indexSort(mundoNuevo.getId(), datosMundos); 
 		if (posInsercion < 0) {
 			datosMundos.add(Math.abs(posInsercion)-1, mundoNuevo); 			// Inserta la sesión en orden.
 		}
@@ -165,9 +139,9 @@ public class MundosDAO implements OperacionesDAO {
 	@Override
 	public Mundo baja(String nombre) throws DatosException  {
 		assert (nombre != null);
-		int posicion = indexSort(nombre); 									// En base 1
+		int posicion = indexSort(nombre, datosMundos); 									// En base 1
 		if (posicion > 0) {
-			return datosMundos.remove(posicion - 1); 						// En base 0
+			return (Mundo) datosMundos.remove(posicion - 1); 				// En base 0
 		}
 		else {
 			throw new DatosException("MundosDAO.baja: "+ nombre + " no existe");
@@ -183,7 +157,7 @@ public class MundosDAO implements OperacionesDAO {
 	public void actualizar(Object obj) throws DatosException  {
 		assert obj != null;
 		Mundo mundoActualizado = (Mundo) obj;								// Para conversión cast
-		int posicion = indexSort(mundoActualizado.getId()); 				// En base 1
+		int posicion = indexSort(mundoActualizado.getId(), datosMundos); 	// En base 1
 		if (posicion > 0) {
 			// Reemplaza elemento
 			datosMundos.set(posicion - 1, mundoActualizado);  				// En base 0		
@@ -200,7 +174,7 @@ public class MundosDAO implements OperacionesDAO {
 	@Override
 	public String listarDatos() {
 		StringBuilder result = new StringBuilder();
-		for (Mundo mundo: datosMundos) {
+		for (Identificable mundo: datosMundos) {
 			result.append("\n" + mundo);
 		}
 		return result.toString();
@@ -213,7 +187,7 @@ public class MundosDAO implements OperacionesDAO {
 	@Override
 	public String listarId() {
 		StringBuilder result = new StringBuilder();
-		for (Mundo mundo: datosMundos) {
+		for (Identificable mundo: datosMundos) {
 			result.append("\n" + mundo.getId());
 		}
 		return result.toString();

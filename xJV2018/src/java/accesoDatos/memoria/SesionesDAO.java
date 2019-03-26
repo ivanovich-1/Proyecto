@@ -1,7 +1,7 @@
 /** 
  * Proyecto: Juego de la vida.
  *  Resuelve todos los aspectos del almacenamiento del DTO Patron utilizando un ArrayList.
- *  Colabora en el patron Fachada.
+ *  Colabora en el patrón Façade.
  *  @since: prototipo2.0
  *  @source: SesionesDAO.java 
  *  @version: 2.0 - 2019/03/15 
@@ -13,26 +13,28 @@ package accesoDatos.memoria;
 import java.util.ArrayList;
 import java.util.List;
 
+import accesoDatos.DAOIndexSort;
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
+import modelo.Identificable;
 import modelo.ModeloException;
 import modelo.SesionUsuario;
 import modelo.Usuario;
 
-public class SesionesDAO implements OperacionesDAO {
+public class SesionesDAO extends DAOIndexSort implements OperacionesDAO {
 
 	// Singleton.
 	private static SesionesDAO instancia = null;
 
 	// Elemento de almacenamiento. 
-	private ArrayList<SesionUsuario> datosSesiones;
+	private ArrayList<Identificable> datosSesiones;
 
 	/**
 	 * Constructor por defecto de uso interno.
 	 * Sólo se ejecutará una vez.
 	 */
 	private SesionesDAO() {
-		datosSesiones = new ArrayList<SesionUsuario>();
+		datosSesiones = new ArrayList<Identificable>();
 	}
 
 	/**
@@ -58,41 +60,13 @@ public class SesionesDAO implements OperacionesDAO {
 	@Override
 	public SesionUsuario obtener(String id) {
 		assert id != null;
-		int posicion = indexSort(id);					// En base 1
+		int posicion = indexSort(id, datosSesiones);					// En base 1
 		if (posicion >= 0) {
-			return datosSesiones.get(posicion - 1);     // En base 0
+			return (SesionUsuario) datosSesiones.get(posicion - 1);     // En base 0
 		}
 		return null;
 	}
 	
-	/**
-	 *  Obtiene por búsqueda binaria, la posición que ocupa, o ocuparía,  una sesión en 
-	 *  la estructura.
-	 *	@param id - id de Sesion a buscar.
-	 *	@return - la posición, en base 1, que ocupa un objeto o la que ocuparía (negativo).
-	 */
-	private int indexSort(String id) {
-		int comparacion;
-		int inicio = 0;
-		int fin = datosSesiones.size() - 1;
-		int medio = 0;
-		while (inicio <= fin) {
-			medio = (inicio + fin) / 2;			// Calcula posición central.
-			// Obtiene > 0 si idSesion va después que medio.
-			comparacion = id.compareTo(datosSesiones.get(medio).getId());
-			if (comparacion == 0) {			
-				return medio + 1;   			// Posción ocupada, base 1	  
-			}		
-			if (comparacion > 0) {
-				inicio = medio + 1;
-			}			
-			else {
-				fin = medio - 1;
-			}
-		}	
-		return -(inicio + 1);					// Posición que ocuparía -negativo- base 1
-	}
-
 	/**
 	 * obtiene todas las sesiones en una lista.
 	 * @return - la lista.
@@ -109,12 +83,12 @@ public class SesionesDAO implements OperacionesDAO {
 	 * @throws ModeloException 
 	 * @throws DatosException - si no existe ninguna.
 	 */
-	public List<SesionUsuario> obtenerTodasMismoUsr(String idUsr) throws ModeloException, DatosException  {
+	public List<Identificable> obtenerTodasMismoUsr(String idUsr) throws ModeloException, DatosException  {
 		assert idUsr != null;
 		SesionUsuario aux = new SesionUsuario();
 		aux.setUsr(UsuariosDAO.getInstancia().obtener(idUsr));
 		//Busca posición inserción ordenada por idUsr + fecha. La última para el mismo usuario.
-		return separarSesionesUsr(indexSort(aux.getId()) - 1);
+		return separarSesionesUsr(indexSort(aux.getId(), datosSesiones) - 1);
 	}
 
 	/**
@@ -122,11 +96,11 @@ public class SesionesDAO implements OperacionesDAO {
 	 * @param ultima - el indice de una sesion almacenada.
 	 * @return - Sublista con las sesiones encontrada; null si no existe ninguna.
 	 */
-	private List<SesionUsuario> separarSesionesUsr(int ultima) {
-		String idUsr = datosSesiones.get(ultima).getUsr().getId();
+	private List<Identificable> separarSesionesUsr(int ultima) {
+		String idUsr = ((SesionUsuario) datosSesiones.get(ultima)).getUsr().getId();
 		int primera = ultima;
 		// Localiza primera sesión del mismo usuario.
-		for (int i = ultima; i >= 0 && datosSesiones.get(i).getUsr().getId().equals(idUsr); i--) {
+		for (int i = ultima; i >= 0 && ((SesionUsuario) datosSesiones.get(i)).getUsr().getId().equals(idUsr); i--) {
 			primera = i;
 		}
 		// devuelve la sublista de sesiones buscadas.
@@ -143,7 +117,7 @@ public class SesionesDAO implements OperacionesDAO {
 	public void alta(Object obj) throws DatosException  {
 		assert obj != null;
 		SesionUsuario sesionNueva = (SesionUsuario) obj;							// Para conversión cast
-		int posInsercion = indexSort(sesionNueva.getId()); 
+		int posInsercion = indexSort(sesionNueva.getId(), datosSesiones); 
 		if (posInsercion < 0) {
 			datosSesiones.add(Math.abs(posInsercion)-1, sesionNueva); 				// Inserta la sesión en orden.
 		}
@@ -161,9 +135,9 @@ public class SesionesDAO implements OperacionesDAO {
 	@Override
 	public SesionUsuario baja(String idSesion) throws DatosException  {
 		assert idSesion != null;
-		int posicion = indexSort(idSesion); 										// En base 1
+		int posicion = indexSort(idSesion, datosSesiones); 							// En base 1
 		if (posicion > 0) {
-			return datosSesiones.remove(posicion - 1); 								// En base 0
+			return (SesionUsuario) datosSesiones.remove(posicion - 1); 				// En base 0
 		}
 		else {
 			throw new DatosException("SesionesDAO.baja: "+ idSesion + " no existe");
@@ -179,7 +153,7 @@ public class SesionesDAO implements OperacionesDAO {
 	public void actualizar(Object obj) throws DatosException {
 		assert obj != null;
 		SesionUsuario sesionActualizada = (SesionUsuario) obj;				// Para conversión cast
-		int posicion = indexSort(sesionActualizada.getId()); 				// En base 1
+		int posicion = indexSort(sesionActualizada.getId(), datosSesiones); // En base 1
 		if (posicion > 0) {
 			// Reemplaza elemento
 			datosSesiones.set(posicion - 1, sesionActualizada);  			// En base 0		
@@ -196,7 +170,7 @@ public class SesionesDAO implements OperacionesDAO {
 	@Override
 	public String listarDatos() {
 		StringBuilder result = new StringBuilder();
-		for (SesionUsuario sesiones: datosSesiones) {
+		for (Identificable sesiones: datosSesiones) {
 			result.append("\n" + sesiones);
 		}
 		return result.toString();
@@ -209,7 +183,7 @@ public class SesionesDAO implements OperacionesDAO {
 	@Override
 	public String listarId() {
 		StringBuilder result = new StringBuilder();
-		for (SesionUsuario sesiones: datosSesiones) {
+		for (Identificable sesiones: datosSesiones) {
 			result.append("\n" + sesiones.getId()); 
 		}
 		return result.toString();

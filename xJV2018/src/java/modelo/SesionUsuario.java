@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 import util.Fecha;
 
-public class SesionUsuario implements Serializable {
+public class SesionUsuario implements Identificable, Serializable {
 
 	public enum EstadoSesion { EN_PREPARACION, ACTIVA, CERRADA }
 	private Usuario usr;
