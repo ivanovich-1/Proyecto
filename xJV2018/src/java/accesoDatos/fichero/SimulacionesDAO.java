@@ -1,11 +1,13 @@
 /** 
  * Proyecto: Juego de la vida.
- *  Resuelve todos los aspectos del almacenamiento del DTO Simulacion utilizando un ArrayList.
- *  Colabora en el patrón Façade.
- *  @since: prototipo2.0
- *  @source: SimulacionesDAO.java 
- *  @version: 2.0 - 2019/03/25 
- *  @author: ajp
+ * Resuelve todos los aspectos del almacenamiento del DTO Simulacion utilizando un ArrayList.
+ * Aplica el patron Singleton.
+ * Participa del patron Template Method heredando el método indexSort().
+ * Colabora en el patrón Façade.
+ * @since: prototipo2.0
+ * @source: SimulacionesDAO.java 
+ * @version: 2.0 - 2019/03/25 
+ * @author: ajp
  */
 
 package accesoDatos.fichero;
@@ -19,16 +21,21 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import accesoDatos.DAOIndexSort;
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
+import accesoDatos.memoria.DAOIndexSort;
 import config.Configuracion;
+import modelo.ClaveAcceso;
+import modelo.Correo;
+import modelo.DireccionPostal;
 import modelo.Identificable;
 import modelo.ModeloException;
 import modelo.Mundo;
+import modelo.Nif;
 import modelo.SesionUsuario;
 import modelo.Simulacion;
 import modelo.Simulacion.EstadoSimulacion;
+import modelo.Usuario.RolUsuario;
 import modelo.Usuario;
 import util.Fecha;
 
@@ -48,13 +55,7 @@ public class SimulacionesDAO extends DAOIndexSort implements OperacionesDAO, Per
 	private SimulacionesDAO() {
 		datosSimulaciones = new ArrayList <Identificable>();
 		fSimulaciones = new File(Configuracion.get().getProperty("simulaciones.nombreFichero"));
-		try {
-			recuperarDatos();
-		} catch (DatosException e) {
-			if (e.getMessage().equals("El fichero de datos: " + fSimulaciones.getName() + " no existe...")) {	
-				cargarPredeterminados();
-			}
-		}
+		recuperarDatos();
 	}
 
 	/**
@@ -77,12 +78,14 @@ public class SimulacionesDAO extends DAOIndexSort implements OperacionesDAO, Per
 	 */
 	private void cargarPredeterminados() {
 		try {
-			// Obtiene usuario (invitado) y mundo predeterminados.
-			Usuario usrDemo = UsuariosDAO.getInstancia().obtener("III1R");
-			Mundo mundoDemo = MundosDAO.getInstancia().obtener("Demo1");
-			alta(new Simulacion(usrDemo, new Fecha(0001, 01, 01, 01, 01, 01), mundoDemo, EstadoSimulacion.PREPARADA));
+			alta(new Simulacion(UsuariosDAO.getInstancia().obtener(new Usuario().getId()),
+								new Fecha(Configuracion.get().getProperty("fecha.predeterminadaFija")), 
+								MundosDAO.getInstancia().obtener(Configuracion.get().getProperty("mundo.nombrePredeterminado")),
+								Integer.parseInt(Configuracion.get().getProperty("simulacion.ciclosPredeterminados")),
+								EstadoSimulacion.PREPARADA));
+			guardarDatos();
 		} 
-		catch (DatosException e) {
+		catch (DatosException | ModeloException e) {
 			e.printStackTrace();
 		}
 	}
@@ -94,34 +97,27 @@ public class SimulacionesDAO extends DAOIndexSort implements OperacionesDAO, Per
 	 * @throws DatosException 
 	 */
 	@Override
-	public void recuperarDatos() throws DatosException {
-		try {
-			if (fSimulaciones.exists()) {
+	public void recuperarDatos() {
+		if (fSimulaciones.exists()) {
+			try {
 				FileInputStream fisSimulaciones = new FileInputStream(fSimulaciones);
 				ObjectInputStream oisSimulaciones = new ObjectInputStream(fisSimulaciones);
 				datosSimulaciones = (ArrayList<Identificable>) oisSimulaciones.readObject();
 				oisSimulaciones.close();
 				return;
 			}
-			throw new DatosException("El fichero de datos: " + fSimulaciones.getName() + " no existe...");
+			catch (ClassNotFoundException | IOException e) {	
+				e.printStackTrace();
+			}
 		} 
-		catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
+		cargarPredeterminados();
 	}
-
+	
 	/**
 	 *  Guarda el Arraylist de simulaciones de usuarios en fichero.
 	 */
 	@Override
 	public void guardarDatos() {
-		guardarDatos(datosSimulaciones);
-	}
-
-	/**
-	 *  Guarda la lista recibida en el fichero de datos.
-	 */
-	private void guardarDatos(ArrayList<Identificable> datosSimulaciones2) {
 		try {
 			FileOutputStream fosSimulaciones = new FileOutputStream(fSimulaciones);
 			ObjectOutputStream oosSesiones = new ObjectOutputStream(fosSimulaciones);

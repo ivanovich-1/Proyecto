@@ -1,11 +1,13 @@
 /** 
  * Proyecto: Juego de la vida.
- *  Resuelve todos los aspectos del almacenamiento del DTO Patron utilizando un ArrayList.
- *  Colabora en el patrón Façade.
- *  @since: prototipo2.0
- *  @source: SesionesDAO.java 
- *  @version: 2.0 - 2019/03/25
- *  @author: ajp
+ * Resuelve todos los aspectos del almacenamiento del DTO Patron utilizando un ArrayList.
+ * Aplica el patron Singleton.
+ * Participa del patron Template Method heredando el método indexSort().
+ * Colabora en el patrón Façade.
+ * @since: prototipo2.0
+ * @source: SesionesDAO.java 
+ * @version: 2.0 - 2019/03/25 
+ * @author: ajp
  */
 
 package accesoDatos.fichero;
@@ -19,9 +21,9 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import accesoDatos.DAOIndexSort;
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
+import accesoDatos.memoria.DAOIndexSort;
 import config.Configuracion;
 import modelo.Identificable;
 import modelo.ModeloException;
@@ -43,11 +45,7 @@ public class SesionesDAO extends DAOIndexSort implements OperacionesDAO, Persist
 	private SesionesDAO() {
 		datosSesiones = new ArrayList<Identificable>();
 		fSesiones = new File(Configuracion.get().getProperty("sesiones.nombreFichero"));
-		try {
-			recuperarDatos();
-		} 
-		catch (DatosException e) { 
-		}
+		recuperarDatos();
 	}
 
 	/**
@@ -67,38 +65,29 @@ public class SesionesDAO extends DAOIndexSort implements OperacionesDAO, Persist
 	// OPERACIONES DE PERSISTENCIA
 	
 	/**
-	 *  Recupera el Arraylist sesionesUsuario almacenados en fichero. 
+	 *  Recupera el Arraylist datosSesiones almacenados en fichero. 
 	 * @throws DatosException 
 	 */
 	@Override
-	public void recuperarDatos() throws DatosException {
-		try {
-			if (fSesiones.exists()) {
+	public void recuperarDatos() {
+		if (fSesiones.exists()) {
+			try {
 				FileInputStream fisSesiones = new FileInputStream(fSesiones);
 				ObjectInputStream oisSesiones = new ObjectInputStream(fisSesiones);
 				datosSesiones = (ArrayList<Identificable>) oisSesiones.readObject();
 				oisSesiones.close();
-				return;
 			}
-			throw new DatosException("El fichero de datos: " + fSesiones.getName() + " no existe...");
+			catch (ClassNotFoundException | IOException e) {	
+				e.printStackTrace();
+			}
 		} 
-		catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
 	}
-
+	
 	/**
-	 *  Guarda el Arraylist de sesiones de usuarios en fichero.
+	 *  Guarda el Arraylist de Sesiones de usuarios en fichero.
 	 */
 	@Override
 	public void guardarDatos() {
-		guardarDatos(datosSesiones);
-	}
-
-	/**
-	 *  Guarda la lista recibida en el fichero de datos.
-	 */
-	private void guardarDatos(ArrayList<Identificable> datosSesiones2) {
 		try {
 			FileOutputStream fosSesiones = new FileOutputStream(fSesiones);
 			ObjectOutputStream oosSesiones = new ObjectOutputStream(fosSesiones);

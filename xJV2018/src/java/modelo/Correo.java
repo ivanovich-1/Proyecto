@@ -12,12 +12,16 @@ package modelo;
 
 import java.io.Serializable;
 
+import config.Configuracion;
+
 public class Correo implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String texto;
 
 	public Correo() throws ModeloException {
-		this("correo@correo.es");
+		this(Configuracion.get().getProperty("usuario.nombrePredeterminado").toLowerCase()
+				+ Configuracion.get().getProperty("correo.dominioPredeterminado"));
 	}
 
 	public Correo(String texto) throws ModeloException {

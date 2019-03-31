@@ -1,26 +1,24 @@
 /** 
  * Proyecto: Juego de la vida.
  * Resuelve todos los aspectos del almacenamiento del DTO Mundo utilizando un ArrayList.
+ * Aplica el patron Singleton.
+ * Participa del patron Template Method heredando el método indexSort().
  * Colabora en el patrón Façade.
  * @since: prototipo2.0
  * @source: MundosDAO.java 
- * @version: 2.0 - 2018/04/20
+ * @version: 2.0 - 2019/03/25
  * @author: ajp
  */
 
 package accesoDatos.memoria;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import accesoDatos.DAOIndexSort;
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
 import modelo.Identificable;
 import modelo.Mundo;
-import modelo.Mundo.FormaEspacio;
-import modelo.Posicion;
 
 public class MundosDAO extends DAOIndexSort implements OperacionesDAO {
 
@@ -57,7 +55,8 @@ public class MundosDAO extends DAOIndexSort implements OperacionesDAO {
 	 *  Método para generar de datos predeterminados.
 	 */
 	private void cargarPredeterminados() {
-		try {
+		try {	
+			Mundo mundoDemo = new Mundo();
 			// En este array los 0 indican celdas con célula muerta y los 1 vivas
 			byte[][] espacioDemo =  new byte[][]{ 
 				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
@@ -79,12 +78,15 @@ public class MundosDAO extends DAOIndexSort implements OperacionesDAO {
 				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
 				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  //
 			};
-			alta(new Mundo("Demo1", espacioDemo, new ArrayList<Posicion>(), new HashMap<String, int[]>(), FormaEspacio.ESFERICO));
+			mundoDemo.setEspacio(espacioDemo);
+			mundoDemo.setTipoMundo(Mundo.FormaEspacio.ESFERICO);
+			alta(mundoDemo);
 		} 
 		catch (DatosException e) {
 			e.printStackTrace();
 		}
 	}
+
 
 	//OPERACIONES DAO
 	/**
@@ -107,7 +109,7 @@ public class MundosDAO extends DAOIndexSort implements OperacionesDAO {
 	 * @return - la lista.
 	 */
 	@Override
-	public List obtenerTodos() {
+	public List<Identificable> obtenerTodos() {
 		return datosMundos;
 	}
 

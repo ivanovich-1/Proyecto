@@ -10,12 +10,15 @@ package modelo;
 
 import java.io.Serializable;
 
+import config.Configuracion;
+
 public class Nif implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String texto;
 
 	public Nif() throws ModeloException {
-		this("00000000T");
+		this(Configuracion.get().getProperty("nif.predeterminado"));
 	}
 
 	public Nif(String texto) throws ModeloException {

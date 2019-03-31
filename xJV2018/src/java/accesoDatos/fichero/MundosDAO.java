@@ -1,10 +1,12 @@
 /** 
  * Proyecto: Juego de la vida.
  * Resuelve todos los aspectos del almacenamiento del DTO Mundo utilizando un ArrayList.
+ * Aplica el patron Singleton.
+ * Participa del patron Template Method heredando el método indexSort().
  * Colabora en el patrón Façade.
  * @since: prototipo2.0
  * @source: MundosDAO.java 
- * @version: 2.0 - 2018/04/25
+ * @version: 2.0 - 2019/03/25
  * @author: ajp
  */
 
@@ -17,17 +19,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import accesoDatos.DAOIndexSort;
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
+import accesoDatos.memoria.DAOIndexSort;
 import config.Configuracion;
 import modelo.Identificable;
 import modelo.Mundo;
-import modelo.Mundo.FormaEspacio;
-import modelo.Posicion;
 
 public class MundosDAO extends DAOIndexSort implements OperacionesDAO, Persistente {
 
@@ -45,14 +44,7 @@ public class MundosDAO extends DAOIndexSort implements OperacionesDAO, Persisten
 	private MundosDAO() {
 		datosMundos = new ArrayList<Identificable>();
 		fMundos = new File(Configuracion.get().getProperty("mundos.nombreFichero"));
-		try {
-			recuperarDatos();
-		} 
-		catch (DatosException e) {
-			if (e.getMessage().equals("El fichero de datos: " + fMundos.getName() + " no existe...")) {	
-				cargarPredeterminados();
-			}
-		}
+		recuperarDatos();
 	}
 
 	/**
@@ -73,7 +65,9 @@ public class MundosDAO extends DAOIndexSort implements OperacionesDAO, Persisten
 	 *  Método para generar de datos predeterminados.
 	 */
 	private void cargarPredeterminados() {
-		try {
+		try {	
+			Mundo mundoDemo = new Mundo();
+			
 			// En este array los 0 indican celdas con célula muerta y los 1 vivas
 			byte[][] espacioDemo =  new byte[][]{ 
 				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
@@ -95,7 +89,10 @@ public class MundosDAO extends DAOIndexSort implements OperacionesDAO, Persisten
 				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
 				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  //
 			};
-			alta(new Mundo("Demo1", espacioDemo, new ArrayList<Posicion>(), new HashMap<String, int[]>(), FormaEspacio.ESFERICO));
+			mundoDemo.setEspacio(espacioDemo);
+			mundoDemo.setTipoMundo(Mundo.FormaEspacio.ESFERICO);
+			alta(mundoDemo);
+			guardarDatos();
 		} 
 		catch (DatosException e) {
 			e.printStackTrace();
@@ -105,42 +102,35 @@ public class MundosDAO extends DAOIndexSort implements OperacionesDAO, Persisten
 	// OPERACIONES DE PERSISTENCIA
 	
 	/**
-	 *  Recupera el Arraylist datosMundos almacenados en fichero. 
+	 *  Recupera el Arraylist datosMundos almacenado en fichero. 
 	 * @throws DatosException 
 	 */
 	@Override
-	public void recuperarDatos() throws DatosException {
-		try {
-			if (fMundos.exists()) {
+	public void recuperarDatos() {
+		if (fMundos.exists()) {
+			try {
 				FileInputStream fisMundos = new FileInputStream(fMundos);
 				ObjectInputStream oisMundos = new ObjectInputStream(fisMundos);
 				datosMundos = (ArrayList<Identificable>) oisMundos.readObject();
 				oisMundos.close();
 				return;
 			}
-			throw new DatosException("El fichero de datos: " + fMundos.getName() + " no existe...");
+			catch (ClassNotFoundException | IOException e) {	
+				e.printStackTrace();
+			}
 		} 
-		catch (ClassNotFoundException |IOException e) {
-			e.printStackTrace();
-		} 
+		cargarPredeterminados();
 	}
-
+	
 	/**
-	 *  Guarda el Arraylist de mundos en fichero.
+	 *  Guarda el Arraylist de Mundos en fichero.
 	 */
 	@Override
 	public void guardarDatos() {
-		guardarDatos(datosMundos);
-	}
-
-	/**
-	 *  Guarda la lista recibida en el fichero de datos.
-	 */
-	private void guardarDatos(ArrayList<Identificable> datosMundos2) {
 		try {
 			FileOutputStream fosMundos = new FileOutputStream(fMundos);
 			ObjectOutputStream oosSesiones = new ObjectOutputStream(fosMundos);
-			oosSesiones.writeObject(datosMundos2);		
+			oosSesiones.writeObject(datosMundos);		
 			oosSesiones.flush();
 			oosSesiones.close();
 		} 

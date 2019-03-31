@@ -23,7 +23,7 @@ public class Fecha implements Serializable {
 	}
 	
 	public Fecha(int año, int mes, int dia) {
-		this(año, mes-1, dia, 0, 0, 0);
+		this(año, mes, dia, 0, 0, 0);
 	}
 	
 	public Fecha() {
@@ -34,6 +34,11 @@ public class Fecha implements Serializable {
 		this.tiempo = (Calendar) fecha.tiempo.clone();
 	}
 
+	public Fecha(String textoFecha) {
+		String[] campos = textoFecha.split("[.-/]");
+		this.tiempo = new GregorianCalendar(Integer.parseInt(campos[0]), Integer.parseInt(campos[1])-1, Integer.parseInt(campos[2])); 
+	}
+	
 	@SuppressWarnings("deprecation")
 	public Fecha(Date date) {
 		this(date.getYear(), date.getMonth(), date.getDate(), 

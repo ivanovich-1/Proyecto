@@ -1,11 +1,13 @@
 /** 
  * Proyecto: Juego de la vida.
- *  Resuelve todos los aspectos del almacenamiento del DTO Simulacion utilizando un ArrayList.
- *  Colabora en el patrón Façade.
- *  @since: prototipo2.0
- *  @source: SimulacionesDAO.java 
- *  @version: 2.0 - 2019/03/20 
- *  @author: ajp
+ * Resuelve todos los aspectos del almacenamiento del DTO Simulacion utilizando un ArrayList.
+ * Aplica el patron Singleton.
+ * Participa del patron Template Method heredando el método indexSort().
+ * Colabora en el patrón Façade.
+ * @since: prototipo2.0
+ * @source: SimulacionesDAO.java 
+ * @version: 2.0 - 2019/03/25 
+ * @author: ajp
  */
 
 package accesoDatos.memoria;
@@ -13,9 +15,11 @@ package accesoDatos.memoria;
 import java.util.ArrayList;
 import java.util.List;
 
-import accesoDatos.DAOIndexSort;
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
+import accesoDatos.fichero.MundosDAO;
+import accesoDatos.fichero.UsuariosDAO;
+import config.Configuracion;
 import modelo.Identificable;
 import modelo.ModeloException;
 import modelo.Mundo;
@@ -62,12 +66,13 @@ public class SimulacionesDAO extends DAOIndexSort implements OperacionesDAO {
 	 */
 	private void cargarPredeterminados() {
 		try {
-			// Obtiene usuario (invitado) y mundo predeterminados.
-			Usuario usrDemo = UsuariosDAO.getInstancia().obtener("III1R");
-			Mundo mundoDemo = MundosDAO.getInstancia().obtener("Demo1");
-			alta(new Simulacion(usrDemo, new Fecha(0001, 01, 01, 01, 01, 01), mundoDemo, EstadoSimulacion.PREPARADA));
+			alta(new Simulacion(UsuariosDAO.getInstancia().obtener(new Usuario().getId()),
+								new Fecha(Configuracion.get().getProperty("fecha.predeterminadaFija")), 
+								MundosDAO.getInstancia().obtener(Configuracion.get().getProperty("mundo.nombrePredeterminado")),
+								Integer.parseInt(Configuracion.get().getProperty("simulacion.ciclosPredeterminados")),
+								EstadoSimulacion.PREPARADA));
 		} 
-		catch (DatosException e) {
+		catch (DatosException | ModeloException e) {
 			e.printStackTrace();
 		}
 	}
@@ -83,7 +88,7 @@ public class SimulacionesDAO extends DAOIndexSort implements OperacionesDAO {
 		assert id != null;
 		int posicion = indexSort(id, datosSimulaciones);				// En base 1
 		if (posicion >= 0) {
-			return (Simulacion) datosSimulaciones.get(posicion - 1);     // En base 0
+			return (Simulacion) datosSimulaciones.get(posicion - 1);    // En base 0
 		}
 		return null;
 	}

@@ -11,15 +11,17 @@ package modelo;
 
 import java.io.Serializable;
 
+import config.Configuracion;
 import util.Fecha;
 
 public class Simulacion implements Identificable, Serializable {
 
-	public enum EstadoSimulacion  {PREPARADA, INICIADA, COMPLETADA}
-	public static final int CICLOS_SIMULACION = 20;
+	private static final long serialVersionUID = 1L;
 	private Usuario usr;
 	private Fecha fecha;
 	private Mundo mundo;
+	private int ciclos;
+	public enum EstadoSimulacion  {PREPARADA, INICIADA, COMPLETADA}
 	private EstadoSimulacion estado;
 
 	/**
@@ -32,10 +34,11 @@ public class Simulacion implements Identificable, Serializable {
 	 * @param mundo
 	 * @param estado 
 	 */
-	public Simulacion(Usuario usr, Fecha fecha, Mundo mundo, EstadoSimulacion estado) {
+	public Simulacion(Usuario usr, Fecha fecha, Mundo mundo, int ciclos, EstadoSimulacion estado) {
 		setUsr(usr);
 		setFecha(fecha);
 		setMundo(mundo);
+		setCiclos(ciclos);
 		setEstado(estado);
 	}
 
@@ -46,7 +49,9 @@ public class Simulacion implements Identificable, Serializable {
 	 * @throws ModeloException 
 	 */
 	public Simulacion() throws ModeloException {
-		this(new Usuario(), new Fecha(), new Mundo(), EstadoSimulacion.PREPARADA);
+		this(new Usuario(), new Fecha(), new Mundo(), 
+				Integer.parseInt(Configuracion.get().getProperty("simulacion.ciclosPredeterminados")), 
+				EstadoSimulacion.PREPARADA);
 	}
 
 	/**
@@ -57,9 +62,11 @@ public class Simulacion implements Identificable, Serializable {
 	 * @param simul - la Simulacion a clonar
 	 */
 	public Simulacion(Simulacion simul) {
-		setUsr(simul.usr);
-		setFecha((Fecha) simul.fecha.clone());
-		setMundo(new Mundo(simul.mundo));
+		this.usr = new Usuario(simul.usr);
+		this.fecha = new Fecha(simul.fecha);
+		this.mundo = new Mundo(simul.mundo);
+		this.ciclos = simul.ciclos;
+		this.estado = simul.estado;
 	}
 
 	public String getId() {	
@@ -91,6 +98,15 @@ public class Simulacion implements Identificable, Serializable {
 	public void setFecha(Fecha fecha) {
 		assert fecha != null;
 		this.fecha = fecha;
+	}
+	
+	public void setCiclos(int ciclos) {
+		assert ciclos > 0;
+		this.ciclos = ciclos;
+	}
+	
+	public int getCiclos() {
+		return ciclos;
 	}
 	
 	public EstadoSimulacion getEstado() {
@@ -137,10 +153,10 @@ public class Simulacion implements Identificable, Serializable {
 			if (this == obj) {
 				return true;
 			}
-			if (usr.equals(((Simulacion)obj).usr) &&
-					fecha.equals(((Simulacion)obj).fecha) &&
-					mundo.equals(((Simulacion)obj).mundo) &&
-					estado.equals(((Simulacion)obj).estado) 
+			if (usr.equals(((Simulacion)obj).usr)
+					&& fecha.equals(((Simulacion)obj).fecha)
+					&& mundo.equals(((Simulacion)obj).mundo)
+					&& estado.equals(((Simulacion)obj).estado) 
 					) {
 				return true;
 			}
@@ -157,6 +173,5 @@ public class Simulacion implements Identificable, Serializable {
 		// Utiliza el constructor copia.
 		return new Simulacion(this);
 	}
-
 
 } //class

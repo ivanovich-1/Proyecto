@@ -2,7 +2,9 @@
  * Proyecto: Juego de la vida.
  * Resuelve todos los aspectos del almacenamiento del DTO Usuario 
  * utilizando un ArrayList y un Map - Hashtable.
- * Colabora en el patron Fachada.
+ * Aplica el patron Singleton.
+ * Participa del patron Template Method heredando el método indexSort().
+ * Colabora en el patrón 
  * @since: prototipo2.0
  * @source: UsuariosDAO.java 
  * @version: 2.0 - 2019/03/25 
@@ -24,8 +26,8 @@ import java.util.Map;
 
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
+import accesoDatos.memoria.DAOIndexSort;
 import config.Configuracion;
-import accesoDatos.DAOIndexSort;
 import modelo.ClaveAcceso;
 import modelo.Correo;
 import modelo.DireccionPostal;
@@ -56,14 +58,7 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 		equivalenciasId = new Hashtable <String, String>();
 		fUsuarios = new File(Configuracion.get().getProperty("usuarios.nombreFichero"));
 		fEquivalId = new File(Configuracion.get().getProperty("equivalenciasId.nombreFichero"));
-		try {
-			recuperarDatos();
-		} 
-		catch (DatosException e) {
-			if (e.getMessage().equals("El fichero de datos: " + fUsuarios.getName() + " o "	+ fEquivalId.getName() + " no existe...")) {	
-				cargarPredeterminados();
-			}
-		}
+		recuperarDatos();
 	}
 
 	/**
@@ -85,25 +80,20 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 	 */
 	private void cargarPredeterminados() {
 		try {
-			String nombreUsr = "Admin";
-			String password = "Miau#0";	
-			alta(new Usuario(new Nif("00000000T"), nombreUsr, "Admin Admin", 
-					new DireccionPostal(), 
-					new Correo("jv.admin" + "@gmail.com"), 
-					new Fecha(0001, 01, 01), 
-					new Fecha(), 
-					new ClaveAcceso(password), 
-					RolUsuario.ADMINISTRADOR));
+			alta(new Usuario());	//Invitado.
 			
-			nombreUsr = "Invitado";
-			password = "Miau#0";	
-			alta(new Usuario(new Nif("00000001R"), nombreUsr, "Invitado Invitado", 
-					new DireccionPostal(), 
-					new Correo("jv.invitado" + "@gmail.com"), 
-					new Fecha(2000, 01, 01), 
-					new Fecha(), 
-					new ClaveAcceso(password), 
-					RolUsuario.INVITADO));
+			String nombre = Configuracion.get().getProperty("usuario.admin");
+			alta(new Usuario(new Nif(Configuracion.get().getProperty("usuario.nifAdmin")), 
+							nombre, 
+							nombre + " " + nombre, 
+							new DireccionPostal(), 
+							new Correo(nombre.toLowerCase() + Configuracion.get().getProperty("correo.dominioCorreo")), 
+							new Fecha(Configuracion.get().getProperty("usuario.fechaNacimientoPredeterminada")), 
+							new Fecha(), 
+							new ClaveAcceso(), 
+							RolUsuario.ADMINISTRADOR)
+			);
+			guardarDatos();
 		} 
 		catch (ModeloException | DatosException e) {
 			e.printStackTrace();
@@ -111,15 +101,15 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 	}
 	
 	// OPERACIONES DE PERSISTENCIA
-	
+
 	/**
 	 *  Recupera el Arraylist usuarios almacenados en fichero. 
 	 * @throws DatosException 
 	 */ 
 	@Override
-	public void recuperarDatos() throws DatosException {
-		try {
-			if (fUsuarios.exists()) {
+	public void recuperarDatos()  {
+		if (fUsuarios.exists() && fEquivalId.exists()) {
+			try {
 				FileInputStream fisUsuarios = new FileInputStream(fUsuarios);
 				FileInputStream fisEquivalId = new FileInputStream(fEquivalId);
 				ObjectInputStream oisUsuarios = new ObjectInputStream(fisUsuarios);
@@ -129,55 +119,39 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 				oisUsuarios.close();
 				oisEquival.close();
 				return;
-			} 
-			throw new DatosException("El fichero de datos: " + fUsuarios.getName() + " o "	+ fEquivalId.getName() + " no existe...");	
+			}
+			catch (ClassNotFoundException | IOException e) {	
+				e.printStackTrace();
+			}
 		} 
-		catch (ClassNotFoundException | IOException e)  {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 *  Guarda el Arraylist de usuarios y el Hashtable de equivalencias de idUsr en ficheros.
-	 */
-	@Override
-	public void guardarDatos() {
-		guardarDatos(datosUsuarios);
-		guardarDatos(equivalenciasId);
+		cargarPredeterminados();
 	} 
 
 	/**
-	 *  Guarda la lista recibida en el fichero de datos.
+	 *  Guarda el Arraylist de usuarios y el Hashtable de equivalencias de idUsr en ficheros.
+	 * @throws DatosException 
 	 */
-	private void guardarDatos(List<Identificable> datosUsuarios) {
+	@Override
+	public void guardarDatos() {
 		try {
 			FileOutputStream fosUsaurios = new FileOutputStream(fUsuarios);
+			FileOutputStream fosEquivalId = new FileOutputStream(fEquivalId);
 			ObjectOutputStream oosUsuarios = new ObjectOutputStream(fosUsaurios);
+			ObjectOutputStream oosEquivalId = new ObjectOutputStream(fosEquivalId);
+
+			oosEquivalId.writeObject(equivalenciasId);
 			oosUsuarios.writeObject(datosUsuarios);
+
 			oosUsuarios.flush();
+			oosEquivalId.flush();
 			oosUsuarios.close();
+			oosEquivalId.close();
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+	} 
 
-	/**
-	 *  Guarda la lista recibida en el fichero de datos.
-	 */
-	private void guardarDatos(Map<String,String> MapaEquivalencias) {
-		try {
-			FileOutputStream fosEquivalId = new FileOutputStream(fEquivalId);
-			ObjectOutputStream oosEquivalId = new ObjectOutputStream(fosEquivalId);
-			oosEquivalId.writeObject(equivalenciasId);
-			oosEquivalId.flush();
-			oosEquivalId.close();
-		} 
-		catch (IOException e) { 
-			e.printStackTrace();
-		}
-	}
-	
 	//OPERACIONES DAO
 	/**
 	 * Búsqueda de usuario dado su id, el correo o su nif.
@@ -228,7 +202,7 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 			}
 		}
 	}
-	
+
 	/**
 	 *  Si hay coincidencia de identificador hace 23 intentos de variar la última letra
 	 *  procedente del NIF. Llama al generarVarianteIdUsr() de la clase Usuario.
@@ -261,8 +235,8 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 	private void registrarEquivalenciaId(Usuario usr) {
 		assert usr != null;
 		equivalenciasId.put(usr.getId(), usr.getId());
-		equivalenciasId.put(usr.getNif().getTexto(), usr.getId());
-		equivalenciasId.put(usr.getCorreo().getTexto(), usr.getId());
+		equivalenciasId.put(usr.getNif().getTexto().toUpperCase(), usr.getId());
+		equivalenciasId.put(usr.getCorreo().getTexto().toUpperCase(), usr.getId());
 	}
 
 	/**
@@ -286,7 +260,7 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 			throw new DatosException("UsuariosDAO.baja: "+ id + " no existe");
 		}
 	} 
-	
+
 	/**
 	 *  Actualiza datos de un Usuario reemplazando el almacenado por el recibido. 
 	 *  No admitirá cambios en el idUsr.
@@ -338,7 +312,7 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 		}
 		return result.toString();
 	}
-	
+
 	/**
 	 * Elimina todos los usuarios almacenados y regenera los predeterminados.
 	 */
@@ -356,5 +330,5 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 	public void cerrar() {
 		guardarDatos();
 	}
-	
+
 } //class

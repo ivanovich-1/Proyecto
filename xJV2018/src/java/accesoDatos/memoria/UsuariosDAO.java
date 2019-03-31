@@ -2,10 +2,12 @@
  * Proyecto: Juego de la vida.
  * Resuelve todos los aspectos del almacenamiento del DTO Usuario 
  * utilizando un ArrayList y un Map - Hashtable.
- * Colabora en el patrón Façade.
+ * Aplica el patron Singleton.
+ * Participa del patron Template Method heredando el método indexSort().
+ * Colabora en el patrón 
  * @since: prototipo2.0
  * @source: UsuariosDAO.java 
- * @version: 2.0 - 2019/03/15 
+ * @version: 2.0 - 2019/03/25 
  * @author: ajp
  */
 
@@ -18,7 +20,7 @@ import java.util.Map;
 
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
-import accesoDatos.DAOIndexSort;
+import config.Configuracion;
 import modelo.ClaveAcceso;
 import modelo.Correo;
 import modelo.DireccionPostal;
@@ -67,31 +69,25 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO {
 	 */
 	private void cargarPredeterminados() {
 		try {
-			String nombreUsr = "Admin";
-			String password = "Miau#0";	
-			alta(new Usuario(new Nif("00000000T"), nombreUsr, "Admin Admin", 
-					new DireccionPostal(), 
-					new Correo("jv.admin" + "@gmail.com"), 
-					new Fecha(0001, 01, 01), 
-					new Fecha(), 
-					new ClaveAcceso(password), 
-					RolUsuario.ADMINISTRADOR));
+			alta(new Usuario());	//Invitado.
 			
-			nombreUsr = "Invitado";
-			password = "Miau#0";	
-			alta(new Usuario(new Nif("00000001R"), nombreUsr, "Invitado Invitado", 
-					new DireccionPostal(), 
-					new Correo("jv.invitado" + "@gmail.com"), 
-					new Fecha(2000, 01, 01), 
-					new Fecha(), 
-					new ClaveAcceso(password), 
-					RolUsuario.INVITADO));
+			String nombre = Configuracion.get().getProperty("usuario.admin");
+			alta(new Usuario(new Nif(Configuracion.get().getProperty("usuario.nifAdmin")), 
+							nombre, 
+							nombre + " " + nombre, 
+							new DireccionPostal(), 
+							new Correo(nombre.toLowerCase() + Configuracion.get().getProperty("correo.dominioPredeterminado")), 
+							new Fecha(Configuracion.get().getProperty("usuario.fechaNacimientoPredeterminada")), 
+							new Fecha(), 
+							new ClaveAcceso(), 
+							RolUsuario.ADMINISTRADOR)
+			);		
 		} 
 		catch (ModeloException | DatosException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// OPERACIONES DAO
 	
 	/**
@@ -103,9 +99,11 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO {
 	public Usuario obtener(String id) {
 		assert id != null;
 		String idUsr = equivalenciasId.get(id);
-		int posicion = indexSort(idUsr, datosUsuarios);			// En base 1
-		if (posicion > 0) {
-			return (Usuario) datosUsuarios.get(posicion - 1);   // En base 0
+		if (idUsr != null) {
+			int posicion = indexSort(idUsr, datosUsuarios);			// En base 1
+			if (posicion > 0) {
+				return (Usuario) datosUsuarios.get(posicion - 1);   // En base 0
+			}
 		}
 		return null;				
 	}
@@ -160,7 +158,7 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO {
 			usr = new Usuario(usr);	
 			posInsercion = indexSort(usr.getId(), datosUsuarios);
 			if (posInsercion < 0) {
-				datosUsuarios.add(-posInsercion - 1, usr); // Inserta el usuario en orden.
+				datosUsuarios.add(-posInsercion - 1, usr); 		// Inserta el usuario en orden.
 				registrarEquivalenciaId(usr);
 				return;
 			}
@@ -176,8 +174,8 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO {
 	private void registrarEquivalenciaId(Usuario usr) {
 		assert usr != null;
 		equivalenciasId.put(usr.getId(), usr.getId());
-		equivalenciasId.put(usr.getNif().getTexto(), usr.getId());
-		equivalenciasId.put(usr.getCorreo().getTexto(), usr.getId());
+		equivalenciasId.put(usr.getNif().getTexto().toUpperCase(), usr.getId());
+		equivalenciasId.put(usr.getCorreo().getTexto().toUpperCase(), usr.getId());
 	}
 
 	/**
@@ -189,7 +187,7 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO {
 	@Override
 	public Usuario baja(String id) throws DatosException {
 		assert (id != null);
-		int posicion = indexSort(id, datosUsuarios); 									// En base 1
+		int posicion = indexSort(id, datosUsuarios); 							// En base 1
 		if (posicion > 0) {
 			Usuario usrEliminado = (Usuario) datosUsuarios.remove(posicion-1); 	// En base 0
 			equivalenciasId.remove(usrEliminado.getId());

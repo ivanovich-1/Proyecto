@@ -6,7 +6,7 @@
  * - Está demasiado acoplada la lógica con la tecnología de E/S de usuario.
  * @since: prototipo1.1
  * @source: Presentacion.java 
- * @version: 1.2 - 2019/02/13
+ * @version: 2.0 - 2019/03/20
  * @author: ajp
  */
 
@@ -16,6 +16,7 @@ import java.util.Scanner;
 
 import accesoDatos.Datos;
 import accesoDatos.DatosException;
+import config.Configuracion;
 import modelo.ClaveAcceso;
 import modelo.ModeloException;
 import modelo.Simulacion;
@@ -24,7 +25,6 @@ import util.Fecha;
 
 public class Presentacion {
 
-	public static final int MAX_INTENTOS_FALLIDOS = 3;
 	private Datos datos;
 	private Usuario usrEnSesion;
 	private Simulacion simulacion;
@@ -48,13 +48,14 @@ public class Presentacion {
 	 */
 	public void mostrarSimulacion() throws ModeloException {
 		int generacion = 0; 
+		System.out.println(simulacion.getMundo().getTipoMundo());
 		do {
 			System.out.println("\nGeneración: " + generacion);
 			simulacion.getMundo().actualizarMundo();
 			generacion++;
 			System.out.println(simulacion.getMundo().toStringEstadoMundo());
 		}
-		while (generacion < simulacion.CICLOS_SIMULACION);
+		while (generacion < simulacion.getCiclos());
 	}
 
 	/**
@@ -63,41 +64,31 @@ public class Presentacion {
 	 */
 	public boolean inicioSesionCorrecto() {
 		Scanner teclado = new Scanner(System.in);	// Entrada por consola.
-		int intentosPermitidos = MAX_INTENTOS_FALLIDOS;
+		int intentosPermitidos = Integer.parseInt(Configuracion.get().getProperty("sesion.intentosPermitidos"));
 
 		do {
 			// Pide usuario y contraseña.
 			System.out.print("Introduce el id de usuario: ");
 			String id = teclado.nextLine().toUpperCase();
 			System.out.print("Introduce clave acceso: ");
-			ClaveAcceso clave = null;
 			try {
-				clave = new ClaveAcceso();
-				clave = new ClaveAcceso(teclado.nextLine());
-
+				ClaveAcceso clave = new ClaveAcceso(teclado.nextLine());
 				// Busca usuario coincidente con las credenciales.
-
 				usrEnSesion = datos.obtenerUsuario(id);
 
-				// Encripta clave tecleada utilizando un objeto temporal
-				// que ejecutará automáticamente el método privado.
-				Usuario aux = new Usuario();
-				aux.setClaveAcceso(new ClaveAcceso(clave));
-				clave = aux.getClaveAcceso();
-			} 
+				if (usrEnSesion != null && usrEnSesion.getClaveAcceso().equals(clave)) {
+					simulacion = datos.obtenerSimulacion(new Usuario().getId() + "-" + new Fecha(Configuracion.get().getProperty("fecha.predeterminadaFija")).toStringMarcaTiempo());
+					return true; 	
+				} 
+			}
 			catch (ModeloException e) { 	
-				//System.out.println(e.getMessage());
 				//e.printStackTrace();
 			}
-			if (usrEnSesion != null && usrEnSesion.getClaveAcceso().equals(clave)) {
-				simulacion = datos.obtenerSimulacion("III1R-" + new Fecha(0001, 01, 01, 01, 01, 01).toStringMarcaTiempo());
-				return true;
-			} else {
-				intentosPermitidos--;
-				System.out.print("Credenciales incorrectas: ");
-				System.out.println("Quedan " + intentosPermitidos + " intentos... ");
-			}
-		} while (intentosPermitidos > 0);
+			intentosPermitidos--;
+			System.out.print("Credenciales incorrectas: ");
+			System.out.println("Quedan " + intentosPermitidos + " intentos... ");
+		} 
+		while (intentosPermitidos > 0);
 
 		return false;
 	}

@@ -15,12 +15,12 @@ import util.Fecha;
 
 public class SesionUsuario implements Identificable, Serializable {
 
-	public enum EstadoSesion { EN_PREPARACION, ACTIVA, CERRADA }
+	private static final long serialVersionUID = 1L;
 	private Usuario usr;
 	private Fecha fecha;
+	public enum EstadoSesion { EN_PREPARACION, ACTIVA, CERRADA }
 	private EstadoSesion estado;
 	
-
 	/**
 	 * Constructor convencional. Utiliza métodos set...()
 	 * @param usr
@@ -120,9 +120,9 @@ public class SesionUsuario implements Identificable, Serializable {
 			if (this == obj) {
 				return true;
 			}
-			if (usr.equals(((SesionUsuario)obj).usr) &&
-					fecha.equals(((SesionUsuario)obj).fecha) &&
-					estado.equals(((SesionUsuario)obj).estado) 
+			if (usr.equals(((SesionUsuario)obj).usr) 
+					&& fecha.equals(((SesionUsuario)obj).fecha)
+					&& estado.equals(((SesionUsuario)obj).estado) 
 					) {
 				return true;
 			}

@@ -12,15 +12,17 @@ package modelo;
 
 import java.io.Serializable;
 
+import config.Configuracion;
+
 public class DireccionPostal implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String calle;
 	private String numero;
 	private String cp;
 	private String poblacion;
 
-	public DireccionPostal(String calle, String numero, 
-			String cp, String poblacion) throws ModeloException {
+	public DireccionPostal(String calle, String numero, String cp, String poblacion) throws ModeloException {
 		setCalle(calle);
 		setNumero(numero);
 		setCp(cp);
@@ -28,9 +30,17 @@ public class DireccionPostal implements Serializable {
 	}
 
 	public DireccionPostal() throws ModeloException {
-		this("Calle", "00", "01000", "Población");
+		this(Configuracion.get().getProperty("direccion.predeterminada"));
 	}
-
+	
+	public DireccionPostal(String textoDireccion) throws ModeloException {
+		String[] campos = textoDireccion.split("[,.-/]");
+		setCalle(campos[0]);
+		setNumero(campos[1]);
+		setCp(campos[2]);
+		setPoblacion(campos[3]);
+	}
+	
 	public DireccionPostal(DireccionPostal dp) {
 		calle = new String(dp.calle);
 		numero = new String(dp.numero);

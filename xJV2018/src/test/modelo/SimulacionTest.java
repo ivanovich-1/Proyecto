@@ -52,7 +52,7 @@ public class SimulacionTest {
 		}
 		fecha = new Fecha(2018, 10, 20, 10, 35, 2);
 		mundo = new Mundo();
-		simulacion1 = new Simulacion(usr, fecha, mundo, EstadoSimulacion.PREPARADA);
+		simulacion1 = new Simulacion(usr, fecha, mundo, 25, EstadoSimulacion.PREPARADA);
 	}
 
 	@AfterAll

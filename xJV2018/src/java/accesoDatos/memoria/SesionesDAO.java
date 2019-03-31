@@ -1,11 +1,13 @@
 /** 
  * Proyecto: Juego de la vida.
- *  Resuelve todos los aspectos del almacenamiento del DTO Patron utilizando un ArrayList.
- *  Colabora en el patrón Façade.
- *  @since: prototipo2.0
- *  @source: SesionesDAO.java 
- *  @version: 2.0 - 2019/03/15 
- *  @author: ajp
+ * Resuelve todos los aspectos del almacenamiento del DTO Patron utilizando un ArrayList.
+ * Aplica el patron Singleton.
+ * Participa del patron Template Method heredando el método indexSort().
+ * Colabora en el patrón Façade.
+ * @since: prototipo2.0
+ * @source: SesionesDAO.java 
+ * @version: 2.0 - 2019/03/25 
+ * @author: ajp
  */
 
 package accesoDatos.memoria;
@@ -13,13 +15,11 @@ package accesoDatos.memoria;
 import java.util.ArrayList;
 import java.util.List;
 
-import accesoDatos.DAOIndexSort;
 import accesoDatos.DatosException;
 import accesoDatos.OperacionesDAO;
 import modelo.Identificable;
 import modelo.ModeloException;
 import modelo.SesionUsuario;
-import modelo.Usuario;
 
 public class SesionesDAO extends DAOIndexSort implements OperacionesDAO {
 

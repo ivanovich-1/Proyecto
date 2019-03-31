@@ -14,7 +14,8 @@ import util.Fecha;
 
 
 public abstract class Persona implements Serializable {
-	
+
+	private static final long serialVersionUID = 1L;
 	protected Nif nif;
 	protected String nombre;
 	protected String apellidos;
@@ -166,6 +167,52 @@ public abstract class Persona implements Serializable {
 	 * @return true si cumple.
 	 */
 	protected abstract boolean fechaNacimientoValida(Fecha fechaNacimiento);
+	
+	
+	/**
+	 * hashCode() complementa al método equals y sirve para comparar objetos de forma 
+	 * rápida en estructuras Hash. 
+	 * Cuando Java compara dos objetos en estructuras de tipo hash (HashMap, HashSet etc)
+	 * primero invoca al método hashcode y luego el equals.
+	 * @return un número entero de 32 bit.
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((apellidos == null) ? 0 : apellidos.hashCode());
+		result = prime * result + ((correo == null) ? 0 : correo.hashCode());
+		result = prime * result + ((domicilio == null) ? 0 : domicilio.hashCode());
+		result = prime * result + ((fechaNacimiento == null) ? 0 : fechaNacimiento.hashCode());
+		result = prime * result + ((nif == null) ? 0 : nif.hashCode());
+		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
+		return result;
+	}
+
+	/**
+	 * Dos objetos son iguales si: 
+	 * Son de la misma clase.
+	 * Tienen los mismos valores en los atributos; o son el mismo objeto.
+	 * @return falso si no cumple las condiciones.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && getClass() == obj.getClass()) {
+			if (this == obj) {
+				return true;
+			}
+			if (nif.equals(((Persona)obj).nif) 
+					&& nombre.equals(((Persona)obj).nombre)
+					&& apellidos.equals(((Persona)obj).apellidos)
+					&& domicilio.equals(((Persona)obj).domicilio)
+					&& correo.equals(((Persona)obj).correo)
+					&& fechaNacimiento.equals(((Persona)obj).fechaNacimiento)
+					) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Redefine el método heredado de la clase Objecto.
@@ -185,9 +232,7 @@ public abstract class Persona implements Serializable {
 			"apellidos:", this.apellidos,  
 			"domicilio:", this.domicilio, 
 			"correo:", this.correo, 
-			"fechaNacimiento:", this.fechaNacimiento.getAño() + "." 
-				+ this.fechaNacimiento.getMes() + "." 
-				+ this.fechaNacimiento.getDia()	
+			"fechaNacimiento:", this.fechaNacimiento	
 		);		
 	}
 	

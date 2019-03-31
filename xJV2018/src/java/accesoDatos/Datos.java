@@ -65,6 +65,7 @@ public class Datos {
 	 * @return - el Usuario encontrado; null si no encuentra. 
 	 */	
 	public Usuario obtenerUsuario(Usuario usr)  {
+		assert usr != null;
 		return usuariosDAO.obtener(usr.getId());
 	}
 
@@ -86,7 +87,6 @@ public class Datos {
 	 * @throws ModeloException 
 	 */
 	public Usuario bajaUsuario(String idUsr) throws DatosException, ModeloException  {
-		assert idUsr != null;
 		Usuario usrBaja = usuariosDAO.baja(idUsr);
 		// Baja de sesiones y simulaciones dependientes.
 		for (Identificable sesionBaja : sesionesDAO.obtenerTodasMismoUsr(idUsr)) {
@@ -105,6 +105,7 @@ public class Datos {
 	 * @throws ModeloException 
 	 */
 	public Usuario bajaUsuario(Usuario usr) throws DatosException, ModeloException  {
+		assert usr != null;
 		return bajaUsuario(usr.getId());
 	}
 
@@ -189,6 +190,7 @@ public class Datos {
 	 * @throws DatosException - si no existe.
 	 */
 	public SesionUsuario bajaSesion(SesionUsuario sesion) throws DatosException  {
+		assert sesion != null;
 		return sesionesDAO.baja(sesion.getId());
 	}
 
@@ -247,6 +249,7 @@ public class Datos {
 	 * @throws DatosException - si no existe.
 	 */	
 	public Simulacion obtenerSimulacion(Simulacion simulacion) {
+		assert simulacion != null;
 		return simulacionesDAO.obtener(simulacion.getId());
 	}
 
@@ -288,6 +291,7 @@ public class Datos {
 	 * @throws DatosException - si no existe.
 	 */
 	public Simulacion bajaSimulacion(Simulacion simulacion) throws DatosException  {
+		assert simulacion != null;
 		return simulacionesDAO.baja(simulacion.getId());
 	}
 
@@ -339,6 +343,7 @@ public class Datos {
 	 * @throws DatosException - si no existe.
 	 */
 	public Mundo obtenerMundo(Mundo mundo) throws DatosException {
+		assert mundo != null;
 		return mundosDAO.obtener(mundo.getId());
 	}
 
@@ -369,6 +374,7 @@ public class Datos {
 	 * @throws DatosException - si no existe.
 	 */
 	public Mundo bajaMundo(Mundo mundo) throws DatosException  {
+		assert mundo != null;
 		return mundosDAO.baja(mundo.getId());
 	}
 

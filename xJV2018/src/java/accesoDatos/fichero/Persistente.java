@@ -15,8 +15,9 @@ public interface Persistente {
 
 	/**
 	 *  Permite guarda el Arraylist de objetos en ficheros.
+	 * @throws DatosException 
 	 */
-	void guardarDatos();
+	void guardarDatos() throws DatosException;
 	
 	/**
 	 *  Permite recupera el Arraylist de objetos almacenados en fichero. 

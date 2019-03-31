@@ -13,11 +13,12 @@ import util.Fecha;
 
 
 public class Usuario extends Persona implements Identificable {
-	
-	public enum RolUsuario {INVITADO, NORMAL, ADMINISTRADOR};
+
+	private static final long serialVersionUID = 1L;
 	private String id;
 	private Fecha fechaAlta;
 	private ClaveAcceso claveAcceso;
+	public enum RolUsuario { INVITADO, NORMAL, ADMINISTRADOR };
 	private RolUsuario rol;
 	
 	/**
@@ -42,8 +43,7 @@ public class Usuario extends Persona implements Identificable {
 		setFechaAlta(fechaAlta);
 		setClaveAcceso(claveAcceso);
 		setRol(rol);
-		generarId();
-		
+		generarId();	
 	}
 
 	/**
@@ -52,14 +52,14 @@ public class Usuario extends Persona implements Identificable {
 	 */
 	public Usuario() throws ModeloException {
 		this(new Nif(), 
-				"Nombre", 
-				"Apellido Apellido", 
-				new DireccionPostal(),
-				new Correo(), 
-				new Fecha().addAños(-Integer.parseInt(Configuracion.get().getProperty("usuario.edadMinima"))), 
-				new Fecha(), 
-				new ClaveAcceso(), 
-				RolUsuario.NORMAL);
+			Configuracion.get().getProperty("usuario.nombrePredeterminado"), 
+			Configuracion.get().getProperty("usuario.nombrePredeterminado") + " " + Configuracion.get().getProperty("usuario.nombrePredeterminado"), 
+			new DireccionPostal(),
+			new Correo(), 
+			new Fecha(Configuracion.get().getProperty("usuario.fechaNacimientoPredeterminada")), 
+			new Fecha(), 
+			new ClaveAcceso(), 
+			RolUsuario.INVITADO);
 	}
 
 	/**
@@ -91,6 +91,7 @@ public class Usuario extends Persona implements Identificable {
 		this.id =  ""+ this.nombre.charAt(0) 
 				+ apellidos[0].charAt(0) + apellidos[1].charAt(0)
 				+ this.nif.getTexto().substring(7);
+		this.id = this.id.toUpperCase();
 	}
 	
 	/**
@@ -163,6 +164,49 @@ public class Usuario extends Persona implements Identificable {
 	}
 
 	/**
+	 * hashCode() complementa al método equals y sirve para comparar objetos de forma 
+	 * rápida en estructuras Hash. 
+	 * Cuando Java compara dos objetos en estructuras de tipo hash (HashMap, HashSet etc)
+	 * primero invoca al método hashcode y luego el equals.
+	 * @return un número entero de 32 bit.
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((claveAcceso == null) ? 0 : claveAcceso.hashCode());
+		result = prime * result + ((fechaAlta == null) ? 0 : fechaAlta.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((rol == null) ? 0 : rol.hashCode());
+		return result;
+	}
+
+	/**
+	 * Dos objetos son iguales si: 
+	 * Son de la misma clase.
+	 * Tienen los mismos valores en la parte heredada.
+	 * Tienen los mismos valores en los atributos; o son el mismo objeto.
+	 * @return falso si no cumple las condiciones.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && getClass() == obj.getClass()) {
+			if (this == obj) {
+				return true;
+			}
+			if (super.equals((Persona)obj)
+					&& id.equals(((Usuario)obj).id)  
+					&& claveAcceso.equals(((Usuario)obj).claveAcceso) 
+					&& fechaAlta.equals(((Usuario)obj).fechaAlta)
+					&& rol.equals(((Usuario)obj).rol)
+					) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Redefine el método heredado de la clase Objecto.
 	 * @return el texto formateado del estado -valores de atributos- de objeto de la clase Usuario.  
 	 */
@@ -170,19 +214,23 @@ public class Usuario extends Persona implements Identificable {
 	public String toString() {
 		return super.toString() + String.format(
 				"%-16s %s\n"
-		+ "%-16s %s\n"
-		+ "%-16s %s\n"
-		+ "%-16s %s\n",
-		"id:", id,	
-		"fechaAlta:", this.fechaAlta.getAño() + "." 
-				+ this.fechaAlta.getMes() + "." 
-				+ this.fechaAlta.getDia(), 
-		"claveAcceso:", this.claveAcceso, 
-		"rol:", this.rol
+				+ "%-16s %s\n"
+				+ "%-16s %s\n"
+				+ "%-16s %s\n",
+				"id:", id,	
+				"fechaAlta:", this.fechaAlta, 
+				"claveAcceso:", this.claveAcceso, 
+				"rol:", this.rol
 		);		
 	}
 
+	/**
+	 * Genera un clon del propio objeto realizando una copia profunda.
+	 * @return el objeto clonado.
+	 */
+	@Override
 	public Usuario clone() {
+		// Utiliza el constructor copia.
 		return new Usuario(this);
 	}
 	

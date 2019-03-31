@@ -12,12 +12,15 @@ package modelo;
 
 import java.io.Serializable;
 
+import config.Configuracion;
+
 public class ClaveAcceso implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String texto;
 
 	public ClaveAcceso() throws ModeloException {
-		this("Miau#0");
+		this(Configuracion.get().getProperty("claveAcceso.predeterminada"));
 	}
 
 	public ClaveAcceso(String texto) throws ModeloException   {

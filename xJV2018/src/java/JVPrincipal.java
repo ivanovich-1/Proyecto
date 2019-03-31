@@ -32,10 +32,7 @@ public class JVPrincipal {
 					SesionUsuario sesion = new SesionUsuario();
 					sesion.setUsr(jv.interfazUsr.getUsrEnSesion());  
 					jv.datos.altaSesion(sesion);
-					
-					//jv.interfazUsr.getSimulacion().setMundo(jv.datos.obtenerMundo("Demo1"));
-					//jv.datos.altaSimulacion(jv.interfazUsr.getSimulacion());
-					
+								
 					System.out.println("Sesión: " + jv.datos.getSesionesRegistradas() + '\n' + "Iniciada por: " 
 							+ 	jv.interfazUsr.getUsrEnSesion().getNombre() + " " 
 							+ jv.interfazUsr.getUsrEnSesion().getApellidos());			
@@ -50,9 +47,6 @@ public class JVPrincipal {
 		catch (Exception e) {
 			e.printStackTrace();
 		} 
-		
-		
 	} 
-
 
 } //class
