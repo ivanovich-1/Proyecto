@@ -104,22 +104,18 @@ public class UsuarioTest {
 
 	@Test
 	public void testUsuarioDefecto() {
-		int edadMinima = Integer.parseInt(Configuracion.get().getProperty("usuario.edadMinima"));
 		try {
-			assertEquals(usuario2.getNif(), new Nif("00000000T"));
-			assertEquals(usuario2.getNombre(), "Nombre");
-			assertEquals(usuario2.getApellidos(), "Apellido Apellido");
+			assertEquals(usuario2.getNif(), new Nif());
+			assertEquals(usuario2.getNombre(), "Invitado");
+			assertEquals(usuario2.getApellidos(), "Invitado Invitado");
 			assertEquals(usuario2.getDomicilio(), new DireccionPostal());
 			assertEquals(usuario2.getCorreo(), new Correo());
-			assertEquals(usuario2.getFechaNacimiento().getAño(), 
-					new Fecha().addAños(-edadMinima).getAño());
-			assertEquals(usuario2.getFechaNacimiento().getMes(), new Fecha().getMes());
-			assertEquals(usuario2.getFechaNacimiento().getDia(), new Fecha().getDia());
+			assertEquals(usuario2.getFechaNacimiento(), new Usuario().getFechaNacimiento());
 			assertEquals(usuario2.getFechaAlta().getAño(), new Fecha().getAño());
 			assertEquals(usuario2.getFechaAlta().getMes(), new Fecha().getMes());
 			assertEquals(usuario2.getFechaAlta().getDia(), new Fecha().getDia());
 			assertEquals(usuario2.getClaveAcceso(), new ClaveAcceso());
-			assertEquals(usuario2.getRol(), RolUsuario.NORMAL);
+			assertEquals(usuario2.getRol(), RolUsuario.INVITADO);
 		} 
 		catch (ModeloException e) {
 		}
@@ -237,9 +233,9 @@ public class UsuarioTest {
 						"apellidos:       Roca Mora\n" +
 						"domicilio:       Roncal, 10, 30130, Murcia\n" +
 						"correo:          luis@gmail.com\n" +
-						"fechaNacimiento: 2000.2.21\n" +
+						"fechaNacimiento: 2000.03.21 - 00:00:00\n" +
 						"id:              LRM1R\n" +
-						"fechaAlta:       2018.9.17\n" +
+						"fechaAlta:       2018.10.17 - 00:00:00\n" +
 						"claveAcceso:     Pmezd9!\n" +
 						"rol:             NORMAL\n"
 				);
@@ -300,7 +296,7 @@ public class UsuarioTest {
 		} 
 		catch (ModeloException e) {
 		}	
-		assertEquals(usuario2.getNombre(), "Nombre");
+		assertEquals(usuario2.getNombre(), "Invitado" );
 	}
 
 	@Test
@@ -321,7 +317,7 @@ public class UsuarioTest {
 		} 
 		catch (ModeloException e) {
 		}	
-		assertEquals(usuario2.getApellidos(), "Apellido Apellido");
+		assertEquals(usuario2.getApellidos(), "Invitado Invitado");
 	}
 
 	@Test
