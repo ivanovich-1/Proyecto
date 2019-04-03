@@ -46,8 +46,8 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 	// Elementos de almacenamiento.
 	private List<Identificable> datosUsuarios;
 	private Map <String,String> equivalenciasId;
-	private static File fUsuarios;
-	private static File fEquivalId;
+	private File fUsuarios;
+	private File fEquivalId;
 
 	/**
 	 * Constructor por defecto de uso interno.
