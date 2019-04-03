@@ -162,7 +162,7 @@ public class SimulacionesDAO extends DAOIndexSort implements OperacionesDAO, Per
 	 * @return - Sublista con las simulaciones encontrada; null si no existe ninguna.
 	 * @throws ModeloException 
 	 */
-	public List<Identificable> obtenerTodasMismoUsr(String idUsr) throws ModeloException {
+	public List<Identificable> obtenerTodosMismoUsr(String idUsr) throws ModeloException {
 		Simulacion aux = null;
 		aux = new Simulacion();
 		aux.setUsr(UsuariosDAO.getInstancia().obtener(idUsr));

@@ -48,6 +48,7 @@ public class Datos {
 	}
 	
 	// FACHADA usuariosDAO
+	
 	/**
 	 * Método fachada que obtiene un Usuario dado el id. 
 	 * Reenvia petición al método DAO específico.
@@ -68,7 +69,7 @@ public class Datos {
 		assert usr != null;
 		return usuariosDAO.obtener(usr.getId());
 	}
-
+	
 	/**
 	 * Método fachada para alta de un Usuario. 
 	 * Reenvia petición al método DAO específico.
@@ -89,10 +90,10 @@ public class Datos {
 	public Usuario bajaUsuario(String idUsr) throws DatosException, ModeloException  {
 		Usuario usrBaja = usuariosDAO.baja(idUsr);
 		// Baja de sesiones y simulaciones dependientes.
-		for (Identificable sesionBaja : sesionesDAO.obtenerTodasMismoUsr(idUsr)) {
+		for (Identificable sesionBaja : sesionesDAO.obtenerTodosMismoUsr(idUsr)) {
 			sesionesDAO.baja(sesionBaja.getId());
 		}
-		for (Identificable simulBaja : simulacionesDAO.obtenerTodasMismoUsr(idUsr)) {
+		for (Identificable simulBaja : simulacionesDAO.obtenerTodosMismoUsr(idUsr)) {
 			simulacionesDAO.baja(simulBaja.getId());
 		}	
 		return usrBaja;
@@ -163,6 +164,17 @@ public class Datos {
 		return sesionesDAO.obtener(sesion.getId());
 	}
 
+	/**
+	 * Método fachada que obtiene todas las sesiones de un usuario. 
+	 * Reenvia petición al método DAO específico.
+	 * @param simulacion - el objeto Simulacion a obtener.
+	 * @return - lista de simulaciones encontradas.
+	 * @throws ModeloException 
+	 */	
+	public List<Identificable> obtenerSesionesUsuario(String idUsr) throws ModeloException {
+		return sesionesDAO.obtenerTodosMismoUsr(idUsr);
+	}
+			
 	/**
 	 * Método fachada para alta de una SesionUsuario. 
 	 * Reenvia petición al método DAO específico.
@@ -261,7 +273,7 @@ public class Datos {
 	 * @throws ModeloException 
 	 */	
 	public List<Identificable> obtenerSimulacionesUsuario(String idUsr) throws ModeloException {
-		return simulacionesDAO.obtenerTodasMismoUsr(idUsr);
+		return simulacionesDAO.obtenerTodosMismoUsr(idUsr);
 	}
 
 	/**

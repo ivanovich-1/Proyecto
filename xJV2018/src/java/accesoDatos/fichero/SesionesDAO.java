@@ -133,7 +133,7 @@ public class SesionesDAO extends DAOIndexSort implements OperacionesDAO, Persist
 	 * @throws ModeloException 
 	 * @throws DatosException - si no existe ninguna.
 	 */
-	public List<Identificable> obtenerTodasMismoUsr(String idUsr) throws ModeloException, DatosException  {
+	public List<Identificable> obtenerTodosMismoUsr(String idUsr) throws ModeloException {
 		assert idUsr != null;
 		SesionUsuario aux = new SesionUsuario();
 		aux.setUsr(UsuariosDAO.getInstancia().obtener(idUsr));
@@ -150,7 +150,9 @@ public class SesionesDAO extends DAOIndexSort implements OperacionesDAO, Persist
 		String idUsr = ((SesionUsuario) datosSesiones.get(ultima)).getUsr().getId();
 		int primera = ultima;
 		// Localiza primera sesión del mismo usuario.
-		for (int i = ultima; i >= 0 && ((SesionUsuario) datosSesiones.get(i)).getUsr().getId().equals(idUsr); i--) {
+		for (int i = ultima; 
+				i >= 0 && ((SesionUsuario) datosSesiones.get(i)).getUsr().getId().equals(idUsr); 
+				i--) {
 			primera = i;
 		}
 		// devuelve la sublista de sesiones buscadas.
