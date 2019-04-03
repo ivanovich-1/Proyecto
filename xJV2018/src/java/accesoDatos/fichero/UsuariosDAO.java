@@ -56,8 +56,12 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 	private UsuariosDAO()  {
 		datosUsuarios = new ArrayList <Identificable>();
 		equivalenciasId = new Hashtable <String, String>();
-		fUsuarios = new File(Configuracion.get().getProperty("usuarios.nombreFichero"));
-		fEquivalId = new File(Configuracion.get().getProperty("equivalenciasId.nombreFichero"));
+		fUsuarios = new File("." + File.separator 
+							+ "datos" + File.separator
+							+ Configuracion.get().getProperty("usuarios.nombreFichero"));
+		fEquivalId = new File("." + File.separator
+							+ "datos" + File.separator
+							+ Configuracion.get().getProperty("equivalenciasId.nombreFichero"));
 		recuperarDatos();
 	}
 
@@ -87,7 +91,7 @@ public class UsuariosDAO extends DAOIndexSort implements OperacionesDAO, Persist
 							nombre, 
 							nombre + " " + nombre, 
 							new DireccionPostal(), 
-							new Correo(nombre.toLowerCase() + Configuracion.get().getProperty("correo.dominioCorreo")), 
+							new Correo(nombre.toLowerCase() + Configuracion.get().getProperty("correo.dominioPredeterminado")), 
 							new Fecha(Configuracion.get().getProperty("usuario.fechaNacimientoPredeterminada")), 
 							new Fecha(), 
 							new ClaveAcceso(), 
