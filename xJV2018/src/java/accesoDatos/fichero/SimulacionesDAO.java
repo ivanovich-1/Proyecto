@@ -46,7 +46,7 @@ public class SimulacionesDAO extends DAOIndexSort implements OperacionesDAO, Per
 
 	// Elemento de almacenamiento.
 	private ArrayList <Identificable> datosSimulaciones;
-	private static File fSimulaciones;
+	private File fSimulaciones;
 
 	/**
 	 * Constructor por defecto de uso interno.
@@ -54,7 +54,13 @@ public class SimulacionesDAO extends DAOIndexSort implements OperacionesDAO, Per
 	 */
 	private SimulacionesDAO() {
 		datosSimulaciones = new ArrayList <Identificable>();
-		fSimulaciones = new File(Configuracion.get().getProperty("simulaciones.nombreFichero"));
+		new File(Configuracion.get().getProperty("datos.nombreDirectorio")).mkdirs();
+		fSimulaciones = new File("." + File.separator 
+							+ Configuracion.get().getProperty("datos.nombreDirectorio")
+							+ File.separator
+							+ Configuracion.get().getProperty("simulaciones.nombreFichero"));
+
+		
 		recuperarDatos();
 	}
 

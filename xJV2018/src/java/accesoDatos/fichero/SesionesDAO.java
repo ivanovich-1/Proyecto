@@ -33,7 +33,7 @@ public class SesionesDAO extends DAOIndexSort implements OperacionesDAO, Persist
 
 	// Singleton.
 	private static SesionesDAO instancia = null;
-	private static File fSesiones;
+	private File fSesiones;
 	
 	// Elemento de almacenamiento. 
 	private ArrayList<Identificable> datosSesiones;
@@ -44,7 +44,12 @@ public class SesionesDAO extends DAOIndexSort implements OperacionesDAO, Persist
 	 */
 	private SesionesDAO() {
 		datosSesiones = new ArrayList<Identificable>();
-		fSesiones = new File(Configuracion.get().getProperty("sesiones.nombreFichero"));
+		new File(Configuracion.get().getProperty("datos.nombreDirectorio")).mkdirs();
+		fSesiones = new File("." + File.separator 
+							+ Configuracion.get().getProperty("datos.nombreDirectorio")
+							+ File.separator
+							+ Configuracion.get().getProperty("sesiones.nombreFichero"));
+
 		recuperarDatos();
 	}
 

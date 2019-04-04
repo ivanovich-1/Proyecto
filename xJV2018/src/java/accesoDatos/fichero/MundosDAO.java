@@ -32,7 +32,7 @@ public class MundosDAO extends DAOIndexSort implements OperacionesDAO, Persisten
 
 	// Singleton.
 	private static MundosDAO instancia;
-	private static File fMundos;
+	private File fMundos;
 
 	// Elementos de almacenamiento.
 	private ArrayList<Identificable> datosMundos;
@@ -43,7 +43,12 @@ public class MundosDAO extends DAOIndexSort implements OperacionesDAO, Persisten
 	 */
 	private MundosDAO() {
 		datosMundos = new ArrayList<Identificable>();
-		fMundos = new File(Configuracion.get().getProperty("mundos.nombreFichero"));
+		new File(Configuracion.get().getProperty("datos.nombreDirectorio")).mkdirs();
+		fMundos = new File("." + File.separator 
+							+ Configuracion.get().getProperty("datos.nombreDirectorio")
+							+ File.separator
+							+ Configuracion.get().getProperty("mundos.nombreFichero"));
+
 		recuperarDatos();
 	}
 
