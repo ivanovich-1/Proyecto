@@ -51,7 +51,6 @@ public class SimulacionTest {
 			mundo = new Mundo();
 		} 
 		catch (ModeloException e) {
-		
 		}
 		fecha = new Fecha(2018, 10, 20, 10, 35, 2);
 		simulacion1 = new Simulacion(usr, fecha, mundo, 25, EstadoSimulacion.PREPARADA);

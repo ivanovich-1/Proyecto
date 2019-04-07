@@ -43,7 +43,7 @@ public class MundosDAO extends DAOIndexSort implements OperacionesDAO {
 	 *  Si no existe la crea invocando al constructor interno.
 	 *  Utiliza inicialización diferida.
 	 *  Sólo se crea una vez; instancia única -patrón singleton-
-	 *  @return instance
+	 *  @return instancia
 	 */
 	public static MundosDAO getInstance() {
 		if (instance == null) {
